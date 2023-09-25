@@ -103,5 +103,14 @@
     "ts-node": "~10.9.0",
     "typescript": "~5.1.0",
     "webpack-bundle-analyzer": "^4.9.0"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": "eslint"
+  },
+
+"husky": {
+    "hooks": {
+      "pre-commit": "yarn run lint-staged"
+    }
   }
 }
