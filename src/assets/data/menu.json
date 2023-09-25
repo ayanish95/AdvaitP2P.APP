@@ -11,7 +11,7 @@
       }
     },
     {
-      "route": "pages",
+      "route": "pages/user",
       "name": "user",
       "type": "link",
       "icon": "people"
