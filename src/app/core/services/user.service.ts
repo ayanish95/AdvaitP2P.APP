@@ -6,13 +6,15 @@ import { Api } from '@core/consts/api';
 import { Method } from '@core/consts/method';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient,private httpclient:HttpClientService) {}
+  constructor(
+    private http: HttpClient,
+    private httpclient: HttpClientService
+  ) {}
 
-  
   getUserList(): Observable<any> {
-    return this.httpclient.authGet(`${Api.Users + Method.GetUserList}`)
+    return this.httpclient.authGet(`${Api.Users + Method.GetUserList}`);
   }
 }
