@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Token, User } from './interface';
+import { Token, MyUser } from './interface';
 import { Menu } from '@core';
 import { map } from 'rxjs/operators';
 
@@ -23,7 +23,7 @@ export class LoginService {
   }
 
   me() {
-    return this.http.get<User>('/me');
+    return this.http.get<MyUser>('/me');
   }
 
   menu() {

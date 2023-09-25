@@ -16,7 +16,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { environment } from '@env/environment';
-import { BASE_URL, httpInterceptorProviders, appInitializerProviders } from '@core';
+import { BASE_URL, httpInterceptorProviders, appInitializerProviders, API_URL } from '@core';
 
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemDataService } from '@shared/in-mem/in-mem-data.service';
@@ -56,6 +56,7 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
   ],
   providers: [
     { provide: BASE_URL, useValue: environment.baseUrl },
+    { provide: API_URL, useValue: environment.apiURL },
     httpInterceptorProviders,
     appInitializerProviders,
     HttpClientService,

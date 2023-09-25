@@ -3,6 +3,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Observable } from 'rxjs';
 
 export const BASE_URL = new InjectionToken<string>('BASE_URL');
+export const API_URL = new InjectionToken<string>('API_URL');
 
 @Injectable()
 export class BaseUrlInterceptor implements HttpInterceptor {

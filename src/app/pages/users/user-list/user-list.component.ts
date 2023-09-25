@@ -5,12 +5,13 @@ import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { TranslateService } from '@ngx-translate/core';
 import { TablesDataService } from 'app/routes/tables/data.service';
 import { TablesKitchenSinkEditComponent } from 'app/routes/tables/kitchen-sink/edit/edit.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
-  providers: [TablesDataService],
+  providers: [TablesDataService,UserService],
 })
 export class UserListComponent {
   columns: MtxGridColumn[] = [
@@ -110,12 +111,36 @@ export class UserListComponent {
     private translate: TranslateService,
     private dataSrv: TablesDataService,
     private dialog: MtxDialog,
-    private userService: UserService
+    private userService:UserService
   ) {}
 
+  query = {
+    q: 'user:nzbin',
+    sort: 'stars',
+    order: 'desc',
+    page: 0,
+    per_page: 10,
+  };
+
+  get params() {
+    const p = Object.assign({}, this.query);
+    p.page += 1;
+    return p;
+  }
+
   ngOnInit() {
-    this.userService.getUserList().subscribe(data => {
-      console.log('data', data);
+   
+
+    this.userService
+    .getUserList()
+    .pipe(
+      finalize(() => {
+        this.isLoading = false;
+      })
+    )
+    .subscribe(res => {
+      console.log('res',res);
+      
     });
     this.list = this.dataSrv.getData();
     this.isLoading = false;

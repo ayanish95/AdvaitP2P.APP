@@ -1,4 +1,4 @@
-export interface User {
+export interface MyUser {
   [prop: string]: any;
 
   id?: number | string | null;

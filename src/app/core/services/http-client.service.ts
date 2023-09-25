@@ -33,8 +33,6 @@ export class HttpClientService {
    * @param url
    */
   authGet(url: string) {
-    console.log('url', this.routeConfig.Url(url));
-
     return this.http.get<any>(this.routeConfig.Url(url));
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthService, User } from '@core/authentication';
+import { AuthService, MyUser } from '@core/authentication';
 import { NgxPermissionsService, NgxRolesService } from 'ngx-permissions';
 import { switchMap, tap } from 'rxjs/operators';
 import { Menu, MenuService } from './menu.service';
@@ -40,7 +40,7 @@ export class StartupService {
     this.menuService.set(menu);
   }
 
-  private setPermissions(user: User) {
+  private setPermissions(user: MyUser) {
     // In a real app, you should get permissions and roles from the user information.
     const permissions = ['canAdd', 'canDelete', 'canEdit', 'canRead'];
     this.permissonsService.loadPermissions(permissions);

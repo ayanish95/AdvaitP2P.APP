@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, iif, merge, of } from 'rxjs';
 import { catchError, map, share, switchMap, tap } from 'rxjs/operators';
 import { filterObject, isEmptyObject } from './helpers';
-import { User } from './interface';
+import { MyUser } from './interface';
 import { LoginService } from './login.service';
 import { TokenService } from './token.service';
 
@@ -10,7 +10,7 @@ import { TokenService } from './token.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private user$ = new BehaviorSubject<User>({});
+  private user$ = new BehaviorSubject<MyUser>({});
   private change$ = merge(
     this.tokenService.change(),
     this.tokenService.refresh().pipe(switchMap(() => this.refresh()))

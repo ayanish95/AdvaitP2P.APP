@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SettingsService } from '@core';
-import { AuthService, User } from '@core/authentication';
+import { AuthService, MyUser } from '@core/authentication';
 import { debounceTime, tap } from 'rxjs/operators';
 
 @Component({
@@ -41,7 +41,7 @@ import { debounceTime, tap } from 'rxjs/operators';
   ],
 })
 export class UserComponent implements OnInit {
-  user!: User;
+  user!: MyUser;
 
   constructor(
     private router: Router,

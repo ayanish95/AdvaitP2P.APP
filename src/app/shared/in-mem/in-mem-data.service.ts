@@ -5,10 +5,10 @@ import { from, Observable } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { find, map, switchMap } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { base64, currentTimestamp, filterObject, User } from '@core/authentication';
+import { base64, currentTimestamp, filterObject, MyUser } from '@core/authentication';
 
 class JWT {
-  generate(user: User) {
+  generate(user: MyUser) {
     const expiresIn = 3600;
     const refreshTokenExpiresIn = 86400;
 
@@ -41,7 +41,7 @@ class JWT {
     }
   }
 
-  createToken(user: User, expiresIn = 0) {
+  createToken(user: MyUser, expiresIn = 0) {
     const exp = user.refresh_token ? currentTimestamp() + expiresIn : undefined;
 
     return [
@@ -84,7 +84,7 @@ function is(reqInfo: RequestInfo, path: string) {
   providedIn: 'root',
 })
 export class InMemDataService implements InMemoryDbService {
-  private users: User[] = [
+  private myUser: MyUser[] = [
     {
       id: 1,
       username: 'ng-matero',
@@ -110,7 +110,7 @@ export class InMemDataService implements InMemoryDbService {
     | Record<string, unknown>
     | Observable<Record<string, unknown>>
     | Promise<Record<string, unknown>> {
-    return { users: this.users };
+    return { MyUser: this.myUser };
   }
 
   get(reqInfo: RequestInfo) {
@@ -165,7 +165,7 @@ export class InMemDataService implements InMemoryDbService {
     const req = reqInfo.req as HttpRequest<any>;
     const { username, password } = req.body;
 
-    return from(this.users).pipe(
+    return from(this.myUser).pipe(
       find(user => user.username === username || user.email === username),
       map(user => {
         if (!user) {
