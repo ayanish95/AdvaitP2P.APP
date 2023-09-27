@@ -17,6 +17,12 @@
       "icon": "people"
     },
     {
+      "route": "pages/supplier",
+      "name": "supplier",
+      "type": "link",
+      "icon": "person"
+    },
+    {
       "route": "design",
       "name": "design",
       "type": "sub",

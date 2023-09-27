@@ -107,8 +107,7 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": "eslint"
   },
-
-"husky": {
+  "husky": {
     "hooks": {
       "pre-commit": "yarn run lint-staged"
     }

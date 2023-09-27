@@ -2,6 +2,7 @@
   "menu": {
     "dashboard": "Dashboard",
     "user": "User",
+    "supplier": "Supplier",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",
@@ -98,6 +99,30 @@
     "last_page_label": "Last page",
     "range_page_label_1": "no record",
     "range_page_label_2": "{{startIndex}} - {{endIndex}} of {{length}}"
+  },
+  "users":{
+    "Id": "Id",
+    "lastName":"LastName" ,
+    "name":"Name" ,
+    "firstName":"FirstName" ,
+    "userName":"UserName" ,
+    "password":"Password" ,
+    "sapUserId":"SAPUserId" ,
+    "mobile":"Mobile" ,
+    "email":"Email" ,
+    "pincode":"Pincode" ,
+    "materialGroupId":"MaterialGroupId" ,
+    "roleId":"RoleId" ,
+    "forceReset":"ForceReset" ,
+    "createdBy":"CreatedBy" ,
+    "createdOn":"CreatedOn" ,
+    "updatedBy":"UpdatedBy" ,
+    "updatedOn":"UpdatedOn" ,
+    "deletedOn":"DeletedOn" ,
+    "isDeleted":"IsDeleted" ,
+    "isActive":"IsActive" ,
+    "extra1":"Extra1" ,
+    "extra2":"Extra2" 
   },
   "table_kitchen_sink": {
     "position": "Position",

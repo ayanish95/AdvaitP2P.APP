@@ -1,44 +1,44 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Filter, OrderBy } from '@core/models/base-filter';
+import { Suppliers } from '@core/models/suppliers';
 import { Users } from '@core/models/users';
-import { UserService } from '@core/services/user.service';
-import { MtxDialog } from '@ng-matero/extensions/dialog';
-import { TablesDataService } from 'app/routes/tables/data.service';
-import { TablesKitchenSinkEditComponent } from 'app/routes/tables/kitchen-sink/edit/edit.component';
+import { SupplierService } from '@core/services/supplier.service';
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
-  providers: [TablesDataService, UserService],
+  selector: 'app-supplier-list',
+  templateUrl: './supplier-list.component.html',
+  styleUrls: ['./supplier-list.component.scss'],
 })
-export class UserListComponent {
-  list: any[] = [];
+export class SupplierListComponent implements OnInit {
   isLoading = true;
-  displayedColumns: string[] = ['srNo', 'userName', 'name', 'sapUserId', 'email', 'mobile'];
+  displayedColumns: string[] = [
+    'srNo',
+    'SupplierCode',
+    'SupplierName',
+    'AccountGroup',
+    'City',
+    'Country',
+    'Phone',
+  ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
   currentPage = 1;
   pageSize = 10;
-  userList!: Users[];
+  suppliierList!: Suppliers[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
 
-  constructor(
-    private dataSrv: TablesDataService,
-    private dialog: MtxDialog,
-    private userService: UserService
-  ) {}
+  constructor(private supplierService: SupplierService) {}
 
   ngOnInit() {
-    this.userService
-      .getUserList()
+    this.supplierService
+      .getSupplierList()
       .pipe(
         finalize(() => {
           this.isLoading = false;
@@ -46,22 +46,20 @@ export class UserListComponent {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          this.userList = res[ResultEnum.Model];
-          this.dataSource.data = this.userList;
-          this.dataSource1 = this.userList;
+          this.suppliierList = res[ResultEnum.Model];
+          this.dataSource.data = this.suppliierList;
           this.dataSource.paginator = this.paginator;
-          console.log('userList', this.userList);
+          console.log('supplier list', this.suppliierList);
           this.filter = new Filter();
           this.filter.OrderBy = OrderBy.DESC;
           this.filter.OrderByColumn = 'id';
           this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
         }
       });
-    this.list = this.dataSrv.getData();
     this.isLoading = false;
   }
 
-  searchUser(filterValue: any) {
+  searchSupplier(filterValue: any) {
     filterValue = filterValue.target.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
