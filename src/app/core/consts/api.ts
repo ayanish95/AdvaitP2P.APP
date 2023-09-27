@@ -4,4 +4,6 @@ export class Api {
   static Dashboard = `dashboard`;
   static Users = `users`;
   static Supplier = `supplier`;
+  static Product = `product`;
+  static Plant = `plant`;
 }

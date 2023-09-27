@@ -22,13 +22,13 @@ export interface Suppliers {
     CompanyCode?: string;
     PayTermsCode?: string;
     Currency?: string;
-    IsActive?: string;
+    IsActive?: boolean;
     CreatedBy?: string;
-    CreatedOn?: string;
+    CreatedOn?: Date;
     UpdatedBy?: string;
-    UpdatedOn?: string;
-    IsDeleted?: string;
-    DeletedOn?: string;
+    UpdatedOn?: Date;
+    IsDeleted?: boolean;
+    DeletedOn?: Date;
     Extra1?: string;
     Extra2?: string;
 }

@@ -11,13 +11,13 @@ export interface Users {
     MaterialGroupId?: string;
     RoleId?: string;
     ForceReset?: string;
+    IsActive?: boolean;
     CreatedBy?: string;
-    CreatedOn?: string;
+    CreatedOn?: Date;
     UpdatedBy?: string;
-    UpdatedOn?: string;
-    DeletedOn?: string;
-    IsDeleted?: string;
-    IsActive?: string;
+    UpdatedOn?: Date;
+    IsDeleted?: boolean;
+    DeletedOn?: Date;
     Extra1?: string;
     Extra2?: string;
 }
