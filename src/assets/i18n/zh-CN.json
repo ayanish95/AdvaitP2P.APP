@@ -4,6 +4,8 @@
     "design": "设计",
     "user": "User",
     "supplier" : "Supplier",
+    "product": "Product",
+    "plant": "Plant",
     "design.colors": "颜色系统",
     "design.icons": "Material 图标库",
     "material": "Material",

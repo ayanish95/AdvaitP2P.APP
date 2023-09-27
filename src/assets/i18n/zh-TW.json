@@ -3,6 +3,8 @@
     "dashboard": "數據大盤",
     "user": "User",
     "supplier" : "Supplier",
+    "product": "Product",
+    "plant": "Plant",
     "design": "設計",
     "design.colors": "颜色系统",
     "design.icons": "Material 圖標庫",

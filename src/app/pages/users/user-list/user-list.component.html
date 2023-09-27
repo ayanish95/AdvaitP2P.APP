@@ -21,23 +21,23 @@
                 </ng-container>
                 <ng-container matColumnDef="userName">
                     <th mat-header-cell *matHeaderCellDef> User Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element.UserName}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.UserName}} </td>
                 </ng-container>
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> First Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element.FirstName}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.FirstName}} </td>
                 </ng-container>
                 <ng-container matColumnDef="sapUserId">
                     <th mat-header-cell *matHeaderCellDef> SAP User Id </th>
-                    <td mat-cell *matCellDef="let element"> {{element.SAPUserId}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.SAPUserId}} </td>
                 </ng-container>
                 <ng-container matColumnDef="email">
                     <th mat-header-cell *matHeaderCellDef> Email </th>
-                    <td mat-cell *matCellDef="let element"> {{element.Email}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.Email}} </td>
                 </ng-container>
                 <ng-container matColumnDef="mobile">
                     <th mat-header-cell *matHeaderCellDef> Mobile </th>
-                    <td mat-cell *matCellDef="let element"> {{element.Mobile}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.Mobile}} </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

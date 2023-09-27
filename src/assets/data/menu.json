@@ -4,11 +4,7 @@
       "route": "dashboard",
       "name": "dashboard",
       "type": "link",
-      "icon": "dashboard",
-      "badge": {
-        "color": "red-500",
-        "value": "5"
-      }
+      "icon": "dashboard"
     },
     {
       "route": "pages/user",
@@ -21,6 +17,18 @@
       "name": "supplier",
       "type": "link",
       "icon": "person"
+    },
+    {
+      "route": "pages/product",
+      "name": "product",
+      "type": "link",
+      "icon": "layers"
+    },
+    {
+      "route": "pages/plant",
+      "name": "plant",
+      "type": "link",
+      "icon": "location_city"
     },
     {
       "route": "design",

@@ -3,6 +3,8 @@
     "dashboard": "Dashboard",
     "user": "User",
     "supplier": "Supplier",
+    "product": "Product",
+    "plant": "Plant",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",
