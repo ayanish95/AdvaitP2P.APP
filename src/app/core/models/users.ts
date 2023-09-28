@@ -8,7 +8,7 @@ export interface Users {
     Mobile?: string;
     Email?: string;
     Pincode?: string;
-    MaterialGroupId?: string;
+    MaterialGroupId?: any;
     RoleId?: string;
     ForceReset?: string;
     IsActive?: boolean;
@@ -20,4 +20,5 @@ export interface Users {
     DeletedOn?: Date;
     Extra1?: string;
     Extra2?: string;
+    SupplierId?:number;
 }
