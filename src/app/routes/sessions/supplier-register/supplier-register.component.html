@@ -1,41 +1,216 @@
 <div class="d-flex w-full h-full">
-    <mat-card class="m-auto" style="max-width: 850px;">
+    <mat-card class="m-auto" style="max-width: 600px;" >
         <mat-card-header class="m-b-24">
             <mat-card-title>
                 {{'register_welcome' | translate}},
                 {{'supplierRegister_title' | translate}}
             </mat-card-title>
         </mat-card-header>
-
-        <mat-card-content>
+        <!-- style="height: 380px;
+        overflow-y: scroll" -->
+        <mat-card-content style="padding-top: 30px !important;">
             <mat-horizontal-stepper [linear]="isLinear" #stepper>
                 <mat-step [stepControl]="basicInfoFrom" label="Basic Info">
-                    <form class="form-field-full" [formGroup]="basicInfoFrom">
+                    <div>
+                        <form class="form-field-full" [formGroup]="basicInfoFrom">
+                            <div class="row mt-5">
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.firstName' | translate}}</mat-label>
+                                        <input matInput formControlName="firstName" required>
+                                        <mat-error *ngIf="basicInfoFrom.get('firstName')?.invalid">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.lastName' | translate}}</mat-label>
+                                        <input matInput type="text" formControlName="lastName"
+                                               required>
+                                        <mat-error *ngIf="basicInfoFrom.get('lastName')?.invalid">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.telephone' | translate}}</mat-label>
+                                        <input matInput type="text" formControlName="telePhone"
+                                               required>
+                                        <mat-error
+                                                   *ngIf="basicInfoFrom.get('telePhone')?.hasError('required')">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.emailId' | translate}}</mat-label>
+                                        <input matInput type="text" formControlName="emailId"
+                                               required>
+                                        <mat-error
+                                                   *ngIf="basicInfoFrom.get('emailId')?.hasError('required')">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ng-select [items]="productGroupList"
+                                               bindLabel="ProductFullName"
+                                               bindValue="Id"
+                                               [multiple]="true"
+                                               [selectableGroup]="true"
+                                               formControlName="productGroup"
+                                               placeholder="Select Product Group">
+                                        <ng-template ng-option-tmp let-item="item" let-item$="item$"
+                                                     let-index="index">
+                                            <div class="row">
+                                                <input id="item-{{index}}" type="checkbox"
+                                                       [ngModel]="item$.selected"
+                                                       [ngModelOptions]="{standalone: true}" />
+                                                {{item.ProductFullName}}
+                                            </div>
+                                        </ng-template>
+                                        <!-- <ng-template ng-multi-label-tmp let-items="items">
+                                            <div class="ng-value"
+                                                 *ngFor="let item of items | slice:0:1">
+                                                {{item}}
+                                            </div>
+                                            <div class="ng-value" *ngIf="items.length > 1">
+                                                <span class="ng-value-label">{{items.length - 1}}
+                                                    more...</span>
+                                            </div>
+                                        </ng-template> -->
+                                        <ng-template
+                                                     ng-optgroup-tmp let-item="item"
+                                                     let-item$="item$" let-index="index">
+                                            <input id="item-{{index}}" type="checkbox"
+                                                   [ngModel]="item$.selected" /> Select All
+                                        </ng-template>
+                                    </ng-select>
+                                    <div class="cutom-error"
+                                         *ngIf="basicInfoFrom.get('productGroup')?.hasError('required') && basicInfoFrom.controls['productGroup']?.touched">
+
+                                        <span>{{'validations.required' | translate}}</span>
+                                    </div>
+                                    <!-- <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.productGroup' |
+                                            translate}}</mat-label>
+
+                                           
+                                        <input matInput
+                                           [matAutocomplete]="productGroup1"
+                                           formControlName="productGroup"> -->
+
+                                    <!-- <mat-chip-grid #chipGrid>
+                                            <mat-chip-row *ngFor="let product of selectedProduct"
+                                                          [editable]="true"
+                                                          (removed)="remove(product)">
+                                                {{product}}
+                                                <mat-icon matChipRemove>cancel</mat-icon>
+                                            </mat-chip-row>
+                                        </mat-chip-grid>
+                                        <input
+                                               placeholder="Select Product Group"
+                                               #fruitInput
+                                               #autocompleteTrigger="matAutocompleteTrigger"
+                                               formControlName="productGroup"
+                                               [matAutocomplete]="productGroup1"
+                                               [matChipInputFor]="chipGrid"
+                                               (matChipInputTokenEnd)="add($event)"> -->
+
+
+                                    <!-- <mat-autocomplete #productGroup1="matAutocomplete" -->
+                                    <!-- (optionSelected)="selected($event)" -->
+                                    <!-- <mat-option
+                                                        *ngFor="let product of filteredProductsGroup | async"   [value]="product.ProductGroupName" > -->
+                                    <!-- <mat-checkbox color="primary"
+                                                              style="padding: 0 12px;"
+                                                              [checked]="selectedProduct.indexOf(convertToString(product.Id)) >= 0"></mat-checkbox> -->
+                                    <!-- <span>{{ product.ProductGroupName }} {{
+                                                    product.Description ? ' - ' +
+                                                    product.Description : '' }}</span>
+                                            </mat-option>
+                                        </mat-autocomplete>
+
+                                        <mat-error
+                                                   *ngIf="basicInfoFrom.get('productGroup')?.hasError('required')">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field> -->
+                                </div>
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.supplierType' |
+                                            translate}}</mat-label>
+                                        <mat-select formControlName="supplierType"
+                                                    (selectionChange)="onChangeSupplierType($event.value)">
+                                            <mat-option *ngFor="let type of supplierTypes"
+                                                        [value]="type.id">
+                                                {{ type.name }}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-error
+                                                   *ngIf="basicInfoFrom.get('supplierType')?.hasError('required')">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <ng-container *ngIf="selectedSupplierType == 'Domestic'">
+                                    <div class="col-sm-6">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>{{'suppliers.gstNumber' |
+                                                translate}}</mat-label>
+                                            <input matInput type="text" formControlName="gstNumber">
+                                            <mat-error
+                                                       *ngIf="basicInfoFrom.get('gstNumber')?.hasError('required')">
+                                                <span>{{'validations.required' | translate}}</span>
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>{{'suppliers.panCard' |
+                                                translate}}</mat-label>
+                                            <input matInput type="text" formControlName="panNumber">
+                                            <mat-error
+                                                       *ngIf="basicInfoFrom.get('panNumber')?.hasError('required')">
+                                                <span>{{'validations.required' | translate}}</span>
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </ng-container>
+                            </div>
+
+
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex justify-content-start col-sm-9"
+                             style="margin-top: 10px;">
+                            <div>{{'have_an_account' | translate}}?
+                                <a routerLink="/auth/login">{{'login' | translate}}</a>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end col-sm-3">
+                            <button class="w-full m-y-16" style="max-width: 150px;"
+                                    mat-raised-button color="primary"
+                                    matStepperNext>Next</button>
+                        </div>
+                    </div>
+                </mat-step>
+
+                <mat-step [stepControl]="addressForm" label="Address">
+                    <form class="form-field-full" [formGroup]="addressForm">
                         <div class="row mt-5">
-                            <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.firstName' | translate}}</mat-label>
-                                    <input matInput formControlName="firstName" required>
-                                    <mat-error *ngIf="basicInfoFrom.get('firstName')?.invalid">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.lastName' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="lastName" required>
-                                    <mat-error *ngIf="basicInfoFrom.get('lastName')?.invalid">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
                             <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
                                     <mat-label>{{'suppliers.street1' | translate}}</mat-label>
                                     <input matInput type="text" formControlName="street1" required>
                                     <mat-error
-                                               *ngIf="basicInfoFrom.get('street1')?.hasError('required')">
+                                               *ngIf="addressForm.get('street1')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
@@ -43,11 +218,7 @@
                             <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
                                     <mat-label>{{'suppliers.street2' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="street2" required>
-                                    <mat-error
-                                               *ngIf="basicInfoFrom.get('street2')?.hasError('required')">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
+                                    <input matInput type="text" formControlName="street2">
                                 </mat-form-field>
                             </div>
                             <div class="col-sm-6">
@@ -56,7 +227,7 @@
                                     <input matInput type="text" formControlName="postalcode"
                                            required>
                                     <mat-error
-                                               *ngIf="basicInfoFrom.get('postalcode')?.hasError('required')">
+                                               *ngIf="addressForm.get('postalcode')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
@@ -66,58 +237,47 @@
                                     <mat-label>{{'suppliers.city' | translate}}</mat-label>
                                     <input matInput type="text" formControlName="city" required>
                                     <mat-error
-                                               *ngIf="basicInfoFrom.get('city')?.hasError('required')">
+                                               *ngIf="addressForm.get('city')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.state' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="state" required>
+                                <mat-form-field>
+                                    <mat-label>State</mat-label>
+                                    <input matInput
+                                           [matAutocomplete]="autocomplete"
+                                           formControlName="state">
+                                    <mat-autocomplete #autocomplete="matAutocomplete" multiple >
+                                        <mat-option *ngFor="let state of filteredStates | async"
+                                                    [value]="state.Name">
+                                            <span>{{ state.Name }}</span>
+                                        </mat-option>
+                                    </mat-autocomplete>
                                     <mat-error
-                                               *ngIf="basicInfoFrom.get('state')?.hasError('required')">
+                                               *ngIf="addressForm.get('state')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
                             </div>
+
                             <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
                                     <mat-label>{{'suppliers.country' | translate}}</mat-label>
                                     <input matInput type="text" formControlName="country" required>
                                     <mat-error
-                                               *ngIf="basicInfoFrom.get('country')?.hasError('required')">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.telephone' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="telePhone"
-                                           required>
-                                    <mat-error
-                                               *ngIf="basicInfoFrom.get('telePhone')?.hasError('required')">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.emailId' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="emailId" required>
-                                    <mat-error
-                                               *ngIf="basicInfoFrom.get('emailId')?.hasError('required')">
+                                               *ngIf="addressForm.get('country')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="d-flex justify-content-start col-sm-9" style="margin-top: 10px;">
-                                <div>{{'have_an_account' | translate}}?
-                                    <a routerLink="/auth/login">{{'login' | translate}}</a>
-                                </div>
+                            <div class="col-sm-9 d-flex justify-content-start">
+                                <button class="w-full m-y-16" style="max-width: 100px;"
+                                        mat-raised-button matStepperPrevious>
+                                    Back
+                                </button>
                             </div>
                             <div class="d-flex justify-content-end col-sm-3">
                                 <button class="w-full m-y-16" style="max-width: 150px;"
@@ -125,9 +285,9 @@
                                         matStepperNext>Next</button>
                             </div>
                         </div>
-
                     </form>
                 </mat-step>
+
                 <mat-step [stepControl]="bankDetailsFrom" label="Bank Detail">
                     <form class="form-field-full" [formGroup]="bankDetailsFrom">
                         <div class="row mt-5">
@@ -142,27 +302,30 @@
                                     </mat-error>
                                 </mat-form-field>
                             </div>
-                            <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.ifscCode' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="ifscCode" required>
-                                    <mat-error
-                                               *ngIf="bankDetailsFrom.get('ifscCode')?.hasError('required')">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-sm-6">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.swiftCode' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="swiftCode"
-                                           required>
-                                    <mat-error
-                                               *ngIf="bankDetailsFrom.get('swiftCode')?.hasError('required')">
-                                        <span>{{'validations.required' | translate}}</span>
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
+                            <ng-container *ngIf="selectedSupplierType == 'Domestic'">
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.ifscCode' | translate}}</mat-label>
+                                        <input matInput type="text" formControlName="ifscCode">
+                                        <mat-error
+                                                   *ngIf="bankDetailsFrom.get('ifscCode')?.hasError('required')">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="selectedSupplierType == 'International'">
+                                <div class="col-sm-6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{'suppliers.swiftCode' | translate}}</mat-label>
+                                        <input matInput type="text" formControlName="swiftCode">
+                                        <mat-error
+                                                   *ngIf="bankDetailsFrom.get('swiftCode')?.hasError('required')">
+                                            <span>{{'validations.required' | translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
                             <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
                                     <mat-label>{{'suppliers.bankName' | translate}}</mat-label>
@@ -186,15 +349,22 @@
                             </div>
                             <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
-                                    <mat-label>{{'suppliers.payterms' | translate}}</mat-label>
-                                    <input matInput type="text" formControlName="paytems" required>
+                                    <mat-label>Account Holder Name</mat-label>
+                                    <input matInput type="text" formControlName="accountHolderName"
+                                           required>
                                     <mat-error
-                                               *ngIf="bankDetailsFrom.get('paytems')?.hasError('required')">
+                                               *ngIf="bankDetailsFrom.get('accountHolderName')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-sm-6">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'suppliers.remarks' | translate}}</mat-label>
+                                    <input matInput type="text" formControlName="remarks">
+                                </mat-form-field>
+                            </div>
+                            <!-- <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
                                     <mat-label>{{'suppliers.supplierAccountGroup' |
                                         translate}}</mat-label>
@@ -216,25 +386,27 @@
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
                                 </mat-form-field>
-                            </div>
+                            </div> -->
                         </div>
                     </form>
                     <mat-checkbox>{{'read_and_agree' | translate}}</mat-checkbox>
                     <div class="row">
-                        <div class="col-sm-9 d-flex justify-content-start">
+                        <div class="col-sm-6 d-flex justify-content-start">
                             <button class="w-full m-y-16" style="max-width: 100px;"
                                     mat-raised-button matStepperPrevious>
                                 Back
                             </button>
                         </div>
-                        <div class="col-sm-3 d-flex justify-content-end">
+                        <div class="col-sm-6 d-flex justify-content-end">
                             <button class="w-full m-y-16" style="max-width: fit-content;"
-                                    mat-raised-button color="primary">
+                                    mat-raised-button color="primary"
+                                    (click)="onClickRegister()">
                                 {{'register' | translate}}
                             </button>
                         </div>
                     </div>
-                    <div>{{'have_an_account' | translate}}?
+                    <div class="col-sm-12d-flex justify-content-end">{{'have_an_account' |
+                        translate}}?
                         <a routerLink="/auth/login">{{'login' | translate}}</a>
                     </div>
                 </mat-step>

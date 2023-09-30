@@ -270,9 +270,9 @@
     tslib "^2.3.0"
 
 "@angular/localize@^16.2.6":
-  version "16.2.6"
-  resolved "https://registry.npmjs.org/@angular/localize/-/localize-16.2.6.tgz"
-  integrity sha512-sOkZcamHIpiklnbBXCplH7VhPV/aV1c0Cl62Q4lOa+pEnD1oPxE/oAQtFe+AHdf2rTnJhqCutvQDr5yGrIT+SQ==
+  version "16.2.7"
+  resolved "https://registry.npmjs.org/@angular/localize/-/localize-16.2.7.tgz"
+  integrity sha512-8j7DgtrXTjzO7g1W8cm4Ewh1BKN7PkrpoxT+mXCkrbLup4krqNhlUZEM2N72mjyX4kN+qPJ3sOhw6rYLjRQP6Q==
   dependencies:
     "@babel/core" "7.22.5"
     fast-glob "3.3.0"
@@ -2423,10 +2423,10 @@
     photoviewer "^3.7.0"
     tslib "^2.4.0"
 
-"@ng-select/ng-select@^11.0.0":
-  version "11.0.0"
-  resolved "https://registry.npmjs.org/@ng-select/ng-select/-/ng-select-11.0.0.tgz"
-  integrity sha512-zuqZ/9LVV4nxiOFWo0hWncTqDV2QcUcUqZyMa4kKZxJALRmPumo4+BXca1h1KY6SHYFJeINIriK93LApeMSwQQ==
+"@ng-select/ng-select@^11.0.0", "@ng-select/ng-select@^11.1.1":
+  version "11.1.1"
+  resolved "https://registry.npmjs.org/@ng-select/ng-select/-/ng-select-11.1.1.tgz"
+  integrity sha512-Z5wV/u2HgaKl7CQSG3Sy1oF+BPQolmVV6jBuPqHa2+OWg0Nn2e9eXYdcZT8Q3BahfP5j5rHNIBrkkESg/m4YiQ==
   dependencies:
     tslib "^2.3.1"
 

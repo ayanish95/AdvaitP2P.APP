@@ -15,4 +15,8 @@ export class SupplierService {
   getSupplierList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierList}`);
   }
+
+  supplierRegister(supplier:any){
+    return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`,supplier);
+  }
 }

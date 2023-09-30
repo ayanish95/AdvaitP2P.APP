@@ -9,6 +9,8 @@ import { Error403Component } from './sessions/403.component';
 import { Error404Component } from './sessions/404.component';
 import { Error500Component } from './sessions/500.component';
 import { SupplierRegisterComponent } from './sessions/supplier-register/supplier-register.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 const COMPONENTS: any[] = [
   DashboardComponent,
@@ -21,7 +23,7 @@ const COMPONENTS: any[] = [
 const COMPONENTS_DYNAMIC: any[] = [];
 
 @NgModule({
-  imports: [SharedModule, RoutesRoutingModule],
+  imports: [SharedModule, RoutesRoutingModule,MatChipsModule,NgSelectModule],
   declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, SupplierRegisterComponent],
 })
 export class RoutesModule {}

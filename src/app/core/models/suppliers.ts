@@ -1,5 +1,5 @@
 export interface Suppliers {
-    Id: number;
+    Id?: number;
     SupplierCode?: string,
     FirstName?: string;
     LastName?: string;
@@ -8,20 +8,33 @@ export interface Suppliers {
     GSTNumber?: string;
     GSTRegionCode?: string;
     PANNumber?: string;
+    ProductGroupId?:number[];
+    SupplierType?:string;
     Street1?: string;
     Street2?: string;
     PostalCode?: string;
     City?: string;
     State?: string;
     Country?: string;
+    Currency?: string;
     Language?: string;
     Phone?: string;
     Email?: string;
+    BankCountry?:string;
+    IFSCCode?:string;
+    SwiftCode?:string;
+    BankName?:string;
+    AccountNumber?:number;
+    AccountHolderName?:number;
+    PayTermsCode?: string;
+    BPCategoryId?:string;
+    BussinessPartne?:string;
+    Grouping?:string;
+    SchemaGroup?:string;
+    ReconcAccount?:string;
     PurchaseOrg?: string;
     GSTVendorClass?: string;
     CompanyCode?: string;
-    PayTermsCode?: string;
-    Currency?: string;
     IsActive?: boolean;
     CreatedBy?: string;
     CreatedOn?: Date;
@@ -29,6 +42,8 @@ export interface Suppliers {
     UpdatedOn?: Date;
     IsDeleted?: boolean;
     DeletedOn?: Date;
+    Remarks?: string;
+    ERPStatus?: boolean;
     Extra1?: string;
     Extra2?: string;
 }

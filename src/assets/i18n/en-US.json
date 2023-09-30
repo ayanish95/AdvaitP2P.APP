@@ -152,8 +152,10 @@
     "lastName": "Last Name",
     "gstNumber": "GST Number",
     "panCard": "Pan Card",
-    "street1": "Street1",
-    "street2": "Street2",
+    "productGroup":"Product Group",
+    "supplierType":"Supplier Type",
+    "street1": "Street 1",
+    "street2": "Street 2",
     "postcalCode": "Postcal Code",
     "city": "City",
     "state": "State",
@@ -175,7 +177,8 @@
     "supplierAccountGroup": "Supplier Account Group",
     "reconcAccount": "Reconc Account",
     "purchaseOrg": "Purchase Org",
-    "companyCode": "Company Code"
+    "companyCode": "Company Code",
+    "remarks":"Remarks"
 
   },
   "profile": "Profile",

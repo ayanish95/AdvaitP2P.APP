@@ -6,4 +6,6 @@ export class Api {
   static Supplier = `supplier`;
   static Product = `product`;
   static Plant = `plant`;
+  static State = `state`;
+  static ProductGroup = `productgroup`;
 }

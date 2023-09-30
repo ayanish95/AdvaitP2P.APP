@@ -19,7 +19,7 @@ import { finalize } from 'rxjs';
 export class UserListComponent {
   list: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['srNo', 'userName', 'name', 'sapUserId', 'email', 'mobile'];
+  displayedColumns: string[] = ['srNo', 'userName', 'name', 'erpUserId', 'email', 'mobile'];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
   currentPage = 1;

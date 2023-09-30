@@ -4,11 +4,10 @@ export interface Users {
     LastName: string;
     UserName: string;
     Password: string;
-    SAPUserId?: string;
+    ERPUserId?: string;
     Mobile?: string;
     Email?: string;
     Pincode?: string;
-    MaterialGroupId?: any;
     RoleId?: string;
     ForceReset?: string;
     IsActive?: boolean;
