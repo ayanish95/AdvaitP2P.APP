@@ -16,6 +16,9 @@ import { SupplierService } from '@core/services/supplier.service';
 import { CommonEnum } from '@core/enums/common-enum';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { CountryService } from '@core/services/country.service';
+import { Country } from '@core/models/country';
 @Component({
   selector: 'app-supplier-register',
   templateUrl: './supplier-register.component.html',
@@ -31,7 +34,7 @@ export class SupplierRegisterComponent implements OnInit {
       gstNumber: [''],
       panNumber: [''],
       productGroup: ['', [Validators.required]],
-      supplierType: ['', [Validators.required]]
+      country: ['', [Validators.required]]
     }
   );
   addressForm = this.fb.group({
@@ -68,6 +71,7 @@ export class SupplierRegisterComponent implements OnInit {
   filteredStates!: Observable<any>;
 
   productGroupList!: ProductGroup[];
+  countryList!: Country[];
   filteredProductsGroup!: Observable<ProductGroup[]>;
   stateList!: States[];
   separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -77,10 +81,11 @@ export class SupplierRegisterComponent implements OnInit {
   addOnBlur = true;
   @ViewChild('fruitInput') fruitInput!: ElementRef<HTMLInputElement>;
   @ViewChild('autocompleteTrigger') matACTrigger!: MatAutocompleteTrigger;
-  selectedSupplierType!: string;
+  selectedCountry!: string;
+  selectedIndex = 0;
 
   constructor(private fb: FormBuilder, private router: Router, private stateService: StateService, private productGroupService: ProductGroupService, private supplierService: SupplierService,
-    private toast: ToastrService) { }
+    private toast: ToastrService, private countryService: CountryService) { }
 
   ngOnInit(): void {
     this.productGroupService
@@ -93,12 +98,19 @@ export class SupplierRegisterComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.productGroupList = res[ResultEnum.Model];
           this.productGroupList.map(x => x.ProductFullName = x.ProductGroupName + (x.Description ? ' - ' + x.Description : ''));
+        }
+      });
 
-          // this.filteredProductsGroup = this.basicInfoFrom.get('productGroup')!.valueChanges.pipe(
-          //   startWith(''),
-          //   map((value: any) => this.filterProduct(value || ''))
-          // );
-          // console.log('filteredProducts', this.filteredProductsGroup);
+    this.countryService
+      .getCountryList()
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.countryList = res[ResultEnum.Model];
+          this.countryList.map(x => x.CountryWithCode = x.CountryCode + (x.Name ? ' - ' + x.Name : ''));
         }
       });
 
@@ -177,8 +189,8 @@ export class SupplierRegisterComponent implements OnInit {
   }
 
   onChangeSupplierType(event: any) {
-    this.selectedSupplierType = event;
-    if (event == CommonEnum.Domestic) {
+    this.selectedCountry = event;
+    if (event == 'IN') {
       this.basicInfoFrom.controls.gstNumber.setValidators([Validators.required]);
       this.basicInfoFrom.controls.panNumber.setValidators([Validators.required]);
       this.bankDetailsFrom.controls.swiftCode.setValidators(null);
@@ -191,11 +203,14 @@ export class SupplierRegisterComponent implements OnInit {
       this.bankDetailsFrom.controls.swiftCode.setValidators([Validators.required]);
       this.bankDetailsFrom.controls.ifscCode.setValidators(null);
     }
+    const data = this.countryList.filter(x => x.CountryCode == event).map(y => y.CountryWithCode);
+    this.addressForm.get('country')?.setValue(data[0]);
+    this.addressForm.get('country')?.disable();
     this.basicInfoFrom.controls.gstNumber.updateValueAndValidity();
     this.basicInfoFrom.controls.panNumber.updateValueAndValidity();
     this.bankDetailsFrom.controls.swiftCode.updateValueAndValidity();
     this.bankDetailsFrom.controls.ifscCode.updateValueAndValidity();
-    
+
   }
 
 
@@ -215,10 +230,33 @@ export class SupplierRegisterComponent implements OnInit {
       }
     };
   }
+
+  selectionChange(event: StepperSelectionEvent) {
+    this.selectedIndex = event.selectedIndex;
+    const stepLabel = event.selectedStep.label;
+    const gstNumber = this.basicInfoFrom.get('gstNumber')?.value;
+    if (stepLabel == 'Address') {
+      if (gstNumber) {
+        this.supplierService.getSupplierByGSTNumber(gstNumber).pipe(
+          finalize(() => {
+          })
+        )
+          .subscribe(res => {
+            if (res[ResultEnum.IsSuccess]) {
+             if(res[ResultEnum.Model]?.length > 0){
+              this.selectedIndex= 0;
+              this.toast.error(res.Message);
+             }
+            }
+          });
+      }
+    }
+  }
+
   onClickRegister() {
     const basicInfoForm = this.basicInfoFrom.value;
     const addressForm = this.addressForm.value;
-    const stateId= this.stateList.find(x=>x.Name===addressForm.state);
+    const stateId = this.stateList.find(x => x.Name === addressForm.state);
     const bankDetailForm = this.bankDetailsFrom.value;
     const supplier = {
       Id: 0,
@@ -229,13 +267,12 @@ export class SupplierRegisterComponent implements OnInit {
       GSTNumber: basicInfoForm.gstNumber,
       PANNumber: basicInfoForm.panNumber,
       ProductGroupId: basicInfoForm.productGroup,
-      SupplierType: basicInfoForm.supplierType,
+      Country: basicInfoForm.country,
       Street1: addressForm.street1 ? addressForm.street1 : '',
       Street2: addressForm.street2 ? addressForm.street2 : '',
       PostalCode: addressForm.postalcode ? addressForm.postalcode : '',
       City: addressForm.city ? addressForm.city : '',
       State: stateId?.GSTStateCode,
-      Country: addressForm.country ? addressForm.country : '',
       BankCountry: bankDetailForm.bankCountry,
       IFSCCode: bankDetailForm.ifscCode,
       SwiftCode: bankDetailForm.swiftCode,
@@ -243,7 +280,7 @@ export class SupplierRegisterComponent implements OnInit {
       AccountNumber: bankDetailForm.accountNumber,
       AccountHolderName: bankDetailForm.accountHolderName,
       Remarks: bankDetailForm.remarks,
-      ERPStatus:false,
+      ERPStatus: false,
     } as Suppliers;
     this.supplierService.supplierRegister(supplier).subscribe({
       next: (res: any) => {
@@ -254,13 +291,13 @@ export class SupplierRegisterComponent implements OnInit {
           this.bankDetailsFrom.reset();
           this.router.navigateByUrl('/auth/login');
         }
-        else{
+        else {
           this.toast.error(res.Message);
         }
       },
       error: (e) => { this.toast.error(e.Message); },
       complete() {
-        
+
       },
     });
   }

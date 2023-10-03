@@ -19,4 +19,8 @@ export class SupplierService {
   supplierRegister(supplier:any){
     return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`,supplier);
   }
+
+  getSupplierByGSTNumber(gstNumber:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierByGSTNumber}/${gstNumber}`);
+  }
 }

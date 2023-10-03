@@ -1,19 +1,22 @@
 <div class="d-flex w-full h-full">
-    <mat-card class="m-auto" style="max-width: 600px;" >
-        <mat-card-header class="m-b-24">
+    <mat-card class="m-auto" style="max-width: 600px;margin: 0px !important;">
+        <mat-card-header style="text-align: justify;padding-top: 30px;">
             <mat-card-title>
-                {{'register_welcome' | translate}},
+                {{'register_welcome' | translate}}, <br />
                 {{'supplierRegister_title' | translate}}
             </mat-card-title>
         </mat-card-header>
         <!-- style="height: 380px;
         overflow-y: scroll" -->
         <mat-card-content style="padding-top: 30px !important;">
-            <mat-horizontal-stepper [linear]="isLinear" #stepper>
+            <mat-horizontal-stepper [linear]="isLinear" (selectionChange)="selectionChange($event)"
+                                    #stepper
+                                    [selectedIndex]="selectedIndex" >
                 <mat-step [stepControl]="basicInfoFrom" label="Basic Info">
                     <div>
                         <form class="form-field-full" [formGroup]="basicInfoFrom">
                             <div class="row mt-5">
+                              
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
                                         <mat-label>{{'suppliers.firstName' | translate}}</mat-label>
@@ -76,7 +79,7 @@
                                         <!-- <ng-template ng-multi-label-tmp let-items="items">
                                             <div class="ng-value"
                                                  *ngFor="let item of items | slice:0:1">
-                                                {{item}}
+                                                {{item.ProductFullName}}
                                             </div>
                                             <div class="ng-value" *ngIf="items.length > 1">
                                                 <span class="ng-value-label">{{items.length - 1}}
@@ -142,14 +145,23 @@
                                     </mat-form-field> -->
                                 </div>
                                 <div class="col-sm-6">
+                                    <!-- <ng-select [items]="countryList"
+                                               bindLabel="CountryWithCode"
+                                               bindValue="CountryCode"
+
+                                               [selectableGroup]="true"
+                                               formControlName="country"
+                                               placeholder="Select Country">
+                                     
+                                    </ng-select> -->
                                     <mat-form-field appearance="outline">
-                                        <mat-label>{{'suppliers.supplierType' |
+                                        <mat-label>{{'suppliers.country' |
                                             translate}}</mat-label>
-                                        <mat-select formControlName="supplierType"
+                                        <mat-select formControlName="country"
                                                     (selectionChange)="onChangeSupplierType($event.value)">
-                                            <mat-option *ngFor="let type of supplierTypes"
-                                                        [value]="type.id">
-                                                {{ type.name }}
+                                            <mat-option *ngFor="let type of countryList"
+                                                        [value]="type.CountryCode">
+                                                {{ type.CountryWithCode }}
                                             </mat-option>
                                         </mat-select>
                                         <mat-error
@@ -158,7 +170,7 @@
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
-                                <ng-container *ngIf="selectedSupplierType == 'Domestic'">
+                                <ng-container *ngIf="selectedCountry == 'IN'">
                                     <div class="col-sm-6">
                                         <mat-form-field appearance="outline">
                                             <mat-label>{{'suppliers.gstNumber' |
@@ -248,7 +260,7 @@
                                     <input matInput
                                            [matAutocomplete]="autocomplete"
                                            formControlName="state">
-                                    <mat-autocomplete #autocomplete="matAutocomplete" multiple >
+                                    <mat-autocomplete #autocomplete="matAutocomplete" multiple>
                                         <mat-option *ngFor="let state of filteredStates | async"
                                                     [value]="state.Name">
                                             <span>{{ state.Name }}</span>
@@ -302,7 +314,7 @@
                                     </mat-error>
                                 </mat-form-field>
                             </div>
-                            <ng-container *ngIf="selectedSupplierType == 'Domestic'">
+                            <ng-container *ngIf="selectedCountry == 'IN'">
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
                                         <mat-label>{{'suppliers.ifscCode' | translate}}</mat-label>
@@ -314,7 +326,7 @@
                                     </mat-form-field>
                                 </div>
                             </ng-container>
-                            <ng-container *ngIf="selectedSupplierType == 'International'">
+                            <ng-container *ngIf="selectedCountry != 'IN'">
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
                                         <mat-label>{{'suppliers.swiftCode' | translate}}</mat-label>

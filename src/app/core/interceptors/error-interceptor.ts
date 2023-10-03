@@ -23,8 +23,8 @@ export class ErrorInterceptor implements HttpInterceptor {
   private errorPages = [STATUS.FORBIDDEN, STATUS.NOT_FOUND, STATUS.INTERNAL_SERVER_ERROR];
 
   private getMessage = (error: HttpErrorResponse) => {
-    if (error.error?.message) {
-      return error.error.message;
+    if (error?.message) {
+      return error.message;
     }
 
     if (error.error?.msg) {
