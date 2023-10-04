@@ -188,7 +188,7 @@ export class SupplierRegisterComponent implements OnInit {
     this.fruitInput.nativeElement.focus();
   }
 
-  onChangeSupplierType(event: any) {
+  onChangeCountry(event: any) {
     this.selectedCountry = event;
     if (event == 'IN') {
       this.basicInfoFrom.controls.gstNumber.setValidators([Validators.required]);

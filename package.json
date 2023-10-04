@@ -42,6 +42,7 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
+    "@auth0/angular-jwt": "^5.1.2",
     "@ng-bootstrap/ng-bootstrap": "^15.1.1",
     "@ng-matero/extensions": "^16.1.0",
     "@ng-matero/extensions-moment-adapter": "^16.0.0",

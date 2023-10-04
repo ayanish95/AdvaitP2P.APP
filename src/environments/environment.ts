@@ -6,7 +6,9 @@ export const environment = {
   production: false,
   baseUrl: '',
   apiURL: 'https://localhost:7249/api',
+  WhitelistedDomains: ['https://localhost:60033'],
   useHash: true,
+  BlacklistedDomains: [''],
 };
 
 /*

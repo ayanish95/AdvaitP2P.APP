@@ -17,4 +17,8 @@ export class UserService {
   getUserList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Users + Method.GetUserList}`);
   }
+
+  login(user:any) {
+    return this.httpclient.authPost(`${Api.Auth + Method.Login}`,user);
+  }
 }

@@ -5,6 +5,8 @@ import { filterObject, isEmptyObject } from './helpers';
 import { MyUser } from './interface';
 import { LoginService } from './login.service';
 import { TokenService } from './token.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { Role } from '@core/enums/role';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,8 @@ export class AuthService {
 
   constructor(
     private loginService: LoginService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    // public jwtHelper: JwtHelperService
   ) {}
 
   init() {
@@ -38,7 +41,9 @@ export class AuthService {
 
   login(username: string, password: string, rememberMe = false) {
     return this.loginService.login(username, password, rememberMe).pipe(
-      tap(token => this.tokenService.set(token)),
+      tap(token =>{ this.tokenService.set(token)
+        console.log('token',token);
+        }),
       map(() => this.check())
     );
   }
@@ -79,4 +84,57 @@ export class AuthService {
 
     return this.loginService.me().pipe(tap(user => this.user$.next(user)));
   }
+
+  static getToken(): string {
+    return localStorage.getItem('access_token')!;
+  }
+
+//   static setToken(token: string): void {
+//     localStorage.setItem('access_token', token);
+//   }
+//   static removeToken(): void {
+//     localStorage.removeItem('access_token');
+//   }
+//   public isAuthenticated(): boolean {
+//     return !this.jwtHelper.isTokenExpired(AuthService.getToken());
+//   }
+//   public roles(): any {
+//     let value = this.jwtHelper.decodeToken(AuthService.getToken())
+//     return Role[value.Role];
+//   }
+//   /**
+//    * get user id from token
+//    * 
+//    */
+//   public userId(): number {
+//     let value = this.jwtHelper.decodeToken(AuthService.getToken())
+//     return value.UId;
+//   }
+//   /**
+//      * get User Name from token
+//      * 
+//      */
+//   public userName(): string {
+//     let value = this.jwtHelper.decodeToken(AuthService.getToken())
+//     return value.UserName;
+//   }
+// /**
+//    * get User Name from token
+//    * 
+//    */
+//  public CustNum(): string{
+//   let value = this.jwtHelper.decodeToken(AuthService.getToken())
+//   return value.CustNum;
+// }
+
+
+//   public custName(): string {
+//     let value = this.jwtHelper.decodeToken(AuthService.getToken());
+//     return value.CustNum;
+//   }
+
+//   public Name() : string {
+//     let value = this.jwtHelper.decodeToken(AuthService.getToken())
+//     return value.Name;
+//   }
 }

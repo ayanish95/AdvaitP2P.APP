@@ -8,4 +8,5 @@ export class Method {
   static GetProductGroupList = `/GetProductGroupList`;
   static CreateSupplier = `/CreateSupplier`;
   static GetCountryList = `/GetCountryList`;
+  static Login = `/login`;
 }

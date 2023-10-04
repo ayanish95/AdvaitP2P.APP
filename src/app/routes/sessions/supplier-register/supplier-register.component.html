@@ -158,7 +158,7 @@
                                         <mat-label>{{'suppliers.country' |
                                             translate}}</mat-label>
                                         <mat-select formControlName="country"
-                                                    (selectionChange)="onChangeSupplierType($event.value)">
+                                                    (selectionChange)="onChangeCountry($event.value)">
                                             <mat-option *ngFor="let type of countryList"
                                                         [value]="type.CountryCode">
                                                 {{ type.CountryWithCode }}
@@ -305,6 +305,22 @@
                         <div class="row mt-5">
                             <div class="col-sm-6">
                                 <mat-form-field appearance="outline">
+                                    <mat-label>{{'suppliers.bankCountry' |
+                                        translate}}</mat-label>
+                                    <mat-select formControlName="bankCountry"
+                                                (selectionChange)="onChangeCountry($event.value)">
+                                        <mat-option *ngFor="let type of countryList"
+                                                    [value]="type.CountryCode">
+                                            {{ type.CountryWithCode }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error
+                                               *ngIf="bankDetailsFrom.get('bankCountry')?.hasError('required')">
+                                        <span>{{'validations.required' | translate}}</span>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!-- <mat-form-field appearance="outline">
                                     <mat-label>{{'suppliers.bankCountry' | translate}}</mat-label>
                                     <input matInput type="text" formControlName="bankCountry"
                                            required>
@@ -312,7 +328,7 @@
                                                *ngIf="bankDetailsFrom.get('bankCountry')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
-                                </mat-form-field>
+                                </mat-form-field> -->
                             </div>
                             <ng-container *ngIf="selectedCountry == 'IN'">
                                 <div class="col-sm-6">

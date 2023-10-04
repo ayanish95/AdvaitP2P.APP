@@ -3,4 +3,5 @@ export const environment = {
   baseUrl: 'API/api',
   WhitelistedDomains: ['API/api'],
   useHash: false,
+  BlacklistedDomains: [''],
 };
