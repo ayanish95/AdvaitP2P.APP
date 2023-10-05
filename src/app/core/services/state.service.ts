@@ -17,5 +17,7 @@ export class StateService {
   getStateList(): Observable<any> {
     return this.httpclient.authGet(`${Api.State + Method.GetStateList}`);
   }
-  
+  getStateListByCountryCode(countryCode:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.State + Method.GetStateListByCountryCode}/${countryCode}`);
+  }
 }

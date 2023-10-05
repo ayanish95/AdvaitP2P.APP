@@ -33,6 +33,7 @@ export class SupplierRegisterComponent implements OnInit {
       emailId: ['', [Validators.required]],
       gstNumber: [''],
       panNumber: [''],
+      taxNumber: [''],
       productGroup: ['', [Validators.required]],
       country: ['', [Validators.required]]
     }
@@ -82,6 +83,7 @@ export class SupplierRegisterComponent implements OnInit {
   @ViewChild('fruitInput') fruitInput!: ElementRef<HTMLInputElement>;
   @ViewChild('autocompleteTrigger') matACTrigger!: MatAutocompleteTrigger;
   selectedCountry!: string;
+  selectedBankCountry!: string;
   selectedIndex = 0;
 
   constructor(private fb: FormBuilder, private router: Router, private stateService: StateService, private productGroupService: ProductGroupService, private supplierService: SupplierService,
@@ -190,27 +192,51 @@ export class SupplierRegisterComponent implements OnInit {
 
   onChangeCountry(event: any) {
     this.selectedCountry = event;
+    this.bankDetailsFrom.get('bankCountry')?.setValue(event);
+    this.selectedBankCountry = event;
+    this.addressForm.get('city')?.setValue(null);
+    this.addressForm.get('state')?.setValue(null);
     if (event == 'IN') {
       this.basicInfoFrom.controls.gstNumber.setValidators([Validators.required]);
       this.basicInfoFrom.controls.panNumber.setValidators([Validators.required]);
+      this.basicInfoFrom.controls.taxNumber.setValidators(null);
       this.bankDetailsFrom.controls.swiftCode.setValidators(null);
       this.bankDetailsFrom.controls.ifscCode.setValidators([Validators.required]);
 
     }
     else {
+      this.basicInfoFrom.controls.taxNumber.setValidators([Validators.required]);
       this.basicInfoFrom.controls.gstNumber.setValidators(null);
       this.basicInfoFrom.controls.panNumber.setValidators(null);
       this.bankDetailsFrom.controls.swiftCode.setValidators([Validators.required]);
       this.bankDetailsFrom.controls.ifscCode.setValidators(null);
     }
-    const data = this.countryList.filter(x => x.CountryCode == event).map(y => y.CountryWithCode);
-    this.addressForm.get('country')?.setValue(data[0]);
+    const data = this.countryList.filter(x => x.CountryCode == event);
+    this.addressForm.get('country')?.setValue(data[0].CountryWithCode);
     this.addressForm.get('country')?.disable();
+    this.basicInfoFrom.controls.taxNumber.updateValueAndValidity();
     this.basicInfoFrom.controls.gstNumber.updateValueAndValidity();
     this.basicInfoFrom.controls.panNumber.updateValueAndValidity();
     this.bankDetailsFrom.controls.swiftCode.updateValueAndValidity();
     this.bankDetailsFrom.controls.ifscCode.updateValueAndValidity();
+    this.bankDetailsFrom.markAsPristine();
+    this.addressForm.markAsPristine();
 
+  }
+
+  onChangeBankCountry(event: any) {
+    this.selectedBankCountry = event;
+    if (event == 'IN') {
+      this.bankDetailsFrom.controls.swiftCode.setValidators(null);
+      this.bankDetailsFrom.controls.ifscCode.setValidators([Validators.required]);
+
+    }
+    else {
+      this.bankDetailsFrom.controls.swiftCode.setValidators([Validators.required]);
+      this.bankDetailsFrom.controls.ifscCode.setValidators(null);
+    }
+    this.bankDetailsFrom.controls.swiftCode.updateValueAndValidity();
+    this.bankDetailsFrom.controls.ifscCode.updateValueAndValidity();
   }
 
 
@@ -232,24 +258,48 @@ export class SupplierRegisterComponent implements OnInit {
   }
 
   selectionChange(event: StepperSelectionEvent) {
-    this.selectedIndex = event.selectedIndex;
-    const stepLabel = event.selectedStep.label;
-    const gstNumber = this.basicInfoFrom.get('gstNumber')?.value;
-    if (stepLabel == 'Address') {
-      if (gstNumber) {
-        this.supplierService.getSupplierByGSTNumber(gstNumber).pipe(
-          finalize(() => {
-          })
-        )
+    this.basicInfoFrom.touched;
+    if (this.basicInfoFrom.valid) {
+      this.selectedIndex = event.selectedIndex;
+      const stepLabel = event.selectedStep.label;
+      const gstNumber = this.basicInfoFrom.get('gstNumber')?.value;
+      const coutnryCode = this.basicInfoFrom.get('country')?.value;
+      if (stepLabel == 'Address') {
+        if (gstNumber) {
+          this.supplierService.getSupplierByGSTNumber(gstNumber).pipe(
+            finalize(() => {
+            })
+          )
+            .subscribe(res => {
+              if (res[ResultEnum.IsSuccess]) {
+                if (res[ResultEnum.Model]?.length > 0) {
+                  this.selectedIndex = 0;
+                  this.toast.error(res.Message);
+                }
+              }
+            });
+        }
+        if(coutnryCode){
+          this.stateService.getStateListByCountryCode(coutnryCode).pipe(finalize(() => { }))
           .subscribe(res => {
             if (res[ResultEnum.IsSuccess]) {
-             if(res[ResultEnum.Model]?.length > 0){
-              this.selectedIndex= 0;
-              this.toast.error(res.Message);
-             }
+              this.stateList = res[ResultEnum.Model];
+              this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterStates(value || ''))
+              );
+            }
+            else{
+              this.selectedIndex = 0;
+              this.toast.error(res[ResultEnum.Message]);
             }
           });
+        }
       }
+      return;
+    }
+    else{
+      this.selectedIndex = this.selectedIndex;
     }
   }
 
@@ -266,6 +316,7 @@ export class SupplierRegisterComponent implements OnInit {
       Phone: basicInfoForm.telePhone,
       GSTNumber: basicInfoForm.gstNumber,
       PANNumber: basicInfoForm.panNumber,
+      TaxNumber: basicInfoForm.taxNumber,
       ProductGroupId: basicInfoForm.productGroup,
       Country: basicInfoForm.country,
       Street1: addressForm.street1 ? addressForm.street1 : '',

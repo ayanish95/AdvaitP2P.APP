@@ -1,5 +1,6 @@
 export interface States {
     Id: number;
+    CountryCode:string;
     Name:string;
     GSTStateCode?:string;
     ERPStateCode?:string;

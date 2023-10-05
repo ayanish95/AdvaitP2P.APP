@@ -178,7 +178,8 @@
     "reconcAccount": "Reconc Account",
     "purchaseOrg": "Purchase Org",
     "companyCode": "Company Code",
-    "remarks":"Remarks"
+    "remarks":"Remarks",
+    "taxNo":"Tax Number"
 
   },
   "profile": "Profile",
