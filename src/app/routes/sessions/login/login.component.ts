@@ -46,14 +46,13 @@ export class LoginComponent {
   }
 
   login() {
-    debugger
     this.isSubmitting = true;
     this.loginDetails = {
       UserName: this.username.value,
       Password: this.password.value,
       OtpCode: '',
       Otp: new Otp
-    }
+    };
 
     // this.userService.login(this.loginDetails)
     // .pipe(filter(authenticated => authenticated))

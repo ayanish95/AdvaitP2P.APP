@@ -8,6 +8,7 @@ export interface Suppliers {
     GSTNumber?: string;
     GSTRegionCode?: string;
     PANNumber?: string;
+    TaxNumber?: string;
     ProductGroupId?:number[];
     SupplierType?:string;
     Street1?: string;

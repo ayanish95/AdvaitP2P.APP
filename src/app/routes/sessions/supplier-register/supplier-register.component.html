@@ -11,12 +11,12 @@
         <mat-card-content style="padding-top: 30px !important;">
             <mat-horizontal-stepper [linear]="isLinear" (selectionChange)="selectionChange($event)"
                                     #stepper
-                                    [selectedIndex]="selectedIndex" >
+                                    [selectedIndex]="selectedIndex">
                 <mat-step [stepControl]="basicInfoFrom" label="Basic Info">
                     <div>
                         <form class="form-field-full" [formGroup]="basicInfoFrom">
                             <div class="row mt-5">
-                              
+
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
                                         <mat-label>{{'suppliers.firstName' | translate}}</mat-label>
@@ -194,6 +194,18 @@
                                         </mat-form-field>
                                     </div>
                                 </ng-container>
+                                <ng-container *ngIf="selectedCountry && selectedCountry != 'IN'">
+                                    <div class="col-sm-12">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>{{'suppliers.taxNo' | translate}}</mat-label>
+                                            <input matInput maxlength="50" type="text" formControlName="taxNumber">
+                                            <mat-error
+                                                       *ngIf="basicInfoFrom.get('taxNumber')?.hasError('required')">
+                                                <span>{{'validations.required' | translate}}</span>
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </ng-container>
                             </div>
 
 
@@ -308,7 +320,7 @@
                                     <mat-label>{{'suppliers.bankCountry' |
                                         translate}}</mat-label>
                                     <mat-select formControlName="bankCountry"
-                                                (selectionChange)="onChangeCountry($event.value)">
+                                                (selectionChange)="onChangeBankCountry($event.value)">
                                         <mat-option *ngFor="let type of countryList"
                                                     [value]="type.CountryCode">
                                             {{ type.CountryWithCode }}
@@ -330,7 +342,7 @@
                                     </mat-error>
                                 </mat-form-field> -->
                             </div>
-                            <ng-container *ngIf="selectedCountry == 'IN'">
+                            <ng-container *ngIf="selectedBankCountry == 'IN'">
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
                                         <mat-label>{{'suppliers.ifscCode' | translate}}</mat-label>
@@ -342,7 +354,7 @@
                                     </mat-form-field>
                                 </div>
                             </ng-container>
-                            <ng-container *ngIf="selectedCountry != 'IN'">
+                            <ng-container *ngIf="selectedBankCountry != 'IN'">
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
                                         <mat-label>{{'suppliers.swiftCode' | translate}}</mat-label>

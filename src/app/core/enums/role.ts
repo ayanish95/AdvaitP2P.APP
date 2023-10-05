@@ -16,13 +16,13 @@ export class UserRole {
 }
 
 export class RoleName {
-    static Admin: string = 'Admin';
-    static BranchHead: string = 'Branch Head';
-    static CustomerSalesSupport: string = 'Customer Sales Support';
-    static Dealer: string = 'Dealer';
-    static Distributor: string = 'Distributor';
-    static TerritorySalesExecutive: string = 'Territory Sales Executive';
-    static ZonalHead: string = 'Zonal Head';
-    static IndiaHead : string = 'India Head';
-    static Snop : string = 'S&OP';
+    static Admin = 'Admin';
+    static BranchHead = 'Branch Head';
+    static CustomerSalesSupport = 'Customer Sales Support';
+    static Dealer = 'Dealer';
+    static Distributor = 'Distributor';
+    static TerritorySalesExecutive = 'Territory Sales Executive';
+    static ZonalHead = 'Zonal Head';
+    static IndiaHead  = 'India Head';
+    static Snop  = 'S&OP';
 }
