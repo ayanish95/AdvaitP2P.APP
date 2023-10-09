@@ -72,8 +72,8 @@
 
 .ng-select-multiple {
     .ng-invalid .ng-touched {
-        .ng-select .ng-select-container{
-        border-color: #f44336 !important;
+        .ng-select .ng-select-container {
+            border-color: #f44336 !important;
         }
     }
 }
@@ -99,8 +99,13 @@
 }
 
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
-.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked{ 
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
     font-size: 15px !important;
     color: #615959 !important;
 }
 
+.no-record-found {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}

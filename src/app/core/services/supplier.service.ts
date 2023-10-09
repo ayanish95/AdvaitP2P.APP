@@ -10,17 +10,26 @@ import { Method } from '@core/consts/method';
 export class SupplierService {
   constructor(
     private httpclient: HttpClientService
-  ) {}
+  ) { }
 
-  getSupplierList(): Observable<any> {
-    return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierList}`);
+  getSupplierList(isApproved?: boolean): Observable<any> {
+    let url = `${Api.Supplier + Method.GetSupplierList}`;
+    if (isApproved != null)
+      url += `/${isApproved}`;
+    return this.httpclient.authGet(url);
   }
 
-  supplierRegister(supplier:any){
-    return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`,supplier);
+  supplierRegister(supplier: any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`, supplier);
   }
-
-  getSupplierByGSTNumber(gstNumber:string): Observable<any> {
+  approveSupplier(supplierId: any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.ApproveSupplier}`,supplierId);
+  }
+  
+  getSupplierByGSTNumber(gstNumber: string): Observable<any> {
     return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierByGSTNumber}/${gstNumber}`);
+  }
+  getSupplierDetailById(supplierId: number): Observable<any> {
+    return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierDetailsById}/${supplierId}`);
   }
 }

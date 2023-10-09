@@ -2,11 +2,11 @@
 
 <mat-card>
     <mat-card-header>
-      <div class="col-md-10">
+      <div class="col-md-9">
         <h3>User List</h3>
       </div>
-      <div class="col-md-2">
-        <mat-form-field class="m-r-8" appearance="outline">
+      <div class="col-md-3">
+        <mat-form-field appearance="outline">
           <mat-label>Search</mat-label>
           <input matInput type="text" name="username" (keyup)="searchUser($event)" placeholder="Search" >
         </mat-form-field>
@@ -47,37 +47,6 @@
             [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0" [length]="filter.TotalRecords"
             (page)="pageChange($event)"
             showFirstLastButtons></mat-paginator>
-           
-
-            <!-- <table  class="mat-table-custom">
-                <thead>
-                  <tr >
-                    <th scope="col">#</th>
-                    <th scope="col">User Name</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col"> SAP User Id</th>
-                    <th scope="col"> Email</th>
-                    <th scope="col"> Mobile</th>
-                  </tr>
-                </thead>
-                <tbody *ngIf="dataSource1?.length > 0">
-                  <tr  *ngFor="let country of dataSource1 | slice: (currentPage-1) * pageSize : (currentPage-1) * pageSize + pageSize;let i = index">
-                    <th scope="row">{{ i+1 }}</th>
-                    <td >
-                     
-                      {{ country.UserName }}
-                    </td>
-                    <td >{{ country.FirstName}}</td>
-                    <td >{{ country.SAPUserId}}</td>
-                    <td >{{ country.Email }}</td>
-                    <td >{{ country.Mobile }}</td>
-                  </tr>
-                </tbody>
-              </table>
-                <div class="d-flex justify-content-between p-2">
-                <ngb-pagination [collectionSize]="dataSource1?.length" [(page)]="currentPage"
-                                [maxSize]="pageSize"></ngb-pagination>
-            </div> -->
         </div>
     </mat-card-content>
 </mat-card>

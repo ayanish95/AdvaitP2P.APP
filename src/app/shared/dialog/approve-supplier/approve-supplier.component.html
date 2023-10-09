@@ -1,0 +1,167 @@
+<h2 mat-dialog-title>Approve Supplier</h2>
+
+<mat-dialog-content>
+    <mat-horizontal-stepper [linear]="isLinear"
+                            #stepper
+                            [selectedIndex]="selectedIndex">
+        <mat-step [stepControl]="supplierForm" label="Supplier Detail">
+            <form [formGroup]="supplierForm" *ngIf="supplier">
+                <div class="row mt-5">
+                    <div class="col-sm-6">
+                        <label>First name</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="firstName" [disabled]="true" >
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Last name</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="lastName">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Phone</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="phone">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Email</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="emailId">
+                        </mat-form-field>
+                    </div>
+                    <ng-container *ngIf="!supplierForm.get('taxNumber')?.value">
+                        <div class="col-sm-6">
+                            <label>GST Number</label>
+                            <mat-form-field class="demo-full-width">
+                                <input matInput formControlName="gstNumber">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>PAN Number</label>
+                            <mat-form-field class="demo-full-width">
+                                <input matInput formControlName="panNumber">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="!supplierForm.get('gstNumber')?.value">
+                        <div class="col-sm-6">
+                            <label>TAX Number</label>
+                            <mat-form-field class="demo-full-width">
+                                <input matInput formControlName="taxNumber">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <div class="col-sm-6">
+                        <label>Street 1</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="street1">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Street 2</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="street2">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Postal Code</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="postalcode">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>City</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="city">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>State</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="state">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Country</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="country">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="bankDetailsFrom" label="Bank Detail">
+            <form class="form-field-full" [formGroup]="bankDetailsFrom">
+                <div class="row mt-5">
+                    <div class="col-sm-6">
+                        <label>{{'suppliers.bankCountry' |
+                            translate}}</label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput formControlName="bankCountry">
+                        </mat-form-field>
+                    </div>
+                    <ng-container *ngIf="bankDetailsFrom.get('ifscCode')?.value">
+                        <div class="col-sm-6">
+                            <label>{{'suppliers.ifscCode' | translate}}</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput type="text" formControlName="ifscCode">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="bankDetailsFrom.get('swiftCode')?.value">
+                        <div class="col-sm-6">
+                            <label>{{'suppliers.swiftCode' | translate}}</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput type="text" formControlName="swiftCode">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <div class="col-sm-6">
+                        <label>{{'suppliers.bankName' | translate}}</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="bankName" required>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>{{'suppliers.accountNumber' | translate}}</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="accountNumber"
+                                   required>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Account Holder Name</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="accountHolderName"
+                                   required>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>{{'suppliers.remarks' | translate}}</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" formControlName="remarks">
+                        </mat-form-field>
+                    </div>
+
+                </div>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-dialog-content>
+
+<mat-dialog-actions *ngIf="selectedIndex==0" align="end">
+        <button mat-raised-button
+                mat-dialog-close>Close</button>
+        <button mat-raised-button color="primary"
+                (click)="nextOrPrevious('next')">Next</button>
+</mat-dialog-actions>
+
+<mat-dialog-actions *ngIf="selectedIndex==1" align="end" >
+    <button  mat-raised-button (click)="nextOrPrevious('previous')"
+            >Previous</button>
+    <button  mat-raised-button color="primary" (click)="confirm()"
+            cdkFocusInitial >Approve</button>
+            <!-- mat-dialog-close="{{supplier}}" -->
+</mat-dialog-actions>

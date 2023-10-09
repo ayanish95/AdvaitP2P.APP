@@ -6,6 +6,7 @@ import { Filter, OrderBy } from '@core/models/base-filter';
 import { Suppliers } from '@core/models/suppliers';
 import { Users } from '@core/models/users';
 import { SupplierService } from '@core/services/supplier.service';
+import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -14,61 +15,83 @@ import { finalize } from 'rxjs';
   styleUrls: ['./supplier-list.component.scss'],
 })
 export class SupplierListComponent implements OnInit {
-  isLoading = true;
-  displayedColumns: string[] = [
-    'srNo',
-    'SupplierCode',
-    'SupplierName',
-    'AccountGroup',
-    'City',
-    'Country',
-    'Phone',
-  ];
-  dataSource = new MatTableDataSource<any>();
-  dataSource1: any;
-  currentPage = 1;
-  pageSize = 10;
-  suppliierList!: Suppliers[];
-  @ViewChild('paginator')
-  paginator!: MatPaginator;
-  filter: Filter = new Filter();
-  index = 0;
 
-  constructor(private supplierService: SupplierService) {}
+  searchText!: string;
+  allSuppliierList!: Suppliers[];
+  pendingSuppliierList!: Suppliers[];
+  approveSuppliierList!: Suppliers[];
+
+  constructor(private supplierService: SupplierService, private toast: ToastrService) { }
 
   ngOnInit() {
     this.supplierService
-      .getSupplierList()
+    .getSupplierList()
+    .pipe(
+      finalize(() => {
+      })
+    )
+    .subscribe(res => {
+      if (res[ResultEnum.IsSuccess]) {
+        this.allSuppliierList = res[ResultEnum.Model];
+      }
+      else {
+        this.toast.error(res[ResultEnum.Message]);
+      }
+    });
+  }
+
+  searchSupplier(filterValue: any) {
+    this.searchText = filterValue.target.value;
+  }
+  onTabChanged(event: any) {
+    console.log(event);
+    if (event?.index==0) {
+      this.supplierService
+        .getSupplierList()
+        .pipe(
+          finalize(() => {
+          })
+        )
+        .subscribe(res => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.allSuppliierList = res[ResultEnum.Model];
+          }
+          else {
+            this.toast.error(res[ResultEnum.Message]);
+          }
+        });
+    }
+    else if(event.index==1){
+      this.supplierService
+      .getSupplierList(false)
       .pipe(
         finalize(() => {
-          this.isLoading = false;
         })
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          this.suppliierList = res[ResultEnum.Model];
-          this.dataSource.data = this.suppliierList;
-          this.dataSource.paginator = this.paginator;
-          console.log('supplier list', this.suppliierList);
-          this.filter = new Filter();
-          this.filter.OrderBy = OrderBy.DESC;
-          this.filter.OrderByColumn = 'id';
-          this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
+          this.pendingSuppliierList = res[ResultEnum.Model];
+        }
+        else {
+          this.toast.error(res[ResultEnum.Message]);
         }
       });
-    this.isLoading = false;
-  }
-
-  searchSupplier(filterValue: any) {
-    filterValue = filterValue.target.value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
     }
-  }
-  pageChange(page: PageEvent) {
-    this.index = page.pageIndex * page.pageSize;
-    this.filter.PageSize = page.pageSize;
-    this.filter.Page = page.pageIndex + 1;
+    else{
+      this.supplierService
+      .getSupplierList(true)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.approveSuppliierList = res[ResultEnum.Model];
+        }
+        else {
+          this.toast.error(res[ResultEnum.Message]);
+        }
+      });
+    }
   }
 }

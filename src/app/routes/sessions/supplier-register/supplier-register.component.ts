@@ -65,7 +65,7 @@ export class SupplierRegisterComponent implements OnInit {
     { id: 'International', name: 'International' }
   ];
 
-  isLinear = false;
+  isLinear = true;
   supplier!: Suppliers;
 
   value = '';
@@ -259,12 +259,14 @@ export class SupplierRegisterComponent implements OnInit {
 
   selectionChange(event: StepperSelectionEvent) {
     this.basicInfoFrom.touched;
+  
     if (this.basicInfoFrom.valid) {
       this.selectedIndex = event.selectedIndex;
       const stepLabel = event.selectedStep.label;
       const gstNumber = this.basicInfoFrom.get('gstNumber')?.value;
       const coutnryCode = this.basicInfoFrom.get('country')?.value;
       if (stepLabel == 'Address') {
+        this.addressForm.markAsUntouched();
         if (gstNumber) {
           this.supplierService.getSupplierByGSTNumber(gstNumber).pipe(
             finalize(() => {

@@ -1,0 +1,45 @@
+<table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="srNo">
+        <th mat-header-cell *matHeaderCellDef># </th>
+        <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="SupplierCode">
+        <th mat-header-cell *matHeaderCellDef> Supplier Code </th>
+        <td mat-cell *matCellDef="let element"> {{element?.SupplierCode}}</td>
+    </ng-container>
+    <ng-container matColumnDef="SupplierName">
+        <th mat-header-cell *matHeaderCellDef> Supplier Name </th>
+        <td mat-cell *matCellDef="let element"> {{element?.FirstName}}
+            {{element?.LastName}} </td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="AccountGroup">
+        <th mat-header-cell *matHeaderCellDef> Account Group </th>
+        <td mat-cell *matCellDef="let element"> {{element?.AccountGroup}} </td>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="SapUserId">
+        <th mat-header-cell *matHeaderCellDef> SAP User Id </th>
+        <td mat-cell *matCellDef="let element"> {{element?.SAPUserId}} </td>
+    </ng-container> -->
+    <ng-container matColumnDef="City">
+        <th mat-header-cell *matHeaderCellDef> City </th>
+        <td mat-cell *matCellDef="let element"> {{element?.City}} </td>
+    </ng-container>
+    <ng-container matColumnDef="Country">
+        <th mat-header-cell *matHeaderCellDef> Country </th>
+        <td mat-cell *matCellDef="let element"> {{element?.Country}} </td>
+    </ng-container>
+    <ng-container matColumnDef="Phone">
+        <th mat-header-cell *matHeaderCellDef> Phone </th>
+        <td mat-cell *matCellDef="let element"> {{element?.Phone}} </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length" [columnCount]="displayedColumns.length"></app-no-record-found>
+<mat-paginator #paginator
+               [pageSize]="filter.PageSize"
+               [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0"
+               [length]="filter.TotalRecords"
+               (page)="pageChange($event)"
+               showFirstLastButtons></mat-paginator>
