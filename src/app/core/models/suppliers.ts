@@ -25,8 +25,8 @@ export interface Suppliers {
     IFSCCode?:string;
     SwiftCode?:string;
     BankName?:string;
-    AccountNumber?:number;
-    AccountHolderName?:number;
+    AccountNumber?:any;
+    AccountHolderName?:string;
     PayTermsCode?: string;
     BPCategoryId?:string;
     BussinessPartne?:string;

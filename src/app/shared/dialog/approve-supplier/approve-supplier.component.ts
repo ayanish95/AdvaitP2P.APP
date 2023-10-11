@@ -72,7 +72,7 @@ export class ApproveSupplierComponent implements OnInit {
         country: this.trimFormValue(this.supplier.Country),
       });
       this.bankDetailsFrom.setValue({
-        bankCountry: this.trimFormValue(this.supplier.BankName),
+        bankCountry: this.trimFormValue(this.supplier.BankCountry),
         ifscCode: this.trimFormValue(this.supplier.IFSCCode),
         swiftCode: this.trimFormValue(this.supplier.SwiftCode),
         bankName: this.trimFormValue(this.supplier.BankName),
@@ -98,6 +98,17 @@ export class ApproveSupplierComponent implements OnInit {
   }
   confirm() {
     // closing itself and sending data to parent component
+    let basicInfoForm=this.supplierForm.value;
+    let bankDetails=this.bankDetailsFrom.value;
+    this.supplier.Phone= basicInfoForm.phone ? basicInfoForm.phone : '';
+    this.supplier.Email= basicInfoForm.emailId ? basicInfoForm.emailId : '';
+    this.supplier.BankCountry= bankDetails.bankCountry ? bankDetails.bankCountry : '';
+    this.supplier.BankName= bankDetails.bankName ? bankDetails.bankName : '';
+    this.supplier.IFSCCode= bankDetails.ifscCode ? bankDetails.ifscCode : '';
+    this.supplier.SwiftCode= bankDetails.swiftCode ? bankDetails.swiftCode : '';
+    this.supplier.AccountNumber= bankDetails.accountNumber ? bankDetails.accountNumber : 0;
+    this.supplier.AccountHolderName= bankDetails.accountHolderName ? bankDetails.accountHolderName : '';
+
     this.dialogRef.close({ data: this.supplier })
   }
 }

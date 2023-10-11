@@ -44,7 +44,6 @@ export class SupplierListComponent implements OnInit {
     this.searchText = filterValue.target.value;
   }
   onTabChanged(event: any) {
-    console.log(event);
     if (event?.index==0) {
       this.supplierService
         .getSupplierList()

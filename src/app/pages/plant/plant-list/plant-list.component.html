@@ -50,7 +50,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
-           
+            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length" [columnCount]="displayedColumns.length"></app-no-record-found>
             <mat-paginator #paginator 
             [pageSize]="filter.PageSize"
               [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0" [length]="filter.TotalRecords"

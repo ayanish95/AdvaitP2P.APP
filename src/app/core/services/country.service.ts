@@ -17,5 +17,8 @@ export class CountryService {
   getCountryList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Country + Method.GetCountryList}`);
   }
+  getMenuFromBackend() {
+    return this.httpclient.authGet(`${Api.Menu}`);
+  }
   
 }

@@ -5,6 +5,7 @@
     "supplier": "Supplier",
     "product": "Product",
     "plant": "Plant",
+    "purchaseRequisition":"Purchase Requisition",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",
