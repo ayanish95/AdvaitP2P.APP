@@ -58,13 +58,13 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
 
   ngOnChanges(changes: SimpleChanges){
     this.propChanges = changes;
-    if(this.propChanges['searchText']){
-      let currentValue = this.propChanges['searchText']?.currentValue;
+    if(this.propChanges.searchText){
+      const currentValue = this.propChanges.searchText?.currentValue;
       if(currentValue != undefined)
-      this.searchSupplier(currentValue)
+      this.searchSupplier(currentValue);
     }
-    if(this.propChanges['supplierList']){
-      let currentValue = this.propChanges['supplierList']?.currentValue;
+    if(this.propChanges.supplierList){
+      const currentValue = this.propChanges.supplierList?.currentValue;
       this.allSuppliierList = currentValue;
       this.dataSource.data = this.allSuppliierList;
       this.dataSource.paginator = this.paginator;

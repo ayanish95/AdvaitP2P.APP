@@ -12,4 +12,9 @@ export class Method {
   static ApproveSupplier = `/ApproveSupplier`;
   static GetCountryList = `/GetCountryList`;
   static Login = `/login`;
+  static GetStorageLocationByPlantCode = `/GetLocationListByPlantCode`;
+  static GetAllUnitList = `/GetAllUnitList`;
+  static GetDocTypeList = `/GetDocTypeList`;
+  static CreatePurchaseRequisition = `/CreatePurchaseRequisition`;
+  static GetAllPRHeaderList = `/GetAllPRHeaderList`;
 }

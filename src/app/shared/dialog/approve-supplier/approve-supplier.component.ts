@@ -45,7 +45,7 @@ export class ApproveSupplierComponent implements OnInit {
   );
 
   supplier!: Suppliers;
-  selectedIndex: number = 0;
+  selectedIndex = 0;
   isLinear = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder,private supplierService:SupplierService,private toast: ToastrService,
@@ -54,7 +54,7 @@ export class ApproveSupplierComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.supplier = this.data?.supplier
+    this.supplier = this.data?.supplier;
     if (this.supplier) {
       this.supplierForm.setValue({
         firstName: this.trimFormValue(this.supplier.FirstName),
@@ -79,7 +79,7 @@ export class ApproveSupplierComponent implements OnInit {
         accountNumber: this.trimFormValue(this.supplier.AccountNumber),
         accountHolderName: this.trimFormValue(this.supplier.AccountHolderName),
         remarks: this.trimFormValue(this.supplier.Remarks)
-      })
+      });
     }
   }
 
@@ -87,7 +87,7 @@ export class ApproveSupplierComponent implements OnInit {
     if (value)
       return value;
     else
-      return ''
+      return '';
   }
 
   nextOrPrevious(type: string) {
@@ -98,8 +98,8 @@ export class ApproveSupplierComponent implements OnInit {
   }
   confirm() {
     // closing itself and sending data to parent component
-    let basicInfoForm=this.supplierForm.value;
-    let bankDetails=this.bankDetailsFrom.value;
+    const basicInfoForm=this.supplierForm.value;
+    const bankDetails=this.bankDetailsFrom.value;
     this.supplier.Phone= basicInfoForm.phone ? basicInfoForm.phone : '';
     this.supplier.Email= basicInfoForm.emailId ? basicInfoForm.emailId : '';
     this.supplier.BankCountry= bankDetails.bankCountry ? bankDetails.bankCountry : '';
@@ -109,6 +109,6 @@ export class ApproveSupplierComponent implements OnInit {
     this.supplier.AccountNumber= bankDetails.accountNumber ? bankDetails.accountNumber : 0;
     this.supplier.AccountHolderName= bankDetails.accountHolderName ? bankDetails.accountHolderName : '';
 
-    this.dialogRef.close({ data: this.supplier })
+    this.dialogRef.close({ data: this.supplier });
   }
 }

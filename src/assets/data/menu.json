@@ -31,6 +31,12 @@
       "icon": "location_city"
     },
     {
+      "route": "pages/purchase-requisition",
+      "name": "purchaseRequisition",
+      "type": "link",
+      "icon": "queue"
+    },
+    {
       "route": "design",
       "name": "design",
       "type": "sub",

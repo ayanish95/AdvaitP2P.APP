@@ -24,6 +24,7 @@ import { HttpClientService } from '@core/services/http-client.service';
 import { RouteConfig } from '@core/config/route.config';
 import { JwtModule } from '@auth0/angular-jwt';
 import { jwtInterceptorProvider } from '@core/interceptors/jwt-interceptor.service';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 // Required for AOT compilation
 export function TranslateHttpLoaderFactory(http: HttpClient) {
@@ -70,6 +71,7 @@ export function tokenGetter() {
   providers: [
     { provide: BASE_URL, useValue: environment.baseUrl },
     { provide: API_URL, useValue: environment.apiURL },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     httpInterceptorProviders,
     appInitializerProviders,
     // jwtInterceptorProvider,

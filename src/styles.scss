@@ -109,3 +109,12 @@
     justify-content: center;
     margin-top: 15px;
 }
+
+form div .custom-label,form table tr td  {
+    h5 {
+        margin-top: 0px;
+        font-size: 15px;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+}

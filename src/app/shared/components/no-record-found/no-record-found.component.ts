@@ -7,7 +7,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class NoRecordFoundComponent implements OnInit {
 
-  @Input() columnCount:number=0 ;
+  @Input() columnCount=0 ;
 
   ngOnInit(): void {
   }

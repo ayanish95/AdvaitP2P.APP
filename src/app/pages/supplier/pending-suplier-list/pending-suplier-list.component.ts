@@ -56,13 +56,13 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     this.propChanges = changes;
-    if (this.propChanges['searchText']) {
-      let currentValue = this.propChanges['searchText']?.currentValue;
+    if (this.propChanges.searchText) {
+      const currentValue = this.propChanges.searchText?.currentValue;
       if (currentValue != undefined)
-        this.searchSupplier(currentValue)
+        this.searchSupplier(currentValue);
     }
-    if(this.propChanges['supplierList']){
-      let currentValue = this.propChanges['supplierList']?.currentValue;
+    if(this.propChanges.supplierList){
+      const currentValue = this.propChanges.supplierList?.currentValue;
       this.allSuppliierList = currentValue;
       this.dataSource.data = this.allSuppliierList;
       this.dataSource.paginator = this.paginator;
@@ -94,21 +94,21 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
     )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          let supplierDetails = res[ResultEnum.Model];
+          const supplierDetails = res[ResultEnum.Model];
           if (supplierDetails) {
             const dialogRef = this.dialog.open(ApproveSupplierComponent, {
               width: '600px',
               data: { supplier: supplierDetails },
             });
             dialogRef.afterClosed().subscribe((result:any) => {
-              debugger
-              if(result!="" && result !=undefined && result?.data){
+              debugger;
+              if(result!='' && result !=undefined && result?.data){
              this.supplierService.approveSupplier(result?.data).subscribe({
                 next: (res: any) => {
                   if (res[ResultEnum.IsSuccess]) {
                     this.toast.success(res.Message);
-                    this.allSuppliierList = res[ResultEnum.Model]
-                    this.dataSource.data = res[ResultEnum.Model]
+                    this.allSuppliierList = res[ResultEnum.Model];
+                    this.dataSource.data = res[ResultEnum.Model];
                   }
                   else {
                     this.toast.error(res.Message);
@@ -124,7 +124,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
           }
         }
         else {
-          this.toast.error(res[ResultEnum.Message])
+          this.toast.error(res[ResultEnum.Message]);
         }
       });
   }

@@ -10,4 +10,8 @@ export class Api {
   static Country = `Country`;
   static Menu = `Menu`;
   static ProductGroup = `productgroup`;
+  static StorageLocation = `storagelocation`;
+  static Unit = `unit`;
+  static DocType = `doctype`;
+  static PurchaseRequisition = `purchaserequisition`;
 }

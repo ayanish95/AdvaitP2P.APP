@@ -1,12 +1,13 @@
 export interface Products {
     Id:number;
-    ProductCode:string;
-    Description:string;
+    ProductCode?:string;
+    Description?:string;
+    ProductFullName?:string;
     ProductTypeId?:string;
-    ProductCategoryId:string;
-    ProductGroup:string;
-    BaseUnit:string;
-    PurchaseUnit:string;
+    ProductCategoryId?:string;
+    ProductGroup?:string;
+    BaseUnit?:string;
+    PurchaseUnit?:string;
     SalesUnit:string;
     PriceIndicator:string;
     StandardPrice:number;
