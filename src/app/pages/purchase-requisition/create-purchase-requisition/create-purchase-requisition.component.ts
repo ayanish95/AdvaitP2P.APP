@@ -64,7 +64,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   locationList!: StorageLocations[];
   filteredlocation!: Observable<StorageLocations[]>;
 
-  PRLineItem:PurchaseRequisitionLine[]=[];
+  PRLineItem: PurchaseRequisitionLine[] = [];
   dataSource = new MatTableDataSource<any>();
   index = 0;
   displayedColumns: string[] = [
@@ -77,11 +77,12 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     'DeliveryDate',
     'Plant',
     'Location',
+    'Delete',
   ];
-  currentDate:Date=new Date();
+  currentDate: Date = new Date();
 
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
-    private storageLocationService: StorageLocationService, private toast: ToastrService,private unitService:UnitService,private docTypeSerivce:DocTypeService,private prService:PurchaseRequistionService,
+    private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
     private router: Router) {
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
@@ -136,7 +137,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         }
       });
 
-      this.unitService
+    this.unitService
       .getAllUnit()
       .pipe(
         finalize(() => {
@@ -154,22 +155,22 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   filterDocType(name: any) {
-    if (name?.Type){
+    if (name?.Type) {
       return this.docTypeList.filter(doctype =>
         doctype?.Type?.toLowerCase().includes(name.Type.toLowerCase()));
     }
-    else{
+    else {
       return this.docTypeList.filter(doctype =>
         doctype?.Type?.toLowerCase().includes(name.toLowerCase()));
     }
   }
 
   filterProducts(name: any) {
-    if (name?.ProductCode){
+    if (name?.ProductCode) {
       return this.productList.filter(product =>
         product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
     }
-    else{
+    else {
       return this.productList.filter(product =>
         product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
     }
@@ -198,36 +199,36 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   filterStorageLocation(name: any) {
-    if (name?.LocationCode || name?.LocationName){
-    return this.locationList.filter(location =>
-      location?.LocationCode?.toLowerCase().includes(name.LocationCode.toLowerCase()) || 
-      location?.LocationName?.toLowerCase().includes(name.LocationName.toLowerCase()));
-    }
-    else{
+    if (name?.LocationCode || name?.LocationName) {
       return this.locationList.filter(location =>
-        location?.LocationCode?.toLowerCase().includes(name.toLowerCase()) || 
+        location?.LocationCode?.toLowerCase().includes(name.LocationCode.toLowerCase()) ||
+        location?.LocationName?.toLowerCase().includes(name.LocationName.toLowerCase()));
+    }
+    else {
+      return this.locationList.filter(location =>
+        location?.LocationCode?.toLowerCase().includes(name.toLowerCase()) ||
         location?.LocationName?.toLowerCase().includes(name.toLowerCase()));
     }
   }
 
-  docTypeDisplayFn(docType: DocTypes){
-    return docType ?  docType.Type! : '';
+  docTypeDisplayFn(docType: DocTypes) {
+    return docType ? docType.Type! : '';
   }
 
-  productDisplayFn(product: Products){
-    return product ?  product.ProductCode! : '';
+  productDisplayFn(product: Products) {
+    return product ? product.ProductCode! : '';
   }
 
   unitDisplayFn(units: Units) {
-    return units ?  units.UOM + ' - ' + units.MeasurementUnitName! : '';
+    return units ? units.UOM + ' - ' + units.MeasurementUnitName! : '';
   }
 
   plantDisplayFn(user: Plants) {
-    return user ?  user.PlantCode + ' - ' + user.PlantName! : '';
+    return user ? user.PlantCode + ' - ' + user.PlantName! : '';
   }
 
   storageLocationDisplayFn(location: StorageLocations) {
-    return location ?  location.LocationCode + ' - ' + location.LocationName! : '';
+    return location ? location.LocationCode + ' - ' + location.LocationName! : '';
   }
 
   openModelForAddItem(templateRef: TemplateRef<any>) {
@@ -239,7 +240,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     });
   }
 
-  onKeyPress(evt:any) {
+  onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57))
       return false;
@@ -249,14 +250,14 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   getPosts(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
-      this.PRLineForm.get('Description')?.setValue(product?.Description?product?.Description:null);
+      this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
     }
   }
 
-  
+
   onChangePlant(event: any) {
-    this.locationList=[];
+    this.locationList = [];
     this.PRLineForm.get('StorageLocation')?.setValue(null);
     if (event.option?.value?.PlantCode) {
       this.storageLocationService.getStorageLocationByPlantCode(event.option?.value?.PlantCode).pipe(
@@ -277,12 +278,12 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
           }
         });
 
-    }else
-    this.toast.error('Plant code not found');
+    } else
+      this.toast.error('Plant code not found');
   }
 
-  onClickAddProduct(){
-    const PRline=this.PRLineForm.value;
+  onClickAddProduct() {
+    const PRline = this.PRLineForm.value;
     this.PRLineItem.push({
       Product: PRline.Product as unknown as Products,
       ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
@@ -297,14 +298,26 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     this.dataSource.data = this.PRLineItem;
   }
 
-  onClickCreatePR(){
+  onClickDeleteItem(id: any) {
+    this.PRLineItem.forEach((element, index) => {
+      element.Id = index + 1;
+      if (element.Id == id)
+        this.PRLineItem.splice(index, 1);
+    });
+    this.PRLineItem.forEach((element, index) => {
+      element.Id = index + 1;
+    });
+    this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
+  }
+
+  onClickCreatePR() {
     this.PRHeaderForm.touched;
-    if(this.PRHeaderForm.valid){
-      const PRHeaderData= this.PRHeaderForm.value;
-      const PRDetails : PurchaseRequisitionDataVM = {
-        Id:0,
+    if (this.PRHeaderForm.valid) {
+      const PRHeaderData = this.PRHeaderForm.value;
+      const PRDetails: PurchaseRequisitionDataVM = {
+        Id: 0,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-        PRDate:PRHeaderData.PRDate ? PRHeaderData.PRDate : new Date(),
+        PRDate: PRHeaderData.PRDate ? PRHeaderData.PRDate : new Date(),
         PRLineItem: this.PRLineItem
       };
 
@@ -322,7 +335,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         },
         error: (e) => { this.toast.error(e.Message); },
         complete() {
-  
+
         },
       });
     }

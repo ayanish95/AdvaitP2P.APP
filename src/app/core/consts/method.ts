@@ -17,4 +17,5 @@ export class Method {
   static GetDocTypeList = `/GetDocTypeList`;
   static CreatePurchaseRequisition = `/CreatePurchaseRequisition`;
   static GetAllPRHeaderList = `/GetAllPRHeaderList`;
+  static GetPRDetailsById = `/GetPRDetailsById`;
 }
