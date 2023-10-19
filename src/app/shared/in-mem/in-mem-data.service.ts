@@ -22,7 +22,6 @@ class JWT {
 
   getUser(req: HttpRequest<any>) {
     let token = '';
-
     if (req.body?.refresh_token) {
       token = req.body.refresh_token;
     } else if (req.headers.has('Authorization')) {
@@ -35,7 +34,8 @@ class JWT {
       const now = new Date();
       const data = JWT.parseToken(token);
 
-      return JWT.isExpired(data, now) ? null : data.user;
+      // return JWT.isExpired(data, now) ? null : data.user;
+      return JWT.isExpired(data, now) ? null : data;
     } catch (e) {
       return null;
     }
@@ -145,8 +145,8 @@ export class InMemDataService implements InMemoryDbService {
   }
 
   post(reqInfo: RequestInfo) {
-    if (is(reqInfo, 'auth/login')) {
-      return this.login(reqInfo);
+    if (is(reqInfo, 'auth/login1')) {
+      return this.login1(reqInfo);
     }
 
     if (is(reqInfo, 'auth/refresh')) {
@@ -160,7 +160,7 @@ export class InMemDataService implements InMemoryDbService {
     return;
   }
 
-  private login(reqInfo: RequestInfo) {
+  private login1(reqInfo: RequestInfo) {
     const { headers, url } = reqInfo;
     const req = reqInfo.req as HttpRequest<any>;
     const { username, password } = req.body;

@@ -7,6 +7,7 @@ import { LoginService } from './login.service';
 import { TokenService } from './token.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Role } from '@core/enums/role';
+import { UserService } from '@core/services/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,7 @@ export class AuthService {
   constructor(
     private loginService: LoginService,
     private tokenService: TokenService,
+    private userService: UserService
     // public jwtHelper: JwtHelperService
   ) {}
 
@@ -40,12 +42,25 @@ export class AuthService {
   }
 
   login(username: string, password: string, rememberMe = false) {
-    return this.loginService.login(username, password, rememberMe).pipe(
-      tap(token =>{ this.tokenService.set(token);
-        console.log('token',token);
+    let user = {
+      UserName:username,
+      Password:password
+    }
+  return  this.userService.login(user).pipe(
+      tap(token =>{ 
+        console.log('token',token.Model);
+        this.tokenService.set(token.Model);
+       
         }),
       map(() => this.check())
     );
+
+    // return this.loginService.login(username, password, rememberMe).pipe(
+    //   tap(token =>{ this.tokenService.set(token);
+    //     console.log('token',token);
+    //     }),
+    //   map(() => this.check())
+    // );
   }
 
   refresh() {

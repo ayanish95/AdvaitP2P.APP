@@ -20,6 +20,7 @@ export class PurchaseRequisitionListComponent implements OnInit {
   displayedColumns: string[] = [
     'srNo',
     'PRNumber',
+    'ERPPRNumber',
     'PRDocType',
     'PRDate',
     'SAPStatus',

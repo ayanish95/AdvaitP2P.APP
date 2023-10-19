@@ -3,7 +3,7 @@ export interface Users {
     FirstName: string;
     LastName: string;
     UserName: string;
-    Password: string;
+    Password?: string;
     ERPUserId?: string;
     Mobile?: string;
     Email?: string;
@@ -15,6 +15,7 @@ export interface Users {
     CreatedOn?: Date;
     UpdatedBy?: string;
     UpdatedOn?: Date;
+    IsAcitve?: boolean;
     IsDeleted?: boolean;
     DeletedOn?: Date;
     Extra1?: string;
@@ -34,4 +35,29 @@ export class Otp {
     OtpCode!: string;
     IsUsed!: string;
     ExpiredOn!: string;
+}
+
+export interface UsersVM {
+    Id: number;
+    FirstName: string;
+    LastName: string;
+    UserName: string;
+    Password?: string;
+    ERPUserId?: string;
+    Mobile?: string;
+    Email?: string;
+    Pincode?: string;
+    RoleId?: string;
+    RoleName?: string;
+    ForceReset?: string;
+    IsActive?: boolean;
+    CreatedBy?: string;
+    CreatedOn?: Date;
+    UpdatedBy?: string;
+    UpdatedOn?: Date;
+    IsDeleted?: boolean;
+    DeletedOn?: Date;
+    Extra1?: string;
+    Extra2?: string;
+    SupplierId?: number;
 }

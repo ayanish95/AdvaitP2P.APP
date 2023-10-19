@@ -2,18 +2,25 @@
 
 <mat-card>
     <mat-card-header>
-      <div class="col-md-9">
-        <h3>Plant List</h3>
-      </div>
-      <div class="col-md-3">
-        <mat-form-field  appearance="outline">
-          <mat-label>Search</mat-label>
-          <input matInput type="text" name="supplier" (keyup)="searchSupplier($event)" placeholder="Search" >
-        </mat-form-field>
-      </div>
+        <div class="col-md-9">
+            <h3>Plant List</h3>
+        </div>
+        <div class="col-md-3">
+            <mat-form-field appearance="outline">
+                <mat-label>Search</mat-label>
+                <input matInput type="text" name="supplier" (keyup)="searchSupplier($event)"
+                       placeholder="Search">
+            </mat-form-field>
+        </div>
     </mat-card-header>
     <mat-card-content>
         <div class="mt-5">
+            <div class="d-flex justify-content-end">
+                <button mat-button mat-raised-button color="primary"
+                        (click)="openAddPlantModel(addPlant)">
+                    <mat-icon>add</mat-icon>Add Plant
+                </button>
+            </div>
             <table mat-table [dataSource]="dataSource">
                 <ng-container matColumnDef="srNo">
                     <th mat-header-cell *matHeaderCellDef># </th>
@@ -21,15 +28,19 @@
                 </ng-container>
                 <ng-container matColumnDef="PlantCode">
                     <th mat-header-cell *matHeaderCellDef> Plant Code </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.Id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="ERPPlantCode">
+                    <th mat-header-cell *matHeaderCellDef>ERP Plant Code </th>
                     <td mat-cell *matCellDef="let element"> {{element?.PlantCode}}</td>
                 </ng-container>
-                 <ng-container matColumnDef="PlantName">
+                <ng-container matColumnDef="PlantName">
                     <th mat-header-cell *matHeaderCellDef> Plant Name </th>
                     <td mat-cell *matCellDef="let element"> {{element?.PlantName}} </td>
                 </ng-container>
                 <ng-container matColumnDef="Street1">
                     <th mat-header-cell *matHeaderCellDef> Address </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.Street1}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.Street1}} {{element?.Street2}} </td>
                 </ng-container>
                 <ng-container matColumnDef="City">
                     <th mat-header-cell *matHeaderCellDef> City </th>
@@ -43,19 +54,283 @@
                     <th mat-header-cell *matHeaderCellDef> Postal Code </th>
                     <td mat-cell *matCellDef="let element"> {{element?.Pincode}} </td>
                 </ng-container>
-                <ng-container matColumnDef="GSTRegionCode">
+                <!-- <ng-container matColumnDef="GSTRegionCode">
                     <th mat-header-cell *matHeaderCellDef> GST Region Code </th>
                     <td mat-cell *matCellDef="let element"> {{element?.GSTRegionCode}} </td>
+                </ng-container> -->
+                <ng-container matColumnDef="IsActive">
+                    <th mat-header-cell *matHeaderCellDef> Active </th>
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary" disabled
+                                      [checked]="element?.IsActive"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="Edit">
+                    <th mat-header-cell *matHeaderCellDef> Edit </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button
+                                (click)="openEditModelPopup(addPlant,element?.Id)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Delete">
+                    <th mat-header-cell *matHeaderCellDef> Delete </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button
+                                (click)="openDeleteModel(deleteAlert,element?.Id)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
-            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length" [columnCount]="displayedColumns.length"></app-no-record-found>
-            <mat-paginator #paginator 
-            [pageSize]="filter.PageSize"
-              [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0" [length]="filter.TotalRecords"
-              (page)="pageChange($event)"
-            showFirstLastButtons></mat-paginator>
+            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                                 [columnCount]="displayedColumns.length"></app-no-record-found>
+            <mat-paginator #paginator
+                           [pageSize]="filter.PageSize"
+                           [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0"
+                           [length]="filter.TotalRecords"
+                           (page)="pageChange($event)"
+                           showFirstLastButtons></mat-paginator>
         </div>
     </mat-card-content>
 </mat-card>
+
+<ng-template #addPlant style="width: 56vw;">
+    <h2 mat-dialog-title> {{ !isEdit ? 'Add' : 'Edit' }} Plant</h2>
+
+    <mat-dialog-content>
+        <form [formGroup]="plantForm">
+            <div class="row mt-5">
+
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Plant Name<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="PlantName"
+                               placeholder="Plant Name">
+                        <mat-error
+                                   *ngIf="plantForm.get('PlantName')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Email<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="Email"
+                               placeholder="Email">
+                        <mat-error
+                                   *ngIf="plantForm.get('Email')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Mobile<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="Mobile"
+                               placeholder="Mobile">
+                        <mat-error
+                                   *ngIf="plantForm.get('Mobile')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Street1<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="Street1"
+                               placeholder="Street1">
+                        <mat-error
+                                   *ngIf="plantForm.get('Street1')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Street2</h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="Street2"
+                               placeholder="Street2">
+                        <mat-error
+                                   *ngIf="plantForm.get('Street2')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>City<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="City"
+                               placeholder="City">
+                        <mat-error
+                                   *ngIf="plantForm.get('City')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Postal Code<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="PostalCode"
+                               placeholder="Postal Code">
+                        <mat-error
+                                   *ngIf="plantForm.get('PostalCode')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Country<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               [matAutocomplete]="countryAuto"
+                               formControlName="Country"
+                               placeholder="Country">
+                        <mat-autocomplete #countryAuto="matAutocomplete"
+                                          [displayWith]="countryDisplayFn">
+                            <mat-option *ngFor="let country of filteredCountry | async"
+                                        [value]="country"
+                                        (onSelectionChange)="onChangeCountry($event)">
+                                <span>{{ country?.CountryWithCode }}</span>
+                            </mat-option>
+                        </mat-autocomplete>
+                        <mat-error *ngIf="plantForm.get('Country')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>State<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               [matAutocomplete]="StateAuto"
+                               formControlName="State"
+                               placeholder="State">
+                        <mat-autocomplete #StateAuto="matAutocomplete"
+                                          [displayWith]="stateDisplayFn">
+                            <mat-option *ngFor="let state of filteredStates | async"
+                                        [value]="state">
+                                <span>{{ state?.Name }}</span>
+                            </mat-option>
+                        </mat-autocomplete>
+                        <mat-error *ngIf="plantForm.get('State')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+               
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Business Place<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="BusinessPlace"
+                               placeholder="Business Place">
+                        <mat-error
+                                   *ngIf="plantForm.get('BusinessPlace')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <ng-container *ngIf="selectedCountryCode == 'IN'">
+                    <div class="col-sm-6">
+                        <label class="custom-label">
+                            <h5>GST Number<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="GSTNumber"
+                                   placeholder="GST Number">
+                            <mat-error
+                                       *ngIf="plantForm.get('GSTNumber')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="selectedCountryCode && selectedCountryCode != 'IN' ">
+                    <div class="col-sm-6">
+                        <label class="custom-label">
+                            <h5>Tax Number<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="TaxNumber"
+                                   placeholder="Tax Number">
+                            <mat-error
+                                       *ngIf="plantForm.get('TaxNumber')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>Company Code/ Legal Entity<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="CompanyCode"
+                               placeholder="Company Code">
+                        <mat-error
+                                   *ngIf="plantForm.get('CompanyCode')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <ng-container *ngIf="isEdit">
+                    <div class="col-sm-12">
+                        <mat-checkbox color="primary"
+                                      formControlName="IsActive">Active?</mat-checkbox>
+                    </div>
+                </ng-container>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-raised-button mat-dialog-close>Close</button>
+        <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+                [disabled]="plantForm.invalid" (click)="onClickAddPlant()">{{ !isEdit ? 'Add' :
+            'Update' }}</button>
+    </mat-dialog-actions>
+
+</ng-template>
+
+<ng-template #deleteAlert>
+    <h2 mat-dialog-title class="text-center">Delete Plant</h2>
+    <div mat-dialog-content>Are you sure want to delete this plant?</div>
+    <div mat-dialog-actions class="d-flex justify-content-center">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="warn" (click)="onClickDeletePlant()">Delete</button>
+    </div>
+</ng-template>

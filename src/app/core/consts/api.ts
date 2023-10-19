@@ -14,4 +14,5 @@ export class Api {
   static Unit = `unit`;
   static DocType = `doctype`;
   static PurchaseRequisition = `purchaserequisition`;
+  static Role = `role`;
 }
