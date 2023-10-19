@@ -18,4 +18,17 @@ export class Method {
   static CreatePurchaseRequisition = `/CreatePurchaseRequisition`;
   static GetAllPRHeaderList = `/GetAllPRHeaderList`;
   static GetPRDetailsById = `/GetPRDetailsById`;
+  static GetAllRolesList = `/GetAllRolesList`;
+  static AddUser = `/AddUser`;
+  static GetUserDetailsById = `/GetUserDetailsById`;
+  static UpdateUser = `/UpdateUser`;
+  static DeleteUser = `/DeleteUser`;
+  static AddProduct = `/AddProduct`;
+  static UpdateProduct = `/UpdateProduct`;
+  static GetProductDetailsById = `/GetProductDetailsById`;
+  static DeleteProduct = `/DeleteProduct`;
+  static AddPlant = `/AddPlant`;
+  static UpdatePlant = `/UpdatePlant`;
+  static DeletePlant = `/DeletePlant`;
+  static GetPlantDetailsById = `/GetPlantDetailsById`;
 }

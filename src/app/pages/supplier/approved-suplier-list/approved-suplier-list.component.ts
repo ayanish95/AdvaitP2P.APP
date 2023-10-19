@@ -23,6 +23,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
   displayedColumns: string[] = [
     'srNo',
     'SupplierCode',
+    'ERPSupplierCode',
     'SupplierName',
     // 'SapUserId',
     // 'AccountGroup',

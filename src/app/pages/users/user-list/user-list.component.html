@@ -1,52 +1,308 @@
 <breadcrumb></breadcrumb>
 
 <mat-card>
-    <mat-card-header>
-      <div class="col-md-9">
-        <h3>User List</h3>
+  <mat-card-header>
+    <div class="col-md-9">
+      <h3>User List</h3>
+    </div>
+    <div class="col-md-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <input matInput type="text" name="username" (keyup)="searchUser($event)"
+               placeholder="Search">
+      </mat-form-field>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="mt-5">
+      <div class="d-flex justify-content-end">
+        <button mat-button mat-raised-button color="primary" (click)="openModelAddUser(addUser)">
+          <mat-icon>add</mat-icon>Add User
+        </button>
       </div>
-      <div class="col-md-3">
-        <mat-form-field appearance="outline">
-          <mat-label>Search</mat-label>
-          <input matInput type="text" name="username" (keyup)="searchUser($event)" placeholder="Search" >
-        </mat-form-field>
-      </div>
-    </mat-card-header>
-    <mat-card-content>
-        <div class="mt-5">
-            <table mat-table [dataSource]="dataSource">
-                <ng-container matColumnDef="srNo">
-                    <th mat-header-cell *matHeaderCellDef># </th>
-                    <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
-                </ng-container>
-                <ng-container matColumnDef="userName">
-                    <th mat-header-cell *matHeaderCellDef> User Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.UserName}} </td>
-                </ng-container>
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> First Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.FirstName}} </td>
-                </ng-container>
-                <ng-container matColumnDef="erpUserId">
-                    <th mat-header-cell *matHeaderCellDef> ERP User Id </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.ERPUserId}} </td>
-                </ng-container>
-                <ng-container matColumnDef="email">
-                    <th mat-header-cell *matHeaderCellDef> Email </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.Email}} </td>
-                </ng-container>
-                <ng-container matColumnDef="mobile">
-                    <th mat-header-cell *matHeaderCellDef> Mobile </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.Mobile}} </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length" [columnCount]="displayedColumns.length"></app-no-record-found>
-            <mat-paginator #paginator  [pageSize]="filter.PageSize"
-            [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0" [length]="filter.TotalRecords"
-            (page)="pageChange($event)"
-            showFirstLastButtons></mat-paginator>
-        </div>
-    </mat-card-content>
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="srNo">
+          <th mat-header-cell *matHeaderCellDef># </th>
+          <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+        </ng-container>
+        <ng-container matColumnDef="userName">
+          <th mat-header-cell *matHeaderCellDef> User Name </th>
+          <td mat-cell *matCellDef="let element"> {{element?.UserName}} </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let element"> {{element?.FirstName}} - {{element?.LastName}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="roleName">
+          <th mat-header-cell *matHeaderCellDef> Role </th>
+          <td mat-cell *matCellDef="let element"> {{element?.RoleName}} </td>
+        </ng-container>
+        <ng-container matColumnDef="erpUserId">
+          <th mat-header-cell *matHeaderCellDef> ERP User Id </th>
+          <td mat-cell *matCellDef="let element"> {{element?.ERPUserId}} </td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let element"> {{element?.Email}} </td>
+        </ng-container>
+        <ng-container matColumnDef="mobile">
+          <th mat-header-cell *matHeaderCellDef> Mobile </th>
+          <td mat-cell *matCellDef="let element"> {{element?.Mobile}} </td>
+        </ng-container>
+        <ng-container matColumnDef="isActive">
+          <th mat-header-cell *matHeaderCellDef> Active </th>
+          <td mat-cell *matCellDef="let element">  <mat-checkbox color="primary" disabled [checked]="element?.IsActive"></mat-checkbox> </td>
+        </ng-container>
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef> Edit </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="openModelEditUser(editUser,element?.Id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="delete">
+          <th mat-header-cell *matHeaderCellDef> Delete </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="openDeleteModel(deleteAlert,element?.Id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                           [columnCount]="displayedColumns.length"></app-no-record-found>
+      <mat-paginator #paginator [pageSize]="filter.PageSize"
+                     [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0"
+                     [length]="filter.TotalRecords"
+                     (page)="pageChange($event)"
+                     showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
 </mat-card>
+
+<ng-template #addUser style="width: 56vw;">
+  <h2 mat-dialog-title>Add User</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="userForm">
+      <div class="row mt-5">
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>First Name<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="FirstName"
+                   placeholder="First Name">
+            <mat-error *ngIf="userForm.get('FirstName')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Last Name<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="LastName"
+                   placeholder="Last Name">
+            <mat-error *ngIf="userForm.get('LastName')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Username<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="UserName"
+                   placeholder="User Name">
+            <mat-error *ngIf="userForm.get('UserName')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Role<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="roleAutocomplete"
+                   formControlName="Role"
+                   placeholder="Role">
+            <mat-autocomplete #roleAutocomplete="matAutocomplete" [displayWith]="roleDisplayFn">
+              <mat-option *ngFor="let role of filteredRoles | async"
+                          [value]="role">
+                <span>{{ role?.DisplayName }} </span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="userForm.get('Role')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Email<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Email"
+                   placeholder="Email">
+            <mat-error *ngIf="userForm.get('Email')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Mobile<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Mobile"
+                   placeholder="Mobile">
+            <mat-error *ngIf="userForm.get('Mobile')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+            [disabled]="userForm.invalid" (click)="onClickAddUser()">Add</button>
+  </mat-dialog-actions>
+
+</ng-template>
+
+<ng-template #editUser style="width: 56vw;">
+  <h2 mat-dialog-title>Edit User</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="editUserForm">
+      <div class="row mt-5">
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>First Name<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="FirstName"
+                   placeholder="First Name">
+            <mat-error *ngIf="editUserForm.get('FirstName')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Last Name<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="LastName"
+                   placeholder="Last Name">
+            <mat-error *ngIf="editUserForm.get('LastName')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Username<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="UserName"
+                   placeholder="User Name">
+            <mat-error *ngIf="editUserForm.get('UserName')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Role<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="roleAutocomplete"
+                   formControlName="Role"
+                   placeholder="Role">
+            <mat-autocomplete #roleAutocomplete="matAutocomplete" [displayWith]="roleDisplayFn">
+              <mat-option *ngFor="let role of filteredRoles | async"
+                          [value]="role">
+                <span>{{ role?.DisplayName }} </span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="editUserForm.get('Role')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Email<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Email"
+                   placeholder="Email">
+            <mat-error *ngIf="editUserForm.get('Email')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Mobile<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Mobile"
+                   placeholder="Mobile">
+            <mat-error *ngIf="editUserForm.get('Mobile')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <mat-checkbox color="primary" formControlName="IsActive">Active?</mat-checkbox>
+        </div>
+       
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+            [disabled]="editUserForm.invalid" (click)="onClickUpdateUser()">Update</button>
+  </mat-dialog-actions>
+
+</ng-template>
+
+<ng-template #deleteAlert>
+  <h2 mat-dialog-title class="text-center">Delete User</h2>
+<div mat-dialog-content>Are you sure want to delete user?</div>
+<div mat-dialog-actions class="d-flex justify-content-center">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button  mat-raised-button color="warn" (click)="onClickDeleteUser()">Delete</button>
+</div>
+</ng-template>

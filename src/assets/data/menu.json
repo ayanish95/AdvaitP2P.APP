@@ -4,37 +4,78 @@
       "route": "dashboard",
       "name": "dashboard",
       "type": "link",
-      "icon": "dashboard"
+      "icon": "dashboard",
+      "permissions": {
+        "only": [
+          "Supplier",
+          "Admin",
+          "UserTeam"
+          
+        ]
+      }
     },
     {
       "route": "pages/user",
       "name": "user",
       "type": "link",
-      "icon": "people"
+      "icon": "people",
+      "permissions": {
+        "only": [
+          "Admin"
+        ]
+      }
     },
     {
       "route": "pages/supplier",
       "name": "supplier",
       "type": "link",
-      "icon": "person"
+      "icon": "person",
+      "permissions": {
+        "only": [
+          "Supplier",
+          "Admin"
+          
+        ]
+      }
     },
     {
       "route": "pages/product",
       "name": "product",
       "type": "link",
-      "icon": "layers"
+      "icon": "layers",
+      "permissions": {
+        "only": [
+          "Supplier",
+          "Admin"
+          
+        ]
+      }
     },
     {
       "route": "pages/plant",
       "name": "plant",
       "type": "link",
-      "icon": "location_city"
+      "icon": "location_city",
+      "permissions": {
+        "only": [
+          "Supplier",
+          "Admin"
+          
+        ]
+      }
     },
     {
       "route": "pages/purchase-requisition",
       "name": "purchaseRequisition",
       "type": "link",
-      "icon": "queue"
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+          
+        ]
+      }
     },
     {
       "route": "design",
@@ -285,9 +326,8 @@
         }
       ],
       "permissions": {
-        "except": [
-          "MANAGER",
-          "GUEST"
+        "only": [
+          "Admin1"
         ]
       }
     },
@@ -318,7 +358,12 @@
             "only": "ADMIN"
           }
         }
-      ]
+      ],
+      "permissions": {
+        "only": [
+          "Admin1"
+        ]
+      }
     },
     {
       "route": "media",
@@ -331,7 +376,10 @@
           "name": "gallery",
           "type": "link"
         }
-      ]
+      ],
+      "permissions": {
+        "except": ["Supplier","Admin","UserTeam"]
+      }
     },
     {
       "route": "forms",
@@ -361,7 +409,8 @@
         }
       ],
       "permissions": {
-        "except": "GUEST"
+        "except": ["Supplier","Admin","UserTeam"]
+
       }
     },
     {
@@ -382,7 +431,7 @@
         }
       ],
       "permissions": {
-        "except": "GUEST"
+        "only": "Admin1"
       }
     },
     {
@@ -401,7 +450,10 @@
           "name": "settings",
           "type": "link"
         }
-      ]
+      ],
+      "permissions": {
+        "only": "Admin1"
+      }
     },
     {
       "route": "https://ng-matero.github.io/extensions/",
@@ -409,7 +461,7 @@
       "type": "extTabLink",
       "icon": "extension",
       "permissions": {
-        "only": "ADMIN"
+        "only": "Admin1"
       }
     },
     {
@@ -435,7 +487,7 @@
         }
       ],
       "permissions": {
-        "only": "ADMIN"
+        "only": "Admin1"
       }
     },
     {
@@ -458,7 +510,10 @@
           "name": "css-helpers",
           "type": "link"
         }
-      ]
+      ],
+      "permissions": {
+        "only": "Admin1"
+      }
     },
     {
       "route": "menu-level",
@@ -504,7 +559,7 @@
         }
       ],
       "permissions": {
-        "only": "ADMIN"
+        "only": "Admin1"
       }
     }
   ]

@@ -6,6 +6,10 @@
     </ng-container>
     <ng-container matColumnDef="SupplierCode">
         <th mat-header-cell *matHeaderCellDef> Supplier Code </th>
+        <td mat-cell *matCellDef="let element"> {{element?.Id}}</td>
+    </ng-container>
+    <ng-container matColumnDef="ERPSupplierCode">
+        <th mat-header-cell *matHeaderCellDef>ERP Supplier Code </th>
         <td mat-cell *matCellDef="let element"> {{element?.SupplierCode}}</td>
     </ng-container>
     <ng-container matColumnDef="SupplierName">

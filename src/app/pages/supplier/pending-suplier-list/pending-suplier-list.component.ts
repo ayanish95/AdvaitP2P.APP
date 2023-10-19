@@ -24,6 +24,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
+    'SupplierCode',
     'SupplierName',
     'City',
     'Country',

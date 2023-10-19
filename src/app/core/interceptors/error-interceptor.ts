@@ -22,11 +22,14 @@ export enum STATUS {
 export class ErrorInterceptor implements HttpInterceptor {
   private errorPages = [STATUS.FORBIDDEN, STATUS.NOT_FOUND, STATUS.INTERNAL_SERVER_ERROR];
 
-  private getMessage = (error: HttpErrorResponse) => {
+  private getMessage = (error: any) => {
+    if (error?.error?.Message) {
+      return error.error.Message;
+    }
     if (error?.message) {
       return error.message;
     }
-
+    
     if (error.error?.msg) {
       return error.error.msg;
     }

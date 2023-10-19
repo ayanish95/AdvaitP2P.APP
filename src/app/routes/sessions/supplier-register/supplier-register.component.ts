@@ -27,6 +27,7 @@ import { Country } from '@core/models/country';
 export class SupplierRegisterComponent implements OnInit {
   basicInfoFrom = this.fb.nonNullable.group(
     {
+      companyName: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       telePhone: ['', [Validators.required]],

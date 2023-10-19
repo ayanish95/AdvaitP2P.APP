@@ -6,13 +6,15 @@ export interface Plants {
     Street2?: string;
     Street3?: string;
     City?: string;
-    State?: string;
+    StateId?: number;
+    ERPStateCode?: string;
     Country?: string;
     Pincode?: string;
     Email?: string;
     Mobile?: string;
     BusinessPlace?: string;
     GST?: string;
+    TaxNumber?: string;
     GSTRegionCode?: string;
     PurchaseDept?: string;
     CompanyCode?: string;

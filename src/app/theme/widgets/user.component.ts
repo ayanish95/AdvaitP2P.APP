@@ -13,15 +13,15 @@ import { debounceTime, tap } from 'rxjs/operators';
     </button>
 
     <mat-menu #menu="matMenu">
-      <button routerLink="/profile/overview" mat-menu-item>
-        <mat-icon>account_circle</mat-icon>
-        <span>{{ 'profile' | translate }}</span>
-      </button>
       <button routerLink="/profile/settings" mat-menu-item>
+        <mat-icon>account_circle</mat-icon>
+        <span>{{ 'edit_profile' | translate }}</span>
+      </button>
+      <button style="display:none" routerLink="/profile/overview" mat-menu-item>
         <mat-icon>edit</mat-icon>
         <span>{{ 'edit_profile' | translate }}</span>
       </button>
-      <button mat-menu-item (click)="restore()">
+      <button style="display:none" mat-menu-item (click)="restore()">
         <mat-icon>restore</mat-icon>
         <span>{{ 'restore_defaults' | translate }}</span>
       </button>
