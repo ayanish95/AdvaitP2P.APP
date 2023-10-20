@@ -32,4 +32,16 @@ export class SupplierService {
   getSupplierDetailById(supplierId: number): Observable<any> {
     return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierDetailsById}/${supplierId}`);
   }
+  supplierRegisterFromAdmin(supplier: any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.AddSupplierFromAdminSide}`, supplier);
+  }
+  updateSupplier(supplier: any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.UpdateSupplier}`, supplier);
+  }
+  deleteSupplier(supplierId: any) {
+    return this.httpclient.authGet(`${Api.Supplier + Method.DeleteSupplier}/${supplierId}`);
+  } 
+  rejectSupplier(supplierId: any) {
+    return this.httpclient.authGet(`${Api.Supplier + Method.RejectSupplier}/${supplierId}`);
+  }
 }

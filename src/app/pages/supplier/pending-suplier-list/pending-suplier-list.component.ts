@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -29,7 +29,8 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
     'City',
     'Country',
     'Phone',
-    'Edit'
+    'Edit',
+    'Reject'
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -40,7 +41,8 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
-
+  selectedSupplierId!:number;
+  @Output() APICallPendingSupplierList:EventEmitter<string> = new EventEmitter<string>();
   constructor(private supplierService: SupplierService, private toast: ToastrService, public dialog: MatDialog) {
 
   }
@@ -128,5 +130,32 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
           this.toast.error(res[ResultEnum.Message]);
         }
       });
+  }
+
+  openDialogReject(templateRef: TemplateRef<any>,event:any){
+    this.selectedSupplierId=event.Id;
+    this.dialog.open(templateRef);
+  }
+
+  onClickReject(){
+    if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
+    throw this.toast.error('Something went wrong');
+  this.supplierService
+    .rejectSupplier(this.selectedSupplierId)
+    .pipe(
+      finalize(() => {
+      })
+    )
+    .subscribe(res => {
+      if (res[ResultEnum.IsSuccess]) {
+        this.toast.success(res[ResultEnum.Message]);
+        this.APICallPendingSupplierList.emit();
+        this.selectedSupplierId = 0;
+      }
+      else
+        this.toast.error(res[ResultEnum.Message]);
+
+      this.dialog.closeAll();
+    });
   }
 }
