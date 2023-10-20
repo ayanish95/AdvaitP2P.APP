@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResultEnum } from '@core/enums/result-enum';
@@ -7,6 +8,7 @@ import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
+import { AddSupplierForAdminComponent } from '../add-supplier-for-admin/add-supplier-for-admin.component';
 
 @Component({
   selector: 'app-all-suplier-list',
@@ -17,6 +19,7 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
 
   @Input() searchText!:string;
   @Input() supplierList!: Suppliers[];
+  @Output() APICallAllSupplierList:EventEmitter<string> = new EventEmitter<string>();
   propChanges: any;
   
   isLoading = true;
@@ -30,7 +33,9 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
     'City',
     'Country',
     'Phone',
-    'Approved'
+    'Approved',
+    'Edit',
+    'Delete'
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -41,9 +46,10 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
+  selectedSupplierId = 0;
   
   
-  constructor(private supplierService: SupplierService,private toast:ToastrService){
+  constructor(private supplierService: SupplierService,private toast:ToastrService,private dialog: MatDialog,){
 
   }
 
@@ -89,4 +95,42 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
     this.filter.Page = page.pageIndex + 1;
   }
 
+  openEditModelPopup( supplierId: number) {
+   
+    const dialogRef = this.dialog.open(AddSupplierForAdminComponent, {
+      width: '60vw',
+      panelClass: 'custom-modalbox',
+      data: { supplierId: supplierId },
+    });
+    dialogRef.afterClosed().subscribe((result:any) => {
+      this.APICallAllSupplierList.emit();
+    });
+  }
+
+  openDeleteModel(templateRef: TemplateRef<any>, supplierId: number) {
+    this.selectedSupplierId = supplierId;
+    this.dialog.open(templateRef);
+  }
+
+  onClickDeleteSupplier(){
+    if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
+    throw this.toast.error('Something went wrong');
+  this.supplierService
+    .deleteSupplier(this.selectedSupplierId)
+    .pipe(
+      finalize(() => {
+      })
+    )
+    .subscribe(res => {
+      if (res[ResultEnum.IsSuccess]) {
+        this.toast.success(res[ResultEnum.Message]);
+        this.APICallAllSupplierList.emit();
+        this.selectedSupplierId = 0;
+      }
+      else
+        this.toast.error(res[ResultEnum.Message]);
+
+      this.dialog.closeAll();
+    });
+  }
 }

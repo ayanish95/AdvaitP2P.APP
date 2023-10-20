@@ -31,4 +31,8 @@ export class Method {
   static UpdatePlant = `/UpdatePlant`;
   static DeletePlant = `/DeletePlant`;
   static GetPlantDetailsById = `/GetPlantDetailsById`;
+  static AddSupplierFromAdminSide = `/AddSupplierFromAdminSide`;
+  static UpdateSupplier = `/UpdateSupplier`;
+  static DeleteSupplier = `/DeleteSupplier`;
+  static RejectSupplier = `/RejectSupplier`;
 }
