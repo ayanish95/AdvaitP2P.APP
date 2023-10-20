@@ -98,10 +98,7 @@ export class AddSupplierForAdminComponent implements OnInit {
     this.apiProductGroup();
     this.apiCountryList();
     this.apiState();
-    if (this.selectedSupplierId) {
-      this.isEdit = true;
-      this.apiGetSupplierById(this.selectedSupplierId);
-    }
+
 
   }
 
@@ -116,6 +113,10 @@ export class AddSupplierForAdminComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.productGroupList = res[ResultEnum.Model];
           this.productGroupList.map(x => x.ProductFullName = x.ProductGroupName + (x.Description ? ' - ' + x.Description : ''));
+          if (this.selectedSupplierId) {
+            this.isEdit = true;
+            this.apiGetSupplierById(this.selectedSupplierId);
+          }
         }
       });
   }
@@ -183,8 +184,15 @@ export class AddSupplierForAdminComponent implements OnInit {
             const data = this.countryList?.filter(x => x.CountryCode == this.supplierDetails?.Country);
             this.addressForm.get('country')?.setValue(data[0].CountryWithCode);
             this.addressForm.get('country')?.disable();
-            await this.apiProductGroup();
-            let productGroupId=this.productGroupList.filter(x=>this.supplierDetails.ProductGroupId?.includes(x.Id)).map(y=>y.Id);
+
+            let productGroupId: number[] = []
+            this.supplierDetails?.ProductGroupId?.forEach(element => {
+              let id = this.productGroupList?.find(x => x.Id == element)?.Id;
+              if (id)
+                productGroupId.push(id);
+              return productGroupId;
+            });
+
             this.basicInfoFrom.patchValue({
               firstName: this.trimFormValue(this.supplierDetails.FirstName),
               lastName: this.trimFormValue(this.supplierDetails.LastName),
@@ -464,7 +472,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       AccountHolderName: bankDetailForm.accountHolderName,
       Remarks: bankDetailForm.remarks,
       ERPStatus: this.supplierDetails.ERPStatus,
-      IsActive: this.isEdit ?  bankDetailForm.IsActive : true,
+      IsActive: this.isEdit ? bankDetailForm.IsActive : true,
     } as Suppliers;
     if (!this.isEdit) {
       this.supplierService.supplierRegisterFromAdmin(supplier).subscribe({
