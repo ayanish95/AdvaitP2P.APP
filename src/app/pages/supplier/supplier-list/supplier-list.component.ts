@@ -10,6 +10,8 @@ import { SupplierService } from '@core/services/supplier.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { AddSupplierForAdminComponent } from '../add-supplier-for-admin/add-supplier-for-admin.component';
+import { AuthService } from '@core';
+import { Role } from '@core/enums/role';
 
 @Component({
   selector: 'app-supplier-list',
@@ -22,10 +24,13 @@ export class SupplierListComponent implements OnInit {
   allSuppliierList!: Suppliers[];
   pendingSuppliierList!: Suppliers[];
   approveSuppliierList!: Suppliers[];
+  userRole!:number;
+  Role = Role;
 
-  constructor(private supplierService: SupplierService, private toast: ToastrService,private dialog: MatDialog,) { }
+  constructor(private supplierService: SupplierService, private toast: ToastrService,private dialog: MatDialog,private authService:AuthService) { }
 
   ngOnInit() {
+    this.userRole = this.authService.roles();
     this.apiAllSupplierList();
   }
 

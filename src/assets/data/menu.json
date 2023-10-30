@@ -4,15 +4,7 @@
       "route": "dashboard",
       "name": "dashboard",
       "type": "link",
-      "icon": "dashboard",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin",
-          "UserTeam"
-          
-        ]
-      }
+      "icon": "dashboard"
     },
     {
       "route": "pages/user",
@@ -33,7 +25,8 @@
       "permissions": {
         "only": [
           "Supplier",
-          "Admin"
+          "Admin",
+          "ProcurementTeam"
           
         ]
       }
@@ -72,8 +65,28 @@
       "permissions": {
         "only": [
           "UserTeam",
-          "Admin"
+          "Admin",
+          "ProcurementTeam"
           
+        ]
+      }
+    },
+    {
+      "route": "pages",
+      "name": "configuration",
+      "type": "sub",
+      "icon": "settings",
+      "children": [
+        {
+          "route": "approval-config",
+          "name": "approval",
+          "type": "link"
+        }
+        
+      ],
+      "permissions": {
+        "only": [
+          "Admin"          
         ]
       }
     },
@@ -96,7 +109,7 @@
       ],
       "permissions": {
         "only": [
-          "ADMIN",
+          "Admin",
           "MANAGER"
         ]
       }
@@ -378,7 +391,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam"]
+        "except": ["Supplier","Admin","UserTeam","ProcurementTeam"]
       }
     },
     {
@@ -409,7 +422,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam"]
+        "except": ["Supplier","Admin","UserTeam","ProcurementTeam"]
 
       }
     },

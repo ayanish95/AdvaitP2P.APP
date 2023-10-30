@@ -35,4 +35,12 @@ export class Method {
   static UpdateSupplier = `/UpdateSupplier`;
   static DeleteSupplier = `/DeleteSupplier`;
   static RejectSupplier = `/RejectSupplier`;
+  static GetAllApprovalTypeList = `/GetAllApprovalTypeList`;
+  static AddApprovalType = `/AddApprovalType`;
+  static UpdateApprovalType = `/UpdateApprovalType`;
+  static GetApprovalTypeDetailsById = `/GetApprovalTypeDetailsById`;
+  static DeleteApprovalType = `/DeleteApprovalType`;
+  static GetUserListByRole = `/GetUserListByRole`;
+  static AddStrategy = `/AddStrategy`;
+  static GetApprovalStrategyDeailsByApprovalId = `/GetApprovalStrategyDeailsByApprovalId`;
 }

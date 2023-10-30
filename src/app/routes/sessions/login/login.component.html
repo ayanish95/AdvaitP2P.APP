@@ -12,10 +12,10 @@
       <form class="form-field-full" [formGroup]="loginForm">
         <mat-form-field appearance="outline">
           <mat-label>{{'username' | translate}}</mat-label>
-          <input matInput placeholder="ng-matero" formControlName="username" required>
+          <input matInput placeholder="Username" formControlName="username" required>
           <mat-error *ngIf="username.invalid">
             <span *ngIf="username.errors?.required">{{'please_enter' | translate}}
-              <strong>ng-matero</strong>
+              <strong>username</strong>
             </span>
             <span *ngIf="username.errors?.remote">{{ username.errors?.remote }}</span>
           </mat-error>
@@ -23,11 +23,11 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{'password' | translate}}</mat-label>
-          <input matInput placeholder="ng-matero" type="password"
+          <input matInput placeholder="Password" type="password"
                  formControlName="password" required>
           <mat-error *ngIf="password.invalid">
             <span *ngIf="password.errors?.required">{{'please_enter' | translate}}
-              <strong>ng-matero</strong>
+              <strong>password</strong>
             </span>
             <span *ngIf="password.errors?.remote">{{ password.errors?.remote }}</span>
           </mat-error>

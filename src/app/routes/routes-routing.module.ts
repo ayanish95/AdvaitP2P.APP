@@ -48,6 +48,10 @@ const routes: Routes = [
       {
         path: 'pages/purchase-requisition',
         loadChildren: () => import('../pages/purchase-requisition/purchase-requisition.module').then(m => m.PurchaseRequisitionModule),
+      }, 
+      {
+        path: 'pages/approval-config',
+        loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
       },
       {
         path: 'design',

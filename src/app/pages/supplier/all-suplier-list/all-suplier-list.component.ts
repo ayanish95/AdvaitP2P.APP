@@ -9,19 +9,21 @@ import { SupplierService } from '@core/services/supplier.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { AddSupplierForAdminComponent } from '../add-supplier-for-admin/add-supplier-for-admin.component';
+import { Role } from '@core/enums/role';
+import { AuthService } from '@core/authentication/auth.service';
 
 @Component({
   selector: 'app-all-suplier-list',
   templateUrl: './all-suplier-list.component.html',
   styleUrls: ['./all-suplier-list.component.scss']
 })
-export class AllSuplierListComponent implements OnInit,OnChanges {
+export class AllSuplierListComponent implements OnInit, OnChanges {
 
-  @Input() searchText!:string;
+  @Input() searchText!: string;
   @Input() supplierList!: Suppliers[];
-  @Output() APICallAllSupplierList:EventEmitter<string> = new EventEmitter<string>();
+  @Output() APICallAllSupplierList: EventEmitter<string> = new EventEmitter<string>();
   propChanges: any;
-  
+
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -47,13 +49,22 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
   filter: Filter = new Filter();
   index = 0;
   selectedSupplierId = 0;
-  
-  
-  constructor(private supplierService: SupplierService,private toast:ToastrService,private dialog: MatDialog,){
+  userRole!: number;
+  Role = Role;
+  isSAPEnabled!: string;
+
+  constructor(private supplierService: SupplierService, private toast: ToastrService, private dialog: MatDialog, private authService: AuthService) {
 
   }
 
   ngOnInit(): void {
+    this.userRole = this.authService.roles();
+    this.isSAPEnabled = this.authService.isSAPEnable();
+    if (this.userRole !== Role.Admin) {
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'Edit' && x != 'Delete');
+    }
+    if (this.isSAPEnabled == 'false')
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPSupplierCode');
     this.allSuppliierList = this.supplierList;
     this.dataSource.data = this.allSuppliierList;
     this.dataSource.paginator = this.paginator;
@@ -63,14 +74,14 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
     this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
   }
 
-  ngOnChanges(changes: SimpleChanges){
+  ngOnChanges(changes: SimpleChanges) {
     this.propChanges = changes;
-    if(this.propChanges.searchText){
+    if (this.propChanges.searchText) {
       const currentValue = this.propChanges.searchText?.currentValue;
-      if(currentValue != undefined)
-      this.searchSupplier(currentValue);
+      if (currentValue != undefined)
+        this.searchSupplier(currentValue);
     }
-    if(this.propChanges.supplierList){
+    if (this.propChanges.supplierList) {
       const currentValue = this.propChanges.supplierList?.currentValue;
       this.allSuppliierList = currentValue;
       this.dataSource.data = this.allSuppliierList;
@@ -95,14 +106,14 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
     this.filter.Page = page.pageIndex + 1;
   }
 
-  openEditModelPopup( supplierId: number) {
-   
+  openEditModelPopup(supplierId: number) {
+
     const dialogRef = this.dialog.open(AddSupplierForAdminComponent, {
       width: '60vw',
       panelClass: 'custom-modalbox',
       data: { supplierId: supplierId },
     });
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       this.APICallAllSupplierList.emit();
     });
   }
@@ -112,25 +123,25 @@ export class AllSuplierListComponent implements OnInit,OnChanges {
     this.dialog.open(templateRef);
   }
 
-  onClickDeleteSupplier(){
+  onClickDeleteSupplier() {
     if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
-    throw this.toast.error('Something went wrong');
-  this.supplierService
-    .deleteSupplier(this.selectedSupplierId)
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.toast.success(res[ResultEnum.Message]);
-        this.APICallAllSupplierList.emit();
-        this.selectedSupplierId = 0;
-      }
-      else
-        this.toast.error(res[ResultEnum.Message]);
+      throw this.toast.error('Something went wrong');
+    this.supplierService
+      .deleteSupplier(this.selectedSupplierId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toast.success(res[ResultEnum.Message]);
+          this.APICallAllSupplierList.emit();
+          this.selectedSupplierId = 0;
+        }
+        else
+          this.toast.error(res[ResultEnum.Message]);
 
-      this.dialog.closeAll();
-    });
+        this.dialog.closeAll();
+      });
   }
 }

@@ -1,0 +1,261 @@
+<breadcrumb></breadcrumb>
+
+<mat-card>
+    <mat-card-header>
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <h3>Add Release Strategy</h3>
+            </div>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="mt-5">
+
+        </div>
+        <div>
+            <form [formGroup]="configForm">
+                <div class="row mt-5">
+
+                    <div class="col-sm-2">
+                        <label class="custom-label">
+                            <h5>Approval Type<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   [matAutocomplete]="approvalTypeAuto"
+                                   formControlName="ApprovalType"
+                                   placeholder="Select Approval Type" readonly>
+                            <mat-autocomplete #approvalTypeAuto="matAutocomplete"
+                                              [displayWith]="approvalTypeDisplayFn">
+                                <mat-option *ngFor="let type of filteredApprovalType | async"
+                                            [value]="type">
+                                    <span>{{ type?.name }}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="configForm.get('ApprovalType')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="custom-label">
+                            <h5>Configuration For<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="DisplayText"
+                                   placeholder="Configuration For" readonly>
+                            <mat-error
+                                       *ngIf="configForm.get('DisplayText')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="custom-label">
+                            <h5>Sequence<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="Sequence" (keypress)="onKeyPress($event)"
+                                   (input)="onChangeSequence($event)"
+                                   placeholder="Sequence" readonly>
+                            <mat-error
+                                       *ngIf="configForm.get('Sequence')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="custom-label">
+                            <h5>Role</h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   [matAutocomplete]="roleAuto"
+                                   formControlName="Role"
+                                   placeholder="Select Role">
+                            <mat-autocomplete #roleAuto="matAutocomplete"
+                                              (optionSelected)="onChangeRole($event)"
+                                              [displayWith]="roleDisplayFn">
+                                <mat-option *ngFor="let role of filteredRoles | async"
+                                            [value]="role">
+                                    <span>{{ role?.RoleName }}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="configForm.get('Role')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="custom-label">
+                            <h5>Approver</h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   [matAutocomplete]="userAuto"
+                                   formControlName="User"
+                                   placeholder="Select Approver">
+                            <mat-autocomplete #userAuto="matAutocomplete"
+                                              [displayWith]="userDisplayFn">
+                                <mat-option *ngFor="let user of filteredUser | async"
+                                            [value]="user">
+                                    <span>{{ IsSAPEnable ? user?.ERPUserId : user?.Id }} -
+                                        {{user?.FirstName}} {{user?.LastName}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="configForm.get('User')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-1 d-flex align-items-center justify-content-center">
+                        <button mat-raised-button color="primary" class="align-middle"
+                                (click)="onClickAddItem()">Add</button>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="mt-20">
+            <h4>Strategy List</h4>
+            <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="srNo">
+                    <th mat-header-cell *matHeaderCellDef># </th>
+                    <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+                </ng-container>
+                <ng-container matColumnDef="ApprovalType">
+                    <th mat-header-cell *matHeaderCellDef> ApprovalType </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.ApprovalType?.name}}</td>
+                </ng-container>
+                <ng-container matColumnDef="ConfigurationFor">
+                    <th mat-header-cell *matHeaderCellDef> ConfigurationFor </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.ConfigurationFor}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Sequence">
+                    <th mat-header-cell *matHeaderCellDef> Sequence </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.Sequence}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Role">
+                    <th mat-header-cell *matHeaderCellDef> Role </th>
+                    <td mat-cell *matCellDef="let element">
+                            {{element?.Role?.RoleName}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Approver">
+                    <th mat-header-cell *matHeaderCellDef> Approver </th>
+                    <td mat-cell *matCellDef="let element">
+                            {{IsSAPEnable ? element?.User?.ERPUserId
+                            : element?.User?.Id}} -
+                            {{element?.User?.FirstName}} {{element?.User?.LastName}}
+                     
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Edit">
+                    <th mat-header-cell *matHeaderCellDef> Edit </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button (click)="editApprovalItem(itemEdit,element?.Sequence)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Delete">
+                    <th mat-header-cell *matHeaderCellDef> Delete </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button (click)="onClickDeleteItem(element?.Sequence)">
+                            <mat-icon>delete</mat-icon></button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                                 [columnCount]="displayedColumns.length"></app-no-record-found>
+        </div>
+        <div class="col-sm-3 mt-20">
+            <button mat-raised-button class="btn"
+                    (click)="onClickBack()">Back</button>
+            <button mat-raised-button color="primary" class="btn ml-10"
+                    (click)="onClickAddAprovalConfig()"> Save</button>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<ng-template #itemEdit style="width: 56vw;">
+<h2 mat-dialog-title>Edit Data</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="configEditForm">
+    <div class="row mt-5">
+        <div class="col-sm-6">
+            <label class="custom-label">
+                <h5>Sequence<small>*</small></h5>
+            </label>
+            <mat-form-field class="demo-full-width">
+                <input matInput
+                       formControlName="Sequence"
+                       placeholder="Sequence" readonly>
+                <mat-error
+                           *ngIf="configEditForm.get('Sequence')?.hasError('required')">
+                    This filed is required...
+                </mat-error>
+            </mat-form-field>
+        </div>
+      <div class="col-sm-6">
+        <label class="custom-label">
+          <h5>Role<small>*</small></h5>
+        </label>
+        <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="selectedRoleAuto"
+                   formControlName="Role"
+                   placeholder="Select Role">
+            <mat-autocomplete #selectedRoleAuto="matAutocomplete"
+                              (optionSelected)="onChangeItemRole($event)"
+                              [displayWith]="roleDisplayFn">
+                <mat-option *ngFor="let role of filteredRoles | async"
+                            [value]="role">
+                    <span>{{ role?.RoleName }}</span>
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="configEditForm.get('Role')?.hasError('required')">
+                This filed is required...
+            </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12">
+        <label class="custom-label">
+          <h5>Approver<small>*</small></h5>
+        </label>
+        <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="userAuto"
+                   formControlName="User"
+                   placeholder="Select Approver">
+            <mat-autocomplete #userAuto="matAutocomplete"
+                              [displayWith]="userDisplayFn">
+                <mat-option *ngFor="let user of filteredUserForItem | async"
+                            [value]="user">
+                    <span>{{ IsSAPEnable ? user?.ERPUserId : user?.Id }} -
+                        {{user?.FirstName}} {{user?.LastName}}</span>
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="configEditForm.get('User')?.hasError('required')">
+                This filed is required...
+            </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close>Close</button>
+  <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+          (click)="onClickUpdateItem()" [disabled]="configEditForm.invalid">Update</button>
+</mat-dialog-actions>
+</ng-template>

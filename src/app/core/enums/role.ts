@@ -1,13 +1,12 @@
 export enum Role {
     Admin = 1,
-    Dealer = 2,
-    Distributor = 3,
-    TSE = 4,
-    ZH = 5,
-    BH = 6,
-    CustomerSalesSupport = 7,
-    IndiaHead = 8,
-    Snop = 9
+    ProcurementTeam = 2,
+    CommercialTeam = 3,
+    FinanceTeam = 4,
+    MasterUser = 5,
+    Supplier = 6,
+    WarehouseTeam = 7,
+    UserTeam = 8
 }
 
 export class UserRole {
@@ -17,12 +16,11 @@ export class UserRole {
 
 export class RoleName {
     static Admin = 'Admin';
-    static BranchHead = 'Branch Head';
-    static CustomerSalesSupport = 'Customer Sales Support';
-    static Dealer = 'Dealer';
-    static Distributor = 'Distributor';
-    static TerritorySalesExecutive = 'Territory Sales Executive';
-    static ZonalHead = 'Zonal Head';
-    static IndiaHead  = 'India Head';
-    static Snop  = 'S&OP';
+    static ProcurementTeam = 'Procurement Team';
+    static CommercialTeam = 'CommercialTeam';
+    static FinanceTeam = 'Finance Team';
+    static MasterUser = 'Master User';
+    static Supplier = 'Supplier';
+    static WarehouseTeam = 'Warehouse Team';
+    static UserTeam  = 'User Team';
 }
