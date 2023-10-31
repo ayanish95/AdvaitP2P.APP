@@ -215,7 +215,7 @@
                                    formControlName="state">
                             <mat-autocomplete #autocomplete="matAutocomplete" [displayWith]="stateDisplayFn" multiple>
                                 <mat-option *ngFor="let state of filteredStates | async"
-                                            [value]="state.Name">
+                                            [value]="state">
                                     <span>{{ state.Name }}</span>
                                 </mat-option>
                             </mat-autocomplete>
@@ -351,6 +351,6 @@
 <mat-dialog-actions *ngIf="selectedIndex==2" align="end">
     <button mat-raised-button (click)="nextOrPrevious('previous')">Previous</button>
     <button mat-raised-button color="primary" (click)="onClickRegister()"
-            cdkFocusInitial>{{ !isEdit ?  'Add' : 'Edit'}}</button>
+            cdkFocusInitial>{{ !isEdit ?  'Add' : 'Update'}}</button>
     <!-- mat-dialog-close="{{supplier}}" -->
 </mat-dialog-actions>

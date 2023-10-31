@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { Plants } from '@core/models/plants';
 import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
-import { PlantService } from '@core/services/plant.service';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
@@ -35,10 +34,14 @@ export class PurchaseRequisitionListComponent implements OnInit {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
+  isSAPEnabled!: string;
 
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService) {}
+  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService,private authService:AuthService) {}
 
   ngOnInit() {
+    this.isSAPEnabled = this.authService.isSAPEnable();
+    if (this.isSAPEnabled == 'false')
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPPRNumber');
     this.purchaseRequistionService
       .getAllPRHeaderList()
       .pipe(

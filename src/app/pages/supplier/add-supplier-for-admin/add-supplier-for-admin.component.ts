@@ -250,8 +250,8 @@ export class AddSupplierForAdminComponent implements OnInit {
   countryDisplayFn(country: Country) {
     return country ? country.CountryWithCode! : '';
   }
-  stateDisplayFn(state: States) {
-    return state ? state.Name! : '';
+  stateDisplayFn(state: any) {
+    return state ? state?.Name! : '';
   }
 
   filterStates(name: any) {
@@ -445,8 +445,8 @@ export class AddSupplierForAdminComponent implements OnInit {
 
   onClickRegister() {
     const basicInfoForm = this.basicInfoFrom.value as any;
-    const addressForm = this.addressForm.value;
-    const stateId = this.stateList.find(x => x.ERPStateCode === addressForm.state);
+    const addressForm = this.addressForm.value as any;
+    const stateId = this.stateList.find(x => x.Id === addressForm.state?.Id);
     const bankDetailForm = this.bankDetailsFrom.value;
     const supplier = {
       Id: this.selectedSupplierId ? this.selectedSupplierId : 0,
@@ -471,7 +471,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       AccountNumber: bankDetailForm.accountNumber,
       AccountHolderName: bankDetailForm.accountHolderName,
       Remarks: bankDetailForm.remarks,
-      ERPStatus: this.supplierDetails.ERPStatus,
+      ERPStatus: this.supplierDetails?.ERPStatus ? this.supplierDetails?.ERPStatus : false,
       IsActive: this.isEdit ? bankDetailForm.IsActive : true,
     } as Suppliers;
     if (!this.isEdit) {

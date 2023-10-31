@@ -29,10 +29,14 @@
         <th mat-header-cell *matHeaderCellDef> Phone </th>
         <td mat-cell *matCellDef="let element"> {{element?.Phone}} </td>
     </ng-container>
+    <ng-container matColumnDef="PendingFrom">
+        <th mat-header-cell *matHeaderCellDef> Approval Pending By </th>
+        <td mat-cell *matCellDef="let element"> {{element?.ApprovalPendingFrom}} </td>
+    </ng-container>
     <ng-container matColumnDef="Edit">
         <th mat-header-cell *matHeaderCellDef> Approve </th>
         <td mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="openDialog(element)">
+            <button mat-icon-button (click)="openDialog(element)" [disabled]="element?.ApproverId != currentUserId && Role.Admin != userRole" >
                 <mat-icon>edit</mat-icon>
             </button>
         </td>
@@ -40,7 +44,7 @@
     <ng-container matColumnDef="Reject">
         <th mat-header-cell *matHeaderCellDef> Reject </th>
         <td mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="openDialogReject(rejectAlert,element)">
+            <button mat-icon-button color="warn" (click)="openDialogReject(rejectAlert,element)" [disabled]="element?.ApproverId != currentUserId && Role.Admin != userRole" >
                 <mat-icon>clear</mat-icon>
             </button>
         </td>

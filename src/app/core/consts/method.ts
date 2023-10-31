@@ -43,4 +43,5 @@ export class Method {
   static GetUserListByRole = `/GetUserListByRole`;
   static AddStrategy = `/AddStrategy`;
   static GetApprovalStrategyDeailsByApprovalId = `/GetApprovalStrategyDeailsByApprovalId`;
+  static GetApprovalStrategyByApprovalType = `/GetApprovalStrategyByApprovalType`;
 }

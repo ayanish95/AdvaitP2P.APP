@@ -119,6 +119,15 @@ export class AuthService {
     let value = this.jwtHelper.decodeToken(token?.access_token);
     return value?.IsSAPEnabled;
   }
+    /**
+     * get user id from token
+     * 
+     */
+    public userId(): number {
+      let token = JSON.parse(AuthService.getToken()) as any;
+      let value = this.jwtHelper.decodeToken(token?.access_token)
+      return value.UId;
+    }
 
 
   //   static setToken(token: string): void {
@@ -134,14 +143,7 @@ export class AuthService {
   //     let value = this.jwtHelper.decodeToken(AuthService.getToken())
   //     return Role[value.Role];
   //   }
-  //   /**
-  //    * get user id from token
-  //    * 
-  //    */
-  //   public userId(): number {
-  //     let value = this.jwtHelper.decodeToken(AuthService.getToken())
-  //     return value.UId;
-  //   }
+
   //   /**
   //      * get User Name from token
   //      * 

@@ -3,6 +3,7 @@ import { HttpClientService } from './http-client.service';
 import { Observable } from 'rxjs';
 import { Api } from '@core/consts/api';
 import { Method } from '@core/consts/method';
+import { Role } from '@core/enums/role';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +23,8 @@ export class SupplierService {
   supplierRegister(supplier: any) {
     return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`, supplier);
   }
-  approveSupplier(supplierId: any) {
-    return this.httpclient.authPost(`${Api.Supplier + Method.ApproveSupplier}`,supplierId);
+  approveSupplier(supplierId: any,currentRole:any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.ApproveSupplier}/${currentRole}`,supplierId);
   }
   
   getSupplierByGSTNumber(gstNumber: string): Observable<any> {

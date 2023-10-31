@@ -100,6 +100,7 @@ export class ApproveSupplierComponent implements OnInit {
     // closing itself and sending data to parent component
     const basicInfoForm=this.supplierForm.value;
     const bankDetails=this.bankDetailsFrom.value;
+    this.supplier.ApproverId = this.supplier.ApproverId;
     this.supplier.Phone= basicInfoForm.phone ? basicInfoForm.phone : '';
     this.supplier.Email= basicInfoForm.emailId ? basicInfoForm.emailId : '';
     this.supplier.BankCountry= bankDetails.bankCountry ? bankDetails.bankCountry : '';

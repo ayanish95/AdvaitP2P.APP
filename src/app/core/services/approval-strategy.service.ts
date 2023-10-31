@@ -17,6 +17,9 @@ export class ApprovalStrategyService {
   
   getStrategyDetailsByApprovalTypeId(approvalId:number): Observable<any> {
     return this.httpclient.authGet(`${Api.ApprovalStrategy + Method.GetApprovalStrategyDeailsByApprovalId}/${approvalId}`);
+  } 
+  getApprovalStrategyByApprovalType(approvalType:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.ApprovalStrategy + Method.GetApprovalStrategyByApprovalType}/${approvalType}`);
   }
   addApprovalStrategy(approval:ApprovalStrategy[]): Observable<any> {
     return this.httpclient.authPost(`${Api.ApprovalStrategy + Method.AddStrategy}`,approval);
