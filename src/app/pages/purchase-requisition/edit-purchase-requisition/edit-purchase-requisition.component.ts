@@ -83,7 +83,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
     private router: Router, private route: ActivatedRoute,private authService:AuthService) {
     this.route.queryParams.subscribe((params: any) => {
-      this.PRId = params['id'];
+      this.PRId = params.id;
       if (!this.PRId || this.PRId <= 0)
         this.router.navigateByUrl('/pages/purchase-requisition');
     });
@@ -117,7 +117,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
               this.PRHeaderForm.patchValue({
                 DocType: this.PRDetails.PRDocType as any,
                 PRDate: this.formatDate(this.PRDetails.PRDate) as any
-              })
+              });
             }
             this.PRDetails.PRLineItems?.forEach((item, index) => {
               this.PRLineItem.push({
@@ -345,7 +345,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   }
 
 
-  onChangePlant(event: any, IsEdit: boolean = false, locationId?: number) {
+  onChangePlant(event: any, IsEdit = false, locationId?: number) {
     this.locationList = [];
     this.PRLineForm.get('StorageLocation')?.setValue(null);
     if (event) {
@@ -413,9 +413,9 @@ export class EditPurchaseRequisitionComponent implements OnInit {
             item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
             item.LineId = item.LineId,
-            item.Id = item.Id
+            item.Id = item.Id;
         }
-      })
+      });
     }
     else {
       this.PRLineItem.push({
@@ -442,10 +442,10 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       throw this.toast.error('PR must have one line item, you can not delete....');
     if (data?.LineId > 0) {
       this.dialog.open(templateRef);
-      this.selectedLineId = data?.Id
+      this.selectedLineId = data?.Id;
     }
     else{
-      let id = data?.Id;
+      const id = data?.Id;
       this.PRLineItem.forEach((element, index) => {
         element.Id = index + 1;
         if (element.Id == id) {
@@ -460,7 +460,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   }
 
   onClickDeleteItem() {
-    let id = this.selectedLineId;
+    const id = this.selectedLineId;
     this.PRLineItem.forEach((element, index) => {
       element.Id = index + 1;
       if (element.Id == id) {

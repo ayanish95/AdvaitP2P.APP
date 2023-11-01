@@ -88,7 +88,7 @@ export class AddSupplierForAdminComponent implements OnInit {
   selectedBankCountry!: string;
   selectedIndex = 0;
   selectedSupplierId!: number;
-  isEdit: boolean = false;
+  isEdit = false;
   supplierDetails!: Suppliers;
   constructor(private fb: FormBuilder, private router: Router, @Inject(MAT_DIALOG_DATA) public data: any, private stateService: StateService, private productGroupService: ProductGroupService, private supplierService: SupplierService,
     private toast: ToastrService, private countryService: CountryService, private dialogRef: MatDialogRef<AddSupplierForAdminComponent>) { }
@@ -185,9 +185,9 @@ export class AddSupplierForAdminComponent implements OnInit {
             this.addressForm.get('country')?.setValue(data[0].CountryWithCode);
             this.addressForm.get('country')?.disable();
 
-            let productGroupId: number[] = []
+            const productGroupId: number[] = [];
             this.supplierDetails?.ProductGroupId?.forEach(element => {
-              let id = this.productGroupList?.find(x => x.Id == element)?.Id;
+              const id = this.productGroupList?.find(x => x.Id == element)?.Id;
               if (id)
                 productGroupId.push(id);
               return productGroupId;
@@ -211,7 +211,7 @@ export class AddSupplierForAdminComponent implements OnInit {
               postalcode: this.trimFormValue(this.supplierDetails.PostalCode),
               state: this.stateList?.find(x => x.GSTStateCode == this.trimFormValue(this.supplierDetails.State)) as any,
               country: this.trimFormValue(this.supplierDetails.Country),
-            })
+            });
             this.bankDetailsFrom.patchValue({
               bankCountry: this.trimFormValue(this.supplierDetails.BankCountry),
               ifscCode: this.trimFormValue(this.supplierDetails.IFSCCode),

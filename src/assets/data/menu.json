@@ -27,7 +27,7 @@
           "Supplier",
           "Admin",
           "ProcurementTeam"
-          
+
         ]
       }
     },
@@ -67,7 +67,7 @@
           "UserTeam",
           "Admin",
           "ProcurementTeam"
-          
+
         ]
       }
     },
@@ -82,11 +82,11 @@
           "name": "approval",
           "type": "link"
         }
-        
+
       ],
       "permissions": {
         "only": [
-          "Admin"          
+          "Admin"
         ]
       }
 
@@ -141,6 +141,7 @@
       ],
       "permissions": {
         "only": [
+          "Admin1",
           "Admin1",
           "MANAGER"
         ]

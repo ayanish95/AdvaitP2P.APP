@@ -64,7 +64,7 @@ export class AddApprovalStrategyComponent implements OnInit {
   userListForItem!: Users[];
   filteredUserForItem!: Observable<Users[]>;
   selectedIdATId!: number;
-  IsSAPEnable: boolean = false;
+  IsSAPEnable = false;
   approvalItems: ApprovalStrategy[] = [];
   selectedRole: any;
   selectedApprover: any;
@@ -86,12 +86,12 @@ export class AddApprovalStrategyComponent implements OnInit {
     private toaster: ToastrService, private approvalTypeService: ApprovalTypeService, private approvalStrategyService: ApprovalStrategyService, private route: ActivatedRoute, private userService: UserService, private dialog: MatDialog,) {
 
     this.route.queryParams.subscribe((params: any) => {
-      this.selectedIdATId = params['atid'];
+      this.selectedIdATId = params.atid;
     });
   }
 
   ngOnInit() {
-    this.IsSAPEnable = this.authService.isSAPEnable() == "true" ? true : false;
+    this.IsSAPEnable = this.authService.isSAPEnable() == 'true' ? true : false;
     this.roleList = [];
     this.apiRoleList();
     // this.apiUsersList();
@@ -186,7 +186,7 @@ export class AddApprovalStrategyComponent implements OnInit {
       });
   }
 
-  apiUsersList(roleId: number, IsForItem: boolean = false) {
+  apiUsersList(roleId: number, IsForItem = false) {
     this.userList = [];
     this.userService.getUserListByRole(roleId)
       .subscribe(res => {
@@ -345,12 +345,12 @@ export class AddApprovalStrategyComponent implements OnInit {
 
   onChangeRole(event: any) {
     this.configForm.get('User')?.setValue(null);
-    let roleId = event?.option.value?.Id;
+    const roleId = event?.option.value?.Id;
     this.apiUsersList(roleId);
   }
   onChangeItemRole(event: any) {
     this.configEditForm.get('User')?.setValue(null);
-    let roleId = event?.option.value?.Id;
+    const roleId = event?.option.value?.Id;
     this.apiUsersList(roleId, true);
   }
 
@@ -376,9 +376,9 @@ export class AddApprovalStrategyComponent implements OnInit {
     const lineItem = this.configForm.value;
 
     if (this.approvalItems.filter(x => x.Role?.Id == lineItem.Role?.Id && x.User?.Id == lineItem.User?.Id)?.length > 0)
-      throw this.toaster.error('Role and approver already exist for other sequence.')
+      throw this.toaster.error('Role and approver already exist for other sequence.');
 
-    let sequence = lineItem?.Sequence;
+    const sequence = lineItem?.Sequence;
     if (this.approvalItems?.filter(x => x.Sequence == sequence)?.length > 0)
       throw this.toaster.error('Strategy already exist for sequence ' + lineItem?.Sequence);
     this.approvalItems.push({
@@ -398,16 +398,16 @@ export class AddApprovalStrategyComponent implements OnInit {
   }
 
   onClickUpdateItem() {
-    let updatedData = this.configEditForm.value;
+    const updatedData = this.configEditForm.value;
     this.approvalItems.filter(x => x.Sequence == updatedData.Sequence).map(x => {
       x.Role = updatedData.Role as any,
-        x.User = updatedData.User as any
-    })
+        x.User = updatedData.User as any;
+    });
     this.dataSource.data = this.approvalItems;
   }
 
   onClickDeleteItem(sequence: number) {
-    let data = this.approvalItems.find(x => x.Sequence == sequence);
+    const data = this.approvalItems.find(x => x.Sequence == sequence);
     this.approvalItems = this.approvalItems.filter(x=>x.Sequence!=sequence);
     this.approvalItems.forEach((element,index) => {
         return element.Sequence = index+1;
@@ -416,7 +416,7 @@ export class AddApprovalStrategyComponent implements OnInit {
   }
 
   editApprovalItem(templateRef: TemplateRef<any>, sequence: any) {
-    let data = this.approvalItems.find(x => x.Sequence == sequence);
+    const data = this.approvalItems.find(x => x.Sequence == sequence);
     this.configEditForm.patchValue({
       Sequence: sequence,
       Role: data?.Role,
@@ -428,9 +428,9 @@ export class AddApprovalStrategyComponent implements OnInit {
 
   onClickAddAprovalConfig() {
     if (this.approvalItems.length <= 0)
-      throw this.toaster.error('Please add atleast one strategy...')
+      throw this.toaster.error('Please add atleast one strategy...');
 
-    let strategyList: ApprovalStrategy[] = [];
+    const strategyList: ApprovalStrategy[] = [];
 
     this.approvalItems.forEach(approval => {
       strategyList.push({
@@ -442,7 +442,7 @@ export class AddApprovalStrategyComponent implements OnInit {
         RoleId: approval.Role?.Id,
         User: approval.User,
         UserId: approval.User?.Id
-      })
+      });
     });
     if (!this.selectedIdATId) {
       this.approvalStrategyService.addApprovalStrategy(strategyList).subscribe({

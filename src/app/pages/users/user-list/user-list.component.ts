@@ -196,7 +196,6 @@ export class UserListComponent {
 
   onClickAddUser() {
     const userFormValue = this.userForm.value as any;
-    debugger;
     const user = {
       Id: 0,
       FirstName: userFormValue.FirstName,

@@ -184,12 +184,12 @@ prDetailsData: PurchaseRequisitionDetailsLine[] = [];
   filterPrno(name: any) {
     if (name?.PRNumber) {
       return this.prlist.filter(pr =>
-        pr?.PRNumber?.toLowerCase().includes(name.PRNumber.toLowerCase()));
+        pr?.ERPPRNumber?.toLowerCase().includes(name.PRNumber.toLowerCase()));
 
     }
     else {
       return this.prlist.filter(pr =>
-        pr?.PRNumber?.toLowerCase().includes(name.toLowerCase()));
+        pr?.ERPPRNumber?.toLowerCase().includes(name.toLowerCase()));
     }
   }
   filterSupplier(name: any) {
@@ -231,10 +231,10 @@ prDetailsData: PurchaseRequisitionDetailsLine[] = [];
 
 
   suppliercodee(supplierCode: Suppliers) {
-    return supplierCode ? supplierCode.SupplierCode! : '';
+    return supplierCode ? supplierCode.SupplierCode! : '';``
   }
   prnumbr(prno: PurchaseRequisitionHeader) {
-    return prno ? prno.PRNumber! : '';
+    return prno ? prno.ERPPRNumber! : '';
   }
   docTypeDisplayFn(docType: DocTypes) {
     return docType ? docType.Type! : '';

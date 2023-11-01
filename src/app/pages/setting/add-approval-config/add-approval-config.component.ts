@@ -53,7 +53,7 @@ export class AddApprovalConfigComponent implements OnInit {
     private toaster: ToastrService, private docTypeService: DocTypeService, private approvalTypeService: ApprovalTypeService, private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
-      this.selectedId = params['id'];
+      this.selectedId = params.id;
     });
   }
 
@@ -84,7 +84,7 @@ export class AddApprovalConfigComponent implements OnInit {
               ApprovalText: this.approvalTypDetail.DisplayText,
               DocType: this.docTypeList.find(x => x.Type == this.approvalTypDetail?.DocType) as any,
               Amount: this.approvalTypDetail?.Amount as any
-            })
+            });
           }
           else
             this.toaster.error('Data Not Found');
@@ -150,8 +150,8 @@ export class AddApprovalConfigComponent implements OnInit {
     if (this.configForm.invalid)
       return;
 
-    let configData = this.configForm.value as any;
-    let config = {
+    const configData = this.configForm.value as any;
+    const config = {
       Id: this.selectedId ? this.selectedId : 0,
       Type: configData.ApprovalType?.id as any,
       DisplayText: configData.ApprovalText,

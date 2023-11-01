@@ -8,9 +8,9 @@ import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
-import { AddSupplierForAdminComponent } from '../add-supplier-for-admin/add-supplier-for-admin.component';
 import { Role } from '@core/enums/role';
 import { AuthService } from '@core/authentication/auth.service';
+import { AddSupplierForAdminComponent } from '../add-supplier-for-admin/add-supplier-for-admin.component';
 
 @Component({
   selector: 'app-all-suplier-list',

@@ -20,7 +20,7 @@ export class TokenInterceptor implements HttpInterceptor {
     private tokenService: TokenService,
     private router: Router,
     @Optional() @Inject(BASE_URL) private baseUrl?: string
-  ) {}
+  ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const handler = () => {
@@ -33,12 +33,32 @@ export class TokenInterceptor implements HttpInterceptor {
       }
     };
 
-    if (this.tokenService.valid() && this.shouldAppendToken(request.url)) {
+    //Old Condition
+    // if (this.tokenService.valid() && this.shouldAppendToken(request.url)) {
+    //   return next
+    //     .handle(
+    //       request.clone({
+    //         headers: request.headers.append('Authorization', this.tokenService.getBearerToken()),
+    //         withCredentials: true,
+    //       })
+    //     )
+    //     .pipe(
+    //       catchError((error: HttpErrorResponse) => {
+    //         if (error.status === 401) {
+    //           this.tokenService.clear();
+    //         }
+    //         return throwError(() => error);
+    //       }),
+    //       tap(() => handler())
+    //     );
+    // }
+
+    // New Code -- 01-11-23
+    if (this.tokenService.valid() ) {
       return next
         .handle(
           request.clone({
-            headers: request.headers.append('Authorization', this.tokenService.getBearerToken()),
-            withCredentials: true,
+            headers: request.headers.append('Authorization', this.tokenService.getBearerToken())
           })
         )
         .pipe(
@@ -51,6 +71,7 @@ export class TokenInterceptor implements HttpInterceptor {
           tap(() => handler())
         );
     }
+
 
     return next.handle(request).pipe(tap(() => handler()));
   }
