@@ -42,10 +42,10 @@ export class AuthService {
   }
 
   login(username: string, password: string, rememberMe = false) {
-    let user = {
+    const user = {
       UserName:username,
       Password:password
-    }
+    };
   return  this.userService.login(user).pipe(
       tap(token =>{this.tokenService.set(token.Model);
         }),

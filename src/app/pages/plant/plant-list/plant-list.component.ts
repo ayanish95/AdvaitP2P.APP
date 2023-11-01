@@ -45,7 +45,7 @@ export class PlantListComponent implements OnInit {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
-  isEdit: boolean = false;
+  isEdit = false;
   countryList!: Country[];
   filteredCountry!: Observable<Country[]>;
   stateList!: States[];
@@ -199,9 +199,9 @@ export class PlantListComponent implements OnInit {
   onChangeCountry(event: any) {
     // this.plantForm.get('City')?.setValue(null);
     this.plantForm.get('State')?.setValue(null);
-    let countryCode = event.source?.value?.CountryCode;
+    const countryCode = event.source?.value?.CountryCode;
     this.selectedCountryCode = countryCode;
-    this.apiStateListByCountryCode(countryCode)
+    this.apiStateListByCountryCode(countryCode);
     if (countryCode == 'IN') {
       this.plantForm.controls.GSTNumber.setValidators([Validators.required]);
       this.plantForm.controls.TaxNumber.setValidators(null);
@@ -259,7 +259,7 @@ export class PlantListComponent implements OnInit {
             });
           }
           else {
-            this.toaster.error("User not found");
+            this.toaster.error('User not found');
           }
         }
         else {
@@ -278,8 +278,8 @@ export class PlantListComponent implements OnInit {
   }
 
   onClickAddPlant() {
-    let plantdata = this.plantForm.value as any;
-    let plant = {
+    const plantdata = this.plantForm.value as any;
+    const plant = {
       Id: this.isEdit ? this.selectedPlantId : 0,
       PlantCode: '',
       PlantName: plantdata.PlantName,

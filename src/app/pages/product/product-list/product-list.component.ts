@@ -60,10 +60,10 @@ export class ProductListComponent {
   priceIndicator = [
     { Id: 'S', Name: 'Standard Price' },
     { Id: 'V', Name: 'Moving Avg. Price' }
-  ]
+  ];
   productDetails!: Products;
   filteredPriceIndicator!: Observable<any[]>;
-  isEdit: boolean = false;
+  isEdit = false;
   productForm = this.fb.group({
     ProductGroup: ['', [Validators.required]],
     ProductDescription: ['', [Validators.required]],
@@ -319,7 +319,7 @@ export class ProductListComponent {
             });
           }
           else {
-            this.toaster.error("User not found");
+            this.toaster.error('User not found');
           }
         }
         else {
@@ -352,8 +352,8 @@ export class ProductListComponent {
   }
 
   onClickAddUser() {
-    let productData = this.productForm.value as any;
-    let product = {
+    const productData = this.productForm.value as any;
+    const product = {
       Id: this.isEdit ? this.selectedProductId : 0,
       ProductCode: '',
       Description: productData.ProductDescription,

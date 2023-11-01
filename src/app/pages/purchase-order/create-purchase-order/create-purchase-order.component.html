@@ -1,0 +1,361 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+  <mat-card-header>
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <h2>Create Purchase order</h2>
+      </div>
+    </div>
+
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="PRLineForm" class="form-field-full">
+      <div class="row mt-5">
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Doc Type</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="docAutocomplete"
+                   formControlName="DocType"
+                   placeholder="Doc Type">
+            <mat-autocomplete #docAutocomplete="matAutocomplete" >
+              <mat-option *ngFor="let product of filteredDocType | async"
+                          [value]="product?.Type">
+                <span>{{ product?.Type }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select doc type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Company Code</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="docAutocomplete"
+                    formControlName="CompanyCode"
+                   placeholder="Company Code">
+            <mat-autocomplete #docAutocomplete="matAutocomplete" >
+              <mat-option *ngFor="let docType of filteredDocType | async"
+                          [value]="docType?.Type">
+                <span>{{ docType?.Type }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select Company Code...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> PR Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="PrnoAutocomplete"
+                   formControlName="PRno"
+                   placeholder="PR Number">
+            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
+            (optionSelected)='getprno($event.option.value)'>
+              <mat-option *ngFor="let prno of filteredprno | async"
+                          [value]="prno?.Id">
+                <span>{{ prno?.Id }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
+              Please select  PurchaseOrder Number...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Contract Number</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="ProductGroup" readonly
+            placeholder="Contract Number">
+
+          </mat-form-field>ssss
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>supplier Code<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="spcode"
+                   formControlName="supplier"
+                   placeholder="supplier Code">
+            <mat-autocomplete #spcode="matAutocomplete" [displayWith]="supplierDisplayFn"
+                              (optionSelected)='getPosts($event.option.value)'>
+              <mat-option *ngFor="let supplier of filtersupplierCode | async"
+                          [value]="supplier">
+                <span>{{ supplier.SupplierCode }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRLineForm.get('Product')?.hasError('required')">
+              Please select supplier code...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>supplier Description</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="Description"
+            placeholder="supplier Description" readonly>
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Rfq Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="docAutocomplete"
+                   formControlName="RfqNumber"
+                   placeholder="Rfq Number">
+            <mat-autocomplete #docAutocomplete="matAutocomplete" >
+              <mat-option *ngFor="let docType of filteredDocType | async"
+                          [value]="docType?.Type">
+                <span>{{ docType?.Type }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select Rfq Number...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> PO Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="paymentPicker"
+                   #paymentDateModel
+                   required
+                   (focus)="paymentPicker.open()"
+                   readonly
+                   formControlName="PRDate">
+            <mat-datepicker-toggle matSuffix
+                                   [for]="paymentPicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+            <!-- <mat-error *ngIf="paymentDateModel.hasError('required')">
+                          Please choose a date.
+                        </mat-error>
+                        <mat-error *ngIf="paymentDateModel.hasError('matDatepickerMin')">
+                          Please choose a later date.
+                        </mat-error> -->
+          </mat-form-field>
+        </div>
+
+
+      </div>
+      <div class="mt-20">
+        <h4>Purchaseorder List</h4>
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="srNo">
+            <th mat-header-cell *matHeaderCellDef># </th>
+            <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+          </ng-container>
+          <ng-container matColumnDef="ProductCode">
+            <th mat-header-cell *matHeaderCellDef> ProductCode </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
+          </ng-container>
+          <ng-container matColumnDef="Description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductDescription}} </td>
+          </ng-container>
+          <ng-container matColumnDef="ProductGroup">
+            <th mat-header-cell *matHeaderCellDef> ProductGroup </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductGroup}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Qty">
+            <th mat-header-cell *matHeaderCellDef> Qty </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Unit">
+            <th mat-header-cell *matHeaderCellDef> Unit </th>
+            <td mat-cell *matCellDef="let element"> {{element?.UnitName}} -
+              {{element?.Unit?.MeasurementUnitName}} </td>
+          </ng-container>
+          <ng-container matColumnDef="DeliveryDate">
+            <th mat-header-cell *matHeaderCellDef> DeliveryDate </th>
+            <td mat-cell *matCellDef="let element"> {{element?.DeliveryDate | date : 'dd-MM-yyyy'}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Plant">
+            <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
+            <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} -
+              {{element?.Plant?.PlantName}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Location">
+            <th mat-header-cell *matHeaderCellDef> Location </th>
+            <td mat-cell *matCellDef="let element"> {{element?.LocationCode}} -
+              {{element?.StorageLocation?.LocationName}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Edit">
+            <th mat-header-cell *matHeaderCellDef> Edit </th>
+            <td mat-cell *matCellDef="let element">
+                <button mat-icon-button
+                        >
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+          <ng-container matColumnDef="Delete">
+            <th mat-header-cell *matHeaderCellDef> Delete </th>
+            <td mat-cell *matCellDef="let element">
+             <button mat-icon-button>  <mat-icon >delete</mat-icon></button>
+             </td>
+        </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <!-- <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                             [columnCount]="displayedColumns.length"></app-no-record-found> -->
+      </div>
+       <div class="d-flex justify-content-end mt-20">
+        <button [disabled]="!dataSource?.data?.length || PRHeaderForm.invalid" mat-raised-button
+                color="primary" > Create PO</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+
+<!-- Modal popup -->
+<ng-template #addProduct style="width: 56vw;">
+  <h2 mat-dialog-title>Add Product Details</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="PRLineForm">
+      <div class="row mt-5">
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Product Group</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="ProductGroup" readonly
+            placeholder="Product Group">
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Qty<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="Qty" (keypress)="onKeyPress($event)"
+            placeholder="Qty"
+                   required>
+                   <mat-error *ngIf="PRLineForm.get('Qty')?.hasError('required')">
+                    Please enter Qty...
+                  </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Unit<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="unitAutocomplete"
+                   formControlName="Unit"
+                   placeholder="Unit">
+            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
+              <mat-option *ngFor="let unit of filteredUnits | async"
+                          [value]="unit">
+                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
+              Please select unit...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Delivery Date<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matDatepicker]="deliveryDate"
+                   #deliveryDateModel
+                   required
+                   (focus)="paymentPicker.open()"
+                   [min]="currentDate"
+                   readonly
+                   formControlName="DeliveryDate"
+                   placeholder="Delivery Date">
+            <mat-datepicker-toggle matSuffix
+                                   [for]="deliveryDate"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #deliveryDate></mat-datepicker>
+            <mat-error *ngIf="PRLineForm.get('DeliveryDate')?.hasError('required')">
+              Please select date...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Plant / Warehouse<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="plantAutocomplete"
+                   formControlName="Plant"
+                   placeholder="Plant / Warehouse">
+            <mat-autocomplete #plantAutocomplete="matAutocomplete"
+
+                              [displayWith]="plantDisplayFn">
+              <mat-option *ngFor="let plant of filteredPlants | async"
+                          [value]="plant">
+                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRLineForm.get('Plant')?.hasError('required')">
+              Please select plant / warehouse...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Storage Location<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="storageAutocomplete"
+                   formControlName="StorageLocation"
+                   placeholder="Storage Location">
+            <mat-autocomplete #storageAutocomplete="matAutocomplete"
+                              [displayWith]="storageLocationDisplayFn">
+              <mat-option *ngFor="let location of filteredlocation | async"
+                          [value]="location">
+                <span>{{ location.LocationCode }} - {{ location.LocationName }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRLineForm.get('StorageLocation')?.hasError('required')">
+              Please select storage location...
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+          [disabled]="PRLineForm.invalid">Add</button>
+  </mat-dialog-actions>
+
+</ng-template>
