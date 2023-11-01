@@ -49,7 +49,7 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
   filter: Filter = new Filter();
   index = 0;
   selectedSupplierId = 0;
-  userRole!: number;
+  currentUserRole!: number;
   Role = Role;
   isSAPEnabled!: string;
 
@@ -58,9 +58,9 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.userRole = this.authService.roles();
+    this.currentUserRole = this.authService.roles();
     this.isSAPEnabled = this.authService.isSAPEnable();
-    if (this.userRole !== Role.Admin) {
+    if (this.currentUserRole !== Role.Admin) {
       this.displayedColumns = this.displayedColumns.filter(x => x != 'Edit' && x != 'Delete');
     }
     if (this.isSAPEnabled == 'false')

@@ -109,7 +109,7 @@
       ],
       "permissions": {
         "only": [
-          "Admin",
+          "Admin1",
           "MANAGER"
         ]
       }

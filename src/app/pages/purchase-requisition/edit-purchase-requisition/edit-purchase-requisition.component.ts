@@ -4,13 +4,13 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
 import { DocTypes } from '@core/models/doc-type';
 import { Plants } from '@core/models/plants';
 import { Products } from '@core/models/products';
-import { PurchaseRequisitionDataVM, PurchaseRequisitionLine } from '@core/models/purchase-requistion';
+import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM, PurchaseRequisitionLine } from '@core/models/purchase-requistion';
 import { StorageLocations } from '@core/models/storage-location';
 import { Units } from '@core/models/units';
 import { DocTypeService } from '@core/services/doc-type.service';
@@ -23,18 +23,11 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 
 @Component({
-  selector: 'app-create-purchase-requisition',
-  templateUrl: './create-purchase-requisition.component.html',
-  styleUrls: ['./create-purchase-requisition.component.scss'],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
-    {
-      provide: MAT_SELECT_CONFIG,
-      useValue: { overlayPanelClass: 'customClass' }
-    }
-  ]
+  selector: 'app-edit-purchase-requisition',
+  templateUrl: './edit-purchase-requisition.component.html',
+  styleUrls: ['./edit-purchase-requisition.component.scss']
 })
-export class CreatePurchaseRequisitionComponent implements OnInit {
+export class EditPurchaseRequisitionComponent implements OnInit {
 
   PRHeaderForm = this.fb.group({
     DocType: [null, [Validators.required]],
@@ -68,6 +61,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   PRLineItem: PurchaseRequisitionLine[] = [];
   dataSource = new MatTableDataSource<any>();
   index = 0;
+  PRId!: number;
   displayedColumns: string[] = [
     'srNo',
     'ProductCode',
@@ -81,17 +75,87 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     'Edit',
     'Delete',
   ];
-  currentDate: Date = new Date();
+  minDate: Date = new Date();
+  PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
   currentUserId!:number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router,private authService:AuthService) {
+    private router: Router, private route: ActivatedRoute,private authService:AuthService) {
+    this.route.queryParams.subscribe((params: any) => {
+      this.PRId = params['id'];
+      if (!this.PRId || this.PRId <= 0)
+        this.router.navigateByUrl('/pages/purchase-requisition');
+    });
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.currentUserId = this.authService.userId();
+    this.apiDocType();
+    this.apiProductList();
+    this.apiPlantList();
+    this.apuUnitList();
+    this.apiStorageLocationList();
+
+  }
+
+  // all api initial
+  apiGetPRDetailsById(prId: number) {
+    this.prService
+      .getPRDetailsById(prId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          console.log(res[ResultEnum.Model]);
+          if (res[ResultEnum.Model]) {
+            this.PRDetails = res[ResultEnum.Model];
+            if (this.PRDetails) {
+              this.PRHeaderForm.patchValue({
+                DocType: this.PRDetails.PRDocType as any,
+                PRDate: this.formatDate(this.PRDetails.PRDate) as any
+              })
+            }
+            this.PRDetails.PRLineItems?.forEach((item, index) => {
+              this.PRLineItem.push({
+                Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
+                ProductGroup: item.ProductGroup,
+                Description: item.ProductDescription,
+                Qty: item?.Qty,
+                DeliveryDate: item?.DeliveryDate,
+                Unit: this.unitList?.find(x => x.Id == item.UnitId),
+                Plant: this.plantList?.find(x => x.Id == item.PlantId),
+                StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
+                LineId: item?.Id,
+                Id: index + 1
+              });
+            });
+
+            this.dataSource.data = this.PRLineItem;
+            // this.dataSource.data = this.PRDetails.PRLineItems;
+          }
+          else
+            this.toast.error(res[ResultEnum.Message]);
+        }
+        else
+          this.toast.error(res[ResultEnum.Message]);
+      });
+  }
+
+  private formatDate(date: any) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+  }
+
+  apiDocType() {
     this.docTypeSerivce
       .getAllDocType()
       .pipe(
@@ -107,8 +171,10 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
           );
         }
       });
+  }
 
-    this.productService
+  async apiProductList() {
+    await this.productService
       .getProductList()
       .pipe(
         finalize(() => {
@@ -118,13 +184,17 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.productList = res[ResultEnum.Model];
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
+          if (this.PRId)
+            this.apiGetPRDetailsById(this.PRId);
           this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterProducts(value || ''))
           );
         }
       });
+  }
 
+  apiPlantList() {
     this.plantService
       .getPlantList()
       .pipe(
@@ -140,7 +210,9 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
           );
         }
       });
+  }
 
+  apuUnitList() {
     this.unitService
       .getAllUnit()
       .pipe(
@@ -158,6 +230,27 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
       });
   }
 
+  apiStorageLocationList() {
+    this.storageLocationService.getAllLocationList().pipe(
+      finalize(() => {
+      })
+    )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.locationList = res[ResultEnum.Model];
+
+          this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterStorageLocation(value || ''))
+          );
+        }
+        else {
+          this.toast.error(res[ResultEnum.Message]);
+        }
+      });
+  }
+
+  // all dropdown search filters
   filterDocType(name: any) {
     if (name?.Type) {
       return this.docTypeList.filter(doctype =>
@@ -235,38 +328,6 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     return location ? location.LocationCode + ' - ' + location.LocationName! : '';
   }
 
-  openModelForAddItem(templateRef: TemplateRef<any>) {
-    this.PRLineForm.reset();
-    this.PRLineForm.updateValueAndValidity();
-    this.dialog.open(templateRef, {
-      width: '56vw',
-      panelClass: 'custom-modalbox'
-    });
-  }
-
-
-  async openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
-    this.PRLineForm.reset();
-    this.PRLineForm.updateValueAndValidity();
-    if (data) {
-      this.selectedLineId = data?.Id;
-      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
-      this.PRLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
-        Description: data?.Description,
-        ProductGroup: data?.ProductGroup,
-        Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
-        DeliveryDate: data.DeliveryDate,
-        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
-        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
-      });
-    }
-    this.dialog.open(templateRef, {
-      width: '56vw',
-      panelClass: 'custom-modalbox'
-    });
-  }
 
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -298,6 +359,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             if (IsEdit && this.locationList?.length > 0) {
               this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
             }
+
             this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterStorageLocation(value || ''))
@@ -311,6 +373,31 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     } else
       this.toast.error('Plant code not found');
   }
+
+  async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
+    this.PRLineForm.reset();
+    this.PRLineForm.updateValueAndValidity();
+    if (data) {
+      this.selectedLineId = data?.Id;
+      this.minDate = data.DeliveryDate;
+      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
+      this.PRLineForm.patchValue({
+        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
+        Description: data?.Description,
+        ProductGroup: data?.ProductGroup,
+        Qty: data.Qty,
+        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        DeliveryDate: data.DeliveryDate,
+        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
+        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
+      });
+    }
+    this.dialog.open(templateRef, {
+      width: '56vw',
+      panelClass: 'custom-modalbox'
+    });
+  }
+
 
   onClickAddProduct() {
     const PRline = this.PRLineForm.value;
@@ -340,23 +427,68 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         Unit: PRline.Unit as unknown as Units,
         Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
-        Id: this.PRLineItem.length + 1
+        Id: this.PRLineItem.length + 1,
+        LineId: 0
       });
     }
-    this.dataSource.data = this.PRLineItem;
     this.selectedLineId = 0;
+    this.dataSource.data = this.PRLineItem;
   }
 
-  onClickDeleteItem(id: any) {
+
+  openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
+    console.log('data', data);
+    if (this.PRLineItem?.length == 1)
+      throw this.toast.error('PR must have one line item, you can not delete....');
+    if (data?.LineId > 0) {
+      this.dialog.open(templateRef);
+      this.selectedLineId = data?.Id
+    }
+    else{
+      let id = data?.Id;
+      this.PRLineItem.forEach((element, index) => {
+        element.Id = index + 1;
+        if (element.Id == id) {
+          this.PRLineItem.splice(index, 1);
+        }
+      });
+      this.PRLineItem.forEach((element, index) => {
+        element.Id = index + 1;
+      });
+      this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
+    }
+  }
+
+  onClickDeleteItem() {
+    let id = this.selectedLineId;
     this.PRLineItem.forEach((element, index) => {
       element.Id = index + 1;
-      if (element.Id == id)
+      if (element.Id == id) {
+        if (element?.LineId) {
+          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0,this.currentUserId).subscribe({
+            next: (res: any) => {
+              if (res[ResultEnum.IsSuccess]) {
+                this.toast.success(res.Message);
+              }
+              else {
+                this.toast.error(res.Message);
+              }
+            },
+            error: (e) => { this.toast.error(e.Message); },
+            complete() {
+
+            },
+          });
+        }
+        this.dialog.closeAll();
         this.PRLineItem.splice(index, 1);
+      }
     });
     this.PRLineItem.forEach((element, index) => {
       element.Id = index + 1;
     });
     this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
+    this.selectedLineId = 0;
   }
 
   onClickCreatePR() {
@@ -364,13 +496,14 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     if (this.PRHeaderForm.valid) {
       const PRHeaderData = this.PRHeaderForm.value;
       const PRDetails: PurchaseRequisitionDataVM = {
-        Id: 0,
+        Id: this.PRId,
+        ERPPRNumber: this.PRDetails.ERPPRNumber,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         PRDate: PRHeaderData.PRDate ? PRHeaderData.PRDate : new Date(),
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.createPR(PRDetails,this.currentUserId).subscribe({
+      this.prService.updatePR(PRDetails,this.currentUserId).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);
@@ -390,3 +523,4 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     }
   }
 }
+

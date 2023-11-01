@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
+import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
@@ -23,6 +25,8 @@ export class PurchaseRequisitionListComponent implements OnInit {
     'PRDocType',
     'PRDate',
     'SAPStatus',
+    'Edit',
+    'Delete',
     'View',
   ];
   dataSource = new MatTableDataSource<any>();
@@ -35,13 +39,24 @@ export class PurchaseRequisitionListComponent implements OnInit {
   filter: Filter = new Filter();
   index = 0;
   isSAPEnabled!: string;
-
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService,private authService:AuthService) {}
+  selectedPRId!: number;
+  currentUserRole!: number;
+  Role = Role;
+  currentUserId!:number;
+  constructor(private purchaseRequistionService: PurchaseRequistionService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog,) { }
 
   ngOnInit() {
+    this.currentUserRole = this.authService.roles();
+    this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
+    if (this.currentUserRole !== Role.Admin)
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'Edit' && x != 'Delete');
     if (this.isSAPEnabled == 'false')
       this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPPRNumber');
+    this.apiPRList();
+  }
+
+  apiPRList() {
     this.purchaseRequistionService
       .getAllPRHeaderList()
       .pipe(
@@ -59,7 +74,7 @@ export class PurchaseRequisitionListComponent implements OnInit {
           this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
         }
         else
-        this.toaster.error(res[ResultEnum.Message]);
+          this.toaster.error(res[ResultEnum.Message]);
       });
   }
 
@@ -76,4 +91,30 @@ export class PurchaseRequisitionListComponent implements OnInit {
     this.filter.Page = page.pageIndex + 1;
   }
 
+  openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
+    this.selectedPRId = plantId;
+    this.dialog.open(templateRef);
+  }
+
+  onClickDeletePR() {
+    if (this.selectedPRId == 0 || this.selectedPRId == undefined)
+      throw this.toaster.error('Something went wrong');
+    this.purchaseRequistionService
+      .deletePR(this.selectedPRId,this.currentUserId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res[ResultEnum.Message]);
+          this.apiPRList();
+          this.selectedPRId = 0;
+        }
+        else
+          this.toaster.error(res[ResultEnum.Message]);
+
+        this.dialog.closeAll();
+      });
+  }
 }

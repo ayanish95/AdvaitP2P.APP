@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Create Purchase Requistion</h2>
+        <h2>Edit Purchase Requistion</h2>
       </div>
     </div>
 
@@ -37,15 +37,11 @@
           </label>
           <mat-form-field>
             <input matInput
-                   [matDatepicker]="paymentPicker"
-                   #paymentDateModel
-                   required
-                   (focus)="paymentPicker.open()"
                    readonly
                    formControlName="PRDate">
-            <mat-datepicker-toggle matSuffix
+            <!-- <mat-datepicker-toggle readonly matSuffix
                                    [for]="paymentPicker"></mat-datepicker-toggle>
-            <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+            <mat-datepicker readonly  format="dd-MM-yyyy" #paymentPicker></mat-datepicker> -->
             <!-- <mat-error *ngIf="paymentDateModel.hasError('required')">
                           Please choose a date.
                         </mat-error>
@@ -56,7 +52,7 @@
         </div>
         <div class="col-sm-12 d-flex align-items-center mt-15">
           <button mat-button mat-raised-button color="primary"
-                  (click)="openModelForAddItem(addProduct)">
+                  (click)="openModelForAddItem(editProduct)">
             <mat-icon>add</mat-icon>
             Add Item
           </button>
@@ -110,7 +106,7 @@
           <ng-container matColumnDef="Edit">
             <th mat-header-cell *matHeaderCellDef> Edit </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button (click)="openModelForEditItem(addProduct,element)">
+                <button mat-icon-button (click)="openModelForAddItem(editProduct,element)">
                     <mat-icon>edit</mat-icon>
                 </button>
             </td>
@@ -118,7 +114,7 @@
           <ng-container matColumnDef="Delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
             <td mat-cell *matCellDef="let element"> 
-             <button mat-icon-button (click)="onClickDeleteItem(element.Id)">  <mat-icon >delete</mat-icon></button>
+             <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">  <mat-icon >delete</mat-icon></button>
              </td>
         </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -129,7 +125,7 @@
       </div>
       <div class="d-flex justify-content-end mt-20">
         <button [disabled]="!dataSource.data.length || PRHeaderForm.invalid" mat-raised-button
-                color="primary" (click)="onClickCreatePR()" > Create PR</button>
+                color="primary" (click)="onClickCreatePR()" > Update PR</button>
       </div>
     </form>
   </mat-card-content>
@@ -137,8 +133,8 @@
 
 
 <!-- Modal popup -->
-<ng-template #addProduct style="width: 56vw;">
-  <h2 mat-dialog-title>Add Product Details</h2>
+<ng-template #editProduct style="width: 56vw;">
+  <h2 mat-dialog-title>{{ selectedLineId ? 'Update' : 'Add'}} Product Details</h2>
 
   <mat-dialog-content>
     <form [formGroup]="PRLineForm">
@@ -226,8 +222,8 @@
                    [matDatepicker]="deliveryDate"
                    #deliveryDateModel
                    required
-                   (focus)="paymentPicker.open()"
-                   [min]="currentDate"
+                   (focus)="deliveryDate.open()"
+                   [min]="minDate"
                    readonly
                    formControlName="DeliveryDate"
                    placeholder="Delivery Date">
@@ -290,7 +286,16 @@
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
     <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">Add</button>
+            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ? 'Update' : 'Add'}}</button>
   </mat-dialog-actions>
 
+</ng-template>
+
+<ng-template #deleteAlert>
+  <h2 mat-dialog-title class="text-center">Delete Purchase Requisition Line Item</h2>
+  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to delete this item?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
+  </div>
 </ng-template>

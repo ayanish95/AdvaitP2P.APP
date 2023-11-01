@@ -13,9 +13,13 @@ export class Method {
   static GetCountryList = `/GetCountryList`;
   static Login = `/login`;
   static GetStorageLocationByPlantCode = `/GetLocationListByPlantCode`;
+  static GetAllLocationList = `/GetAllLocationList`;
   static GetAllUnitList = `/GetAllUnitList`;
   static GetDocTypeList = `/GetDocTypeList`;
   static CreatePurchaseRequisition = `/CreatePurchaseRequisition`;
+  static UpdatePurchaseRequisition = `/UpdatePurchaseRequisition`;
+  static DeletePurchaseRequisitionById = `/DeletePurchaseRequisitionById`;
+  static DeletePRLineItemByLineId = `/DeletePRLineItemByLineId`;
   static GetAllPRHeaderList = `/GetAllPRHeaderList`;
   static GetPRDetailsById = `/GetPRDetailsById`;
   static GetAllRolesList = `/GetAllRolesList`;

@@ -19,7 +19,17 @@ export class PurchaseRequistionService {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetPRDetailsById}/${Id}`);
   }
 
-  createPR(PRVM: any) {
-    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.CreatePurchaseRequisition}`, PRVM);
+  createPR(PRVM: any,currentUserId:number) {
+    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.CreatePurchaseRequisition}/${currentUserId}`, PRVM);
+  } 
+  updatePR(PRVM: any,currentUserId:number) {
+    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.UpdatePurchaseRequisition}/${currentUserId}`, PRVM);
+  }
+
+  deletePR(Id:number,currentUserId:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.DeletePurchaseRequisitionById}/${Id}/${currentUserId}`);
+  }
+  deletePRLineByLineId(lineId:number,currentUserId:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.DeletePRLineItemByLineId}/${lineId}/${currentUserId}`);
   }
 }
