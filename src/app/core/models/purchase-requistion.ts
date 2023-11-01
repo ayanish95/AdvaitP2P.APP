@@ -5,7 +5,7 @@ import { Units } from './units';
 
 export interface PurchaseRequisitionHeader{
     Id: number;
-    PRNumber?:string;
+    ERPPRNumber?:string;
     PRDocType?:string;
     PRDate?:Date;
     PRToRFQ?: boolean;
@@ -24,7 +24,7 @@ export interface PurchaseRequisitionHeader{
 
 export interface PurchaseRequisitionDataVM{
     Id?:number;
-    PRNumber?:string;
+    ERPPRNumber?:string;
     PRDocType:string;
     PRToRFQ?:boolean;
     PRDate?:Date;
@@ -33,6 +33,7 @@ export interface PurchaseRequisitionDataVM{
 
 export interface PurchaseRequisitionLine{
     Id:number;
+    LineId?:number;
     Product?:Products;
     Description?:string;
     ProductGroup?:string;
@@ -45,7 +46,7 @@ export interface PurchaseRequisitionLine{
 
 export interface PurchaseRequisitionDetailsVM{
     Id?:number;
-    PRNumber?:string;
+    ERPPRNumber?:string;
     PRDocType:string;
     PRToRFQ?:boolean;
     PRDate?:Date;

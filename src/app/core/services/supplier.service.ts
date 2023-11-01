@@ -3,6 +3,7 @@ import { HttpClientService } from './http-client.service';
 import { Observable } from 'rxjs';
 import { Api } from '@core/consts/api';
 import { Method } from '@core/consts/method';
+import { Role } from '@core/enums/role';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +23,8 @@ export class SupplierService {
   supplierRegister(supplier: any) {
     return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`, supplier);
   }
-  approveSupplier(supplierId: any) {
-    return this.httpclient.authPost(`${Api.Supplier + Method.ApproveSupplier}`,supplierId);
+  approveSupplier(supplierId: any,currentRole:any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.ApproveSupplier}/${currentRole}`,supplierId);
   }
   
   getSupplierByGSTNumber(gstNumber: string): Observable<any> {
@@ -31,5 +32,17 @@ export class SupplierService {
   }
   getSupplierDetailById(supplierId: number): Observable<any> {
     return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierDetailsById}/${supplierId}`);
+  }
+  supplierRegisterFromAdmin(supplier: any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.AddSupplierFromAdminSide}`, supplier);
+  }
+  updateSupplier(supplier: any) {
+    return this.httpclient.authPost(`${Api.Supplier + Method.UpdateSupplier}`, supplier);
+  }
+  deleteSupplier(supplierId: any) {
+    return this.httpclient.authGet(`${Api.Supplier + Method.DeleteSupplier}/${supplierId}`);
+  } 
+  rejectSupplier(supplierId: any) {
+    return this.httpclient.authGet(`${Api.Supplier + Method.RejectSupplier}/${supplierId}`);
   }
 }

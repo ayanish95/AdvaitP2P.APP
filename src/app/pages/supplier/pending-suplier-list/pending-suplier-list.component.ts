@@ -50,7 +50,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   selectedSupplierId!: number;
   approvalStrategyList!: ApprovalStrategy[];
   currentUserId!: number;
-  rightsForApproval = false;
+  rightsForApproval: boolean = false;
   userRole!: number;
   Role = Role;
   @Output() APICallPendingSupplierList: EventEmitter<string> = new EventEmitter<string>();
@@ -90,7 +90,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
       this.filter.OrderByColumn = 'id';
       this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
-    this.allSuppliierList;
+    this.allSuppliierList
   }
 
   // api for get all list who have rights for approve supplier and based on that show approve and reject button

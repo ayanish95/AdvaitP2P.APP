@@ -34,4 +34,7 @@ export class UserService {
   getUserDetailById(userId:number) {
     return this.httpclient.authGet(`${Api.Users + Method.GetUserDetailsById}/${userId}`);
   }
+  getUserListByRole(roleId:number) {
+    return this.httpclient.authGet(`${Api.Users + Method.GetUserListByRole}/${roleId}`);
+  }
 }

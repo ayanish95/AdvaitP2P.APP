@@ -1,0 +1,102 @@
+<breadcrumb></breadcrumb>
+
+<mat-card>
+    <mat-card-header>
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <h3>{{selectedId ? 'Update' : 'Add'}} Approval Configuration</h3>
+            </div>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="mt-5">
+
+        </div>
+        <div>
+            <form [formGroup]="configForm">
+                <div class="row mt-5">
+
+                    <div class="col-sm-3">
+                        <label class="custom-label">
+                            <h5>Approval Type<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   [matAutocomplete]="approvalTypeAuto"
+                                   formControlName="ApprovalType"
+                                   placeholder="Select Approval Type">
+                            <mat-autocomplete #approvalTypeAuto="matAutocomplete"
+                                              [displayWith]="approvalTypeDisplayFn">
+                                <mat-option *ngFor="let type of filteredApprovalType | async"
+                                            [value]="type">
+                                    <span>{{ type?.name }}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="configForm.get('ApprovalType')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="custom-label">
+                            <h5>Configuration For<small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="ApprovalText"
+                                   placeholder="Configuration For">
+                            <mat-error
+                                       *ngIf="configForm.get('ApprovalText')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="custom-label">
+                            <h5>Doc Type</h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   [matAutocomplete]="DocTypeAuto"
+                                   formControlName="DocType"
+                                   placeholder="Select Doc Type">
+                            <mat-autocomplete #DocTypeAuto="matAutocomplete"
+                                              [displayWith]="docTypeDisplayFn">
+                                <mat-option *ngFor="let docType of filteredDocType | async"
+                                            [value]="docType">
+                                    <span>{{ docType?.Type }}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="configForm.get('DocType')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="custom-label">
+                            <h5>Amount</h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="Amount"
+                                   placeholder="Enter Amount">
+                            <mat-error
+                                       *ngIf="configForm.get('Amount')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-sm-3">
+                        <button mat-raised-button class="btn"
+                                (click)="onClickBack()">Back</button>
+                        <button mat-raised-button color="primary" class="btn ml-10"
+                                (click)="onClickAddAprovalConfig()"> {{ selectedId ? 'Update' : 'Save' }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -14,4 +14,7 @@ export class StorageLocationService {
   getStorageLocationByPlantCode(plantCode: string): Observable<any> {
     return this.httpclient.authGet(`${Api.StorageLocation + Method.GetStorageLocationByPlantCode}/${plantCode}`);
   }
+  getAllLocationList(): Observable<any> {
+    return this.httpclient.authGet(`${Api.StorageLocation + Method.GetAllLocationList}`);
+  }
 }

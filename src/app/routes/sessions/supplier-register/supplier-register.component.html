@@ -16,18 +16,9 @@
                     <div>
                         <form class="form-field-full" [formGroup]="basicInfoFrom">
                             <div class="row mt-5">
-                                <div class="col-sm-12">
-                                    <mat-form-field appearance="outline">
-                                        <mat-label>Company Name</mat-label>
-                                        <input matInput formControlName="companyName" required>
-                                        <mat-error *ngIf="basicInfoFrom.get('companyName')?.invalid">
-                                            <span>{{'validations.required' | translate}}</span>
-                                        </mat-error>
-                                    </mat-form-field>
-                                </div>
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
-                                        <mat-label>{{'suppliers.firstName' | translate}}</mat-label>
+                                        <mat-label>Company Name 1</mat-label>
                                         <input matInput formControlName="firstName" required>
                                         <mat-error *ngIf="basicInfoFrom.get('firstName')?.invalid">
                                             <span>{{'validations.required' | translate}}</span>
@@ -36,7 +27,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <mat-form-field appearance="outline">
-                                        <mat-label>{{'suppliers.lastName' | translate}}</mat-label>
+                                        <mat-label>Company Name 2</mat-label>
                                         <input matInput type="text" formControlName="lastName"
                                                required>
                                         <mat-error *ngIf="basicInfoFrom.get('lastName')?.invalid">

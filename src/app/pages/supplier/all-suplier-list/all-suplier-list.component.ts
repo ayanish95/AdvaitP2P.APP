@@ -111,7 +111,7 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
     const dialogRef = this.dialog.open(AddSupplierForAdminComponent, {
       width: '60vw',
       panelClass: 'custom-modalbox',
-      data: { supplierId },
+      data: { supplierId: supplierId },
     });
     dialogRef.afterClosed().subscribe((result: any) => {
       this.APICallAllSupplierList.emit();

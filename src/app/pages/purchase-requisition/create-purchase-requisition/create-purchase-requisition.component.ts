@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
 import { DocTypes } from '@core/models/doc-type';
 import { Plants } from '@core/models/plants';
@@ -77,17 +78,20 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     'DeliveryDate',
     'Plant',
     'Location',
+    'Edit',
     'Delete',
   ];
   currentDate: Date = new Date();
-
+  selectedLineId!: number;
+  currentUserId!:number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router) {
+    private router: Router,private authService:AuthService) {
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
 
   ngOnInit(): void {
+    this.currentUserId = this.authService.userId();
     this.docTypeSerivce
       .getAllDocType()
       .pipe(
@@ -240,6 +244,30 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     });
   }
 
+
+  async openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
+    this.PRLineForm.reset();
+    this.PRLineForm.updateValueAndValidity();
+    if (data) {
+      this.selectedLineId = data?.Id;
+      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
+      this.PRLineForm.patchValue({
+        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
+        Description: data?.Description,
+        ProductGroup: data?.ProductGroup,
+        Qty: data.Qty,
+        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        DeliveryDate: data.DeliveryDate,
+        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
+        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
+      });
+    }
+    this.dialog.open(templateRef, {
+      width: '56vw',
+      panelClass: 'custom-modalbox'
+    });
+  }
+
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -256,18 +284,20 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
 
-  onChangePlant(event: any) {
+  onChangePlant(event: any, IsEdit: boolean = false, locationId?: number) {
     this.locationList = [];
     this.PRLineForm.get('StorageLocation')?.setValue(null);
-    if (event.option?.value?.PlantCode) {
-      this.storageLocationService.getStorageLocationByPlantCode(event.option?.value?.PlantCode).pipe(
+    if (event) {
+      this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
         finalize(() => {
         })
       )
         .subscribe(res => {
           if (res[ResultEnum.IsSuccess]) {
             this.locationList = res[ResultEnum.Model];
-
+            if (IsEdit && this.locationList?.length > 0) {
+              this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
+            }
             this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterStorageLocation(value || ''))
@@ -284,18 +314,37 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
   onClickAddProduct() {
     const PRline = this.PRLineForm.value;
-    this.PRLineItem.push({
-      Product: PRline.Product as unknown as Products,
-      ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
-      Description: PRline.Description ? PRline.Description : '',
-      Qty: PRline?.Qty as unknown as number,
-      DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-      Unit: PRline.Unit as unknown as Units,
-      Plant: PRline.Plant as unknown as Plants,
-      StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
-      Id: this.PRLineItem.length + 1
-    });
+    if (this.selectedLineId > 0) {
+      this.PRLineItem.forEach(item => {
+        if (item?.Id == this.selectedLineId) {
+          item.Product = PRline.Product as unknown as Products,
+            item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
+            item.Description = PRline.Description ? PRline.Description : '',
+            item.Qty = PRline?.Qty as unknown as number,
+            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
+            item.Unit = PRline.Unit as unknown as Units,
+            item.Plant = PRline.Plant as unknown as Plants,
+            item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
+            item.LineId = item.LineId,
+            item.Id = item.Id
+        }
+      })
+    }
+    else {
+      this.PRLineItem.push({
+        Product: PRline.Product as unknown as Products,
+        ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
+        Description: PRline.Description ? PRline.Description : '',
+        Qty: PRline?.Qty as unknown as number,
+        DeliveryDate: PRline?.DeliveryDate as unknown as Date,
+        Unit: PRline.Unit as unknown as Units,
+        Plant: PRline.Plant as unknown as Plants,
+        StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
+        Id: this.PRLineItem.length + 1
+      });
+    }
     this.dataSource.data = this.PRLineItem;
+    this.selectedLineId = 0;
   }
 
   onClickDeleteItem(id: any) {
@@ -321,7 +370,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.createPR(PRDetails).subscribe({
+      this.prService.createPR(PRDetails,this.currentUserId).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);

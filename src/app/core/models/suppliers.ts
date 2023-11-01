@@ -47,4 +47,6 @@ export interface Suppliers {
     ERPStatus?: boolean;
     Extra1?: string;
     Extra2?: string;
+    ApproverId?: number;
+    ApprovalPendingFrom?: string;
 }

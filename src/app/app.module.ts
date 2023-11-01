@@ -22,7 +22,7 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemDataService } from '@shared/in-mem/in-mem-data.service';
 import { HttpClientService } from '@core/services/http-client.service';
 import { RouteConfig } from '@core/config/route.config';
-import { JwtModule } from '@auth0/angular-jwt';
+import { JWT_OPTIONS, JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 import { jwtInterceptorProvider } from '@core/interceptors/jwt-interceptor.service';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
@@ -77,6 +77,10 @@ export function tokenGetter() {
     // jwtInterceptorProvider,
     HttpClientService,
     RouteConfig,
+    
+      { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+      JwtHelperService
+  
   ],
   bootstrap: [AppComponent],
 })
