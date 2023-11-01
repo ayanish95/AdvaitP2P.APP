@@ -32,7 +32,7 @@ export class ViewPurchaseRequisitionComponent implements OnInit {
   constructor(private PRService: PurchaseRequistionService, private toaster: ToastrService, private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
-      this.PRId = params['id'];
+      this.PRId = params.id;
     });
   }
 

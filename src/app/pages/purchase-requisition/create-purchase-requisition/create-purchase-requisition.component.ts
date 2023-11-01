@@ -284,7 +284,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
 
-  onChangePlant(event: any, IsEdit: boolean = false, locationId?: number) {
+  onChangePlant(event: any, IsEdit = false, locationId?: number) {
     this.locationList = [];
     this.PRLineForm.get('StorageLocation')?.setValue(null);
     if (event) {
@@ -326,9 +326,9 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
             item.LineId = item.LineId,
-            item.Id = item.Id
+            item.Id = item.Id;
         }
-      })
+      });
     }
     else {
       this.PRLineItem.push({

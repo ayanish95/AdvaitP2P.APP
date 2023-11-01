@@ -44,10 +44,10 @@ export class AuthService {
 
   login(username: string, password: string, rememberMe = false) {
     this.tokenService.clear();
-    let user = {
+    const user = {
       UserName: username,
       Password: password
-    }
+    };
     return this.userService.login(user).pipe(
       tap(token => {
         // console.log('decode',this.jwtHelper.decodeToken(token.Model?.access_token));
@@ -109,14 +109,14 @@ export class AuthService {
     return localStorage.getItem('token')!;
   }
   public roles(): any {
-    let token = JSON.parse(AuthService.getToken()) as any;
-    let value = this.jwtHelper.decodeToken(token?.access_token);
+    const token = JSON.parse(AuthService.getToken()) as any;
+    const value = this.jwtHelper.decodeToken(token?.access_token);
     return Role[value.Role];
   }
 
   public isSAPEnable(): any {
-    let token = JSON.parse(AuthService.getToken()) as any;
-    let value = this.jwtHelper.decodeToken(token?.access_token);
+    const token = JSON.parse(AuthService.getToken()) as any;
+    const value = this.jwtHelper.decodeToken(token?.access_token);
     return value?.IsSAPEnabled;
   }
     /**
@@ -124,8 +124,8 @@ export class AuthService {
      * 
      */
     public userId(): number {
-      let token = JSON.parse(AuthService.getToken()) as any;
-      let value = this.jwtHelper.decodeToken(token?.access_token)
+      const token = JSON.parse(AuthService.getToken()) as any;
+      const value = this.jwtHelper.decodeToken(token?.access_token);
       return value.UId;
     }
 
