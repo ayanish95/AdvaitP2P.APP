@@ -26,7 +26,7 @@ export class StartupService {
         .pipe(
           tap((user:any) => {
             this.userRole= user.Role;
-            this.setPermissions(user)}),
+            this.setPermissions(user);}),
           switchMap(() => this.authService.menu()),
           tap(menu => this.setMenu(menu))
         )

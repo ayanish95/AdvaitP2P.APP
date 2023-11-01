@@ -10,7 +10,7 @@
           "Supplier",
           "Admin",
           "UserTeam"
-          
+
         ]
       }
     },
@@ -34,7 +34,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -47,7 +47,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -60,7 +60,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -73,10 +73,42 @@
         "only": [
           "UserTeam",
           "Admin"
-          
+
         ]
       }
+
     },
+
+    {
+      "route": "pages/purchase-order",
+      "name": "puchaseorder",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/quotation",
+      "name": "quotation",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+
+
     {
       "route": "design",
       "name": "design",

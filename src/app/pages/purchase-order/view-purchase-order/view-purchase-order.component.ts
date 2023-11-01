@@ -8,11 +8,11 @@ import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-view-purchase-requisition',
-  templateUrl: './view-purchase-requisition.component.html',
-  styleUrls: ['./view-purchase-requisition.component.scss']
+  selector: 'app-view-purchase-order',
+  templateUrl: './view-purchase-order.component.html',
+  styleUrls: ['./view-purchase-order.component.scss']
 })
-export class ViewPurchaseRequisitionComponent implements OnInit {
+export class ViewPurchaseOrderComponent {
   displayedColumns: string[] = [
     'srNo',
     'ProductCode',
@@ -57,5 +57,4 @@ export class ViewPurchaseRequisitionComponent implements OnInit {
           this.toaster.error(res[ResultEnum.Message]);
       });
   }
-
 }

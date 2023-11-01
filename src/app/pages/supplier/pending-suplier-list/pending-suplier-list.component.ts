@@ -1,10 +1,15 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from '@core';
+import { ApprovalTypeEnum } from '@core/enums/approval-type-enum';
 import { ResultEnum } from '@core/enums/result-enum';
+import { Role } from '@core/enums/role';
+import { ApprovalStrategy } from '@core/models/approval-type';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Suppliers } from '@core/models/suppliers';
+import { ApprovalStrategyService } from '@core/services/approval-strategy.service';
 import { SupplierService } from '@core/services/supplier.service';
 import { ApproveSupplierComponent } from '@shared/dialog/approve-supplier/approve-supplier.component';
 import { ToastrService } from 'ngx-toastr';
@@ -29,7 +34,9 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
     'City',
     'Country',
     'Phone',
-    'Edit'
+    'PendingFrom',
+    'Edit',
+    'Reject'
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -40,19 +47,30 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
-
-  constructor(private supplierService: SupplierService, private toast: ToastrService, public dialog: MatDialog) {
+  selectedSupplierId!: number;
+  approvalStrategyList!: ApprovalStrategy[];
+  currentUserId!: number;
+  rightsForApproval = false;
+  userRole!: number;
+  Role = Role;
+  @Output() APICallPendingSupplierList: EventEmitter<string> = new EventEmitter<string>();
+  constructor(private supplierService: SupplierService, private toast: ToastrService, public dialog: MatDialog, private strategyService: ApprovalStrategyService,
+    private authService: AuthService) {
 
   }
 
   ngOnInit(): void {
-    this.allSuppliierList= this.supplierList;
+    this.userRole = this.authService.roles();
+    this.currentUserId = this.authService.userId();
+    this.apiApprovalStrategyByApprovalType();
+    this.allSuppliierList = this.supplierList;
     this.dataSource.data = this.allSuppliierList;
     this.dataSource.paginator = this.paginator;
     this.filter = new Filter();
     this.filter.OrderBy = OrderBy.DESC;
     this.filter.OrderByColumn = 'id';
     this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -62,7 +80,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
       if (currentValue != undefined)
         this.searchSupplier(currentValue);
     }
-    if(this.propChanges.supplierList){
+    if (this.propChanges.supplierList) {
       const currentValue = this.propChanges.supplierList?.currentValue;
       this.allSuppliierList = currentValue;
       this.dataSource.data = this.allSuppliierList;
@@ -72,6 +90,33 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
       this.filter.OrderByColumn = 'id';
       this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
+    this.allSuppliierList;
+  }
+
+  // api for get all list who have rights for approve supplier and based on that show approve and reject button
+  apiApprovalStrategyByApprovalType() {
+    this.strategyService
+      .getApprovalStrategyByApprovalType(ApprovalTypeEnum.Supplier)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.approvalStrategyList = res[ResultEnum.Model];
+
+          // Condition - Here is the check the current user have rights for approve the supplier, If yes then it've show the approve and reject button otherwise it will disappear for the user
+          if (this.userRole != Role.Admin)
+            this.rightsForApproval = this.approvalStrategyList.filter(x => x.UserId == this.currentUserId)?.length > 0 ? true : false;
+          else
+            this.rightsForApproval = true;
+          if (!this.rightsForApproval && this.userRole !== Role.Admin)
+            this.displayedColumns = this.displayedColumns.filter(x => x != 'Edit' && x != 'Reject');
+        }
+        else {
+          this.toast.error(res[ResultEnum.Message]);
+        }
+      });
   }
 
   searchSupplier(filterValue: any) {
@@ -101,32 +146,58 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
               width: '600px',
               data: { supplier: supplierDetails },
             });
-            dialogRef.afterClosed().subscribe((result:any) => {
-              debugger;
-              if(result!='' && result !=undefined && result?.data){
-             this.supplierService.approveSupplier(result?.data).subscribe({
-                next: (res: any) => {
-                  if (res[ResultEnum.IsSuccess]) {
-                    this.toast.success(res.Message);
-                    this.allSuppliierList = res[ResultEnum.Model];
-                    this.dataSource.data = res[ResultEnum.Model];
-                  }
-                  else {
-                    this.toast.error(res.Message);
-                  }
-                },
-                error: (e) => { this.toast.error(e.Message); },
-                complete() {
-          
-                },
-              }); 
-            }
+            dialogRef.afterClosed().subscribe((result: any) => {
+              if (result != '' && result != undefined && result?.data) {
+                this.supplierService.approveSupplier(result?.data,this.userRole).subscribe({
+                  next: (res: any) => {
+                    if (res[ResultEnum.IsSuccess]) {
+                      this.toast.success(res.Message);
+                      this.allSuppliierList = res[ResultEnum.Model];
+                      this.dataSource.data = res[ResultEnum.Model];
+                    }
+                    else {
+                      this.toast.error(res.Message);
+                    }
+                  },
+                  error: (e) => { this.toast.error(e.Message); },
+                  complete() {
+
+                  },
+                });
+              }
             });
           }
         }
         else {
           this.toast.error(res[ResultEnum.Message]);
         }
+      });
+  }
+
+  openDialogReject(templateRef: TemplateRef<any>, event: any) {
+    this.selectedSupplierId = event.Id;
+    this.dialog.open(templateRef);
+  }
+
+  onClickReject() {
+    if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
+      throw this.toast.error('Something went wrong');
+    this.supplierService
+      .rejectSupplier(this.selectedSupplierId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toast.success(res[ResultEnum.Message]);
+          this.APICallPendingSupplierList.emit();
+          this.selectedSupplierId = 0;
+        }
+        else
+          this.toast.error(res[ResultEnum.Message]);
+
+        this.dialog.closeAll();
       });
   }
 }

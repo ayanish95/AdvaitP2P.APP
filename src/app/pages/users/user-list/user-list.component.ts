@@ -37,7 +37,7 @@ export class UserListComponent {
   filter: Filter = new Filter();
   index = 0;
   filteredRoles!: Observable<Roles[]>;
-  selectedUserId:number=0;
+  selectedUserId=0;
   userForm = this.fb.group({
     FirstName: ['', [Validators.required]],
     LastName: [''],
@@ -176,7 +176,7 @@ export class UserListComponent {
           });
         }
         else{
-          this.toaster.error("User not found");
+          this.toaster.error('User not found');
         }
       }
       else{
@@ -195,9 +195,9 @@ export class UserListComponent {
   }
 
   onClickAddUser() {
-    let userFormValue = this.userForm.value as any;
-    debugger
-    let user = {
+    const userFormValue = this.userForm.value as any;
+    debugger;
+    const user = {
       Id: 0,
       FirstName: userFormValue.FirstName,
       LastName: userFormValue.LastName,
@@ -227,8 +227,8 @@ export class UserListComponent {
   }
 
   onClickUpdateUser() {
-    let userFormValue = this.editUserForm.value as any;
-    let user = {
+    const userFormValue = this.editUserForm.value as any;
+    const user = {
       Id: this.userDetails.Id,
       FirstName: userFormValue.FirstName,
       LastName: userFormValue.LastName,

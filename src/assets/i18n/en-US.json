@@ -6,6 +6,8 @@
     "product": "Product",
     "plant": "Plant",
     "purchaseRequisition":"Purchase Requisition",
+    "puchaseorder":"Purchase order",
+    "quotation":"quotation",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",
