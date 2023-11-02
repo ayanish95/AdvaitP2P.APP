@@ -364,7 +364,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
       const PRHeaderData = this.PRHeaderForm.value;
-      let PRDate = this.PRHeaderForm.get('PRDate')?.getRawValue();
+      const PRDate = this.PRHeaderForm.get('PRDate')?.getRawValue();
       const PRDetails: PurchaseRequisitionDataVM = {
         Id: 0,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
