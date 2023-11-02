@@ -74,5 +74,8 @@
         <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
+      <div class="d-flex justify-content-start mt-20">
+        <button mat-raised-button (click)="onClickBack()" > Back</button>
+      </div>
     </mat-card-content>
   </mat-card>

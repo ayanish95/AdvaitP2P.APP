@@ -19,6 +19,13 @@ export interface PurchaseRequisitionHeader{
     DeletedOn?: Date;
     Extra1?: string;
     Extra2?: string;
+    ApproverId?: number;
+    IsApprovedByAll?: boolean;
+    IsRejected?: boolean;
+    RejectedBy?: number;
+    RejectedDate?: Date;
+    PRPendingBy?: string;
+    IsApprovalStart?: boolean;
 }
 
 
@@ -50,6 +57,13 @@ export interface PurchaseRequisitionDetailsVM{
     PRDocType:string;
     PRToRFQ?:boolean;
     PRDate?:Date;
+    ApproverId?: number;
+    IsApprovedByAll?: boolean;
+    IsRejected?: boolean;
+    RejectedBy?: number;
+    RejectedDate?: Date;
+    PRPendingBy?: string;
+    IsApprovalStart?: boolean;
     PRLineItems:PurchaseRequisitionDetailsLine[];
 }
 export interface PurchaseRequisitionDetailsLine{

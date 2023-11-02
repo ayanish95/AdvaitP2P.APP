@@ -91,6 +91,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.PRHeaderForm.get('PRDate')?.disable();
     this.currentUserId = this.authService.userId();
     this.docTypeSerivce
       .getAllDocType()
@@ -363,10 +364,11 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
       const PRHeaderData = this.PRHeaderForm.value;
+      let PRDate = this.PRHeaderForm.get('PRDate')?.getRawValue();
       const PRDetails: PurchaseRequisitionDataVM = {
         Id: 0,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-        PRDate: PRHeaderData.PRDate ? PRHeaderData.PRDate : new Date(),
+        PRDate: PRDate ? PRDate : new Date(),
         PRLineItem: this.PRLineItem
       };
 
