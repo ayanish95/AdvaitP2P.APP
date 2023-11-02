@@ -54,6 +54,18 @@ const routes: Routes = [
         loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
       },
       {
+        path: 'pages/approval-config',
+        loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
+      },
+      {
+        path: 'pages/purchase-order',
+        loadChildren: () => import('../pages/purchase-order/purchase-order.module').then(m => m.PurchaseOrderModule),
+      },
+      {
+        path: 'pages/quotation',
+        loadChildren: () => import('../pages/quotation/quotation.module').then(m => m.QuotationModule),
+      },
+      {
         path: 'design',
         loadChildren: () => import('./design/design.module').then(m => m.DesignModule),
       },

@@ -121,7 +121,7 @@ export class AuthService {
   }
     /**
      * get user id from token
-     * 
+     *
      */
     public userId(): number {
       const token = JSON.parse(AuthService.getToken()) as any;
@@ -146,7 +146,7 @@ export class AuthService {
 
   //   /**
   //      * get User Name from token
-  //      * 
+  //      *
   //      */
   //   public userName(): string {
   //     let value = this.jwtHelper.decodeToken(AuthService.getToken())
@@ -154,7 +154,7 @@ export class AuthService {
   //   }
   // /**
   //    * get User Name from token
-  //    * 
+  //    *
   //    */
   //  public CustNum(): string{
   //   let value = this.jwtHelper.decodeToken(AuthService.getToken())

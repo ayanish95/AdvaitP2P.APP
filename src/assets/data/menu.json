@@ -27,7 +27,7 @@
           "Supplier",
           "Admin",
           "ProcurementTeam"
-          
+
         ]
       }
     },
@@ -40,7 +40,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -53,7 +53,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -69,7 +69,7 @@
           "ProcurementTeam",
           "CommercialTeam",
           "FinanceTeam"
-          
+
         ]
       }
     },
@@ -84,14 +84,46 @@
           "name": "approval",
           "type": "link"
         }
-        
+
       ],
       "permissions": {
         "only": [
-          "Admin"          
+          "Admin"
         ]
       }
+
     },
+
+    {
+      "route": "pages/purchase-order",
+      "name": "puchaseorder",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/quotation",
+      "name": "quotation",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+
+
     {
       "route": "design",
       "name": "design",
@@ -111,6 +143,7 @@
       ],
       "permissions": {
         "only": [
+          "Admin1",
           "Admin1",
           "MANAGER"
         ]

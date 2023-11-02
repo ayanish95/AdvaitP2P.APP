@@ -1,0 +1,90 @@
+<breadcrumb></breadcrumb>
+
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>Purchase Order Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="PRDetails">
+      <div class="row">
+        <div class="col-md-2">
+           <h5 class="mb-0">PO number</h5>
+           <p class="mt-0">{{PRDetails.Id}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">PO Doc Type</h5>
+            <p class="mt-0">{{PRDetails.PRDocType}}</p>
+         </div>
+         <div class="col-md-2">
+          <h5 class="mb-0">Company Code</h5>
+          <p class="mt-0">{{PRDetails.PRDocType}}</p>
+       </div>
+       <div class="col-md-2">
+        <h5 class="mb-0">Supplier Code</h5>
+        <p class="mt-0">{{PRDetails.PRDocType}}</p>
+     </div>
+     <div class="col-md-2">
+      <h5 class="mb-0">Product Description</h5>
+      <p class="mt-0">{{PRDetails.PRDocType}}</p>
+   </div>
+         <div class="col-md-2">
+            <h5 class="mb-0">PO Date</h5>
+            <p class="mt-0">{{PRDetails.PRDate | date : 'dd-MM-yyyy hh:mm a'}}</p>
+         </div>
+      </div>
+      <div class="mt-20">
+        <h4>Purchase Order List</h4>
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="srNo">
+            <th mat-header-cell *matHeaderCellDef># </th>
+            <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+          </ng-container>
+          <ng-container matColumnDef="ProductGroup">
+            <th mat-header-cell *matHeaderCellDef> Purchaseorder</th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductGroup}} </td>
+          </ng-container>
+          <ng-container matColumnDef="ProductCode">
+            <th mat-header-cell *matHeaderCellDef> Purchaseorder </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductCode}} - {{element?.ProductDescription}}</td>
+          </ng-container>
+          <ng-container matColumnDef="Qty">
+            <th mat-header-cell *matHeaderCellDef> Qty </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Unit">
+            <th mat-header-cell *matHeaderCellDef> Unit </th>
+            <td mat-cell *matCellDef="let element"> {{element?.UnitName}}  </td>
+          </ng-container>
+          <ng-container matColumnDef="DeliveryDate">
+            <th mat-header-cell *matHeaderCellDef> DeliveryDate </th>
+            <td mat-cell *matCellDef="let element"> {{element?.DeliveryDate | date : 'dd-MM-yyyy'}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Plant">
+            <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
+            <td mat-cell *matCellDef="let element">
+              {{element?.PlantDescription}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Location">
+            <th mat-header-cell *matHeaderCellDef> Location </th>
+            <td mat-cell *matCellDef="let element"> {{element?.LocationDescription}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Close">
+            <th mat-header-cell *matHeaderCellDef> Close </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-checkbox color="primary"></mat-checkbox>
+             </td>
+        </ng-container>
+        <ng-container matColumnDef="RFQ">
+            <th mat-header-cell *matHeaderCellDef> RFQ </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-checkbox color="primary"></mat-checkbox>
+             </td>
+        </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                             [columnCount]="displayedColumns.length"></app-no-record-found>
+      </div>
+    </mat-card-content>
+  </mat-card>
