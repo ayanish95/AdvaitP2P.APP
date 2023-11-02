@@ -11,7 +11,7 @@ import { Component } from '@angular/core';
   styles: [
     `
       .brand-logo {
-        width: 120px;
+        width: 170px;
         height: 39px;
       }
     `,

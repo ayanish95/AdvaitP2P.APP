@@ -6,7 +6,7 @@ import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM } from '@core/m
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-view-purchase-requisition',
   templateUrl: './view-purchase-requisition.component.html',
@@ -22,14 +22,14 @@ export class ViewPurchaseRequisitionComponent implements OnInit {
     'DeliveryDate',
     'Plant',
     'Location',
-    'Close',
-    'RFQ',
+    // 'Close',
+    // 'RFQ',
   ];
   PRId!: number;
   PRDetails!: PurchaseRequisitionDetailsVM;
   dataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private PRService: PurchaseRequistionService, private toaster: ToastrService, private route: ActivatedRoute) {
+  constructor(private PRService: PurchaseRequistionService, private toaster: ToastrService, private location: Location, private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
@@ -58,4 +58,7 @@ export class ViewPurchaseRequisitionComponent implements OnInit {
       });
   }
 
+  onClickBack() {
+    this.location.back();
+  }
 }

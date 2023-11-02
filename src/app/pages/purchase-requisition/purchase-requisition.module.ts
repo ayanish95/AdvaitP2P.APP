@@ -7,6 +7,8 @@ import { SharedModule } from '@shared';
 import { CreatePurchaseRequisitionComponent } from './create-purchase-requisition/create-purchase-requisition.component';
 import { ViewPurchaseRequisitionComponent } from './view-purchase-requisition/view-purchase-requisition.component';
 import { EditPurchaseRequisitionComponent } from './edit-purchase-requisition/edit-purchase-requisition.component';
+import { PendingForApprovalComponent } from './pending-for-approval/pending-for-approval.component';
+import { AllPurchaseRequisitionListComponent } from './all-purchase-requisition-list/all-purchase-requisition-list.component';
 
 
 @NgModule({
@@ -14,7 +16,9 @@ import { EditPurchaseRequisitionComponent } from './edit-purchase-requisition/ed
     PurchaseRequisitionListComponent,
     CreatePurchaseRequisitionComponent,
     ViewPurchaseRequisitionComponent,
-    EditPurchaseRequisitionComponent
+    EditPurchaseRequisitionComponent,
+    PendingForApprovalComponent,
+    AllPurchaseRequisitionListComponent
   ],
   imports: [
     CommonModule,
