@@ -3,7 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
+import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Plants } from '@core/models/plants';
 import { ProductGroup, Products } from '@core/models/products';
@@ -24,6 +26,21 @@ import { Observable, finalize, map, startWith } from 'rxjs';
   styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent {
+  productForm = this.fb.group({
+    ProductGroup: ['', [Validators.required]],
+    ProductDescription: ['', [Validators.required]],
+    BaseUnit: ['', [Validators.required]],
+    PurchaseUnit: ['', [Validators.required]],
+    SalesUnit: ['', [Validators.required]],
+    PriceIndicator: ['', [Validators.required]],
+    StandardPrice: [''],
+    MovingAvgPrice: [''],
+    Plant: ['', [Validators.required]],
+    HSNCode:['',[Validators.required]],
+    GST:['',[Validators.required,Validators.min(0),Validators.max(28)]],
+    IsActive: [false],
+
+  });
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -64,27 +81,31 @@ export class ProductListComponent {
   productDetails!: Products;
   filteredPriceIndicator!: Observable<any[]>;
   isEdit = false;
-  productForm = this.fb.group({
-    ProductGroup: ['', [Validators.required]],
-    ProductDescription: ['', [Validators.required]],
-    BaseUnit: ['', [Validators.required]],
-    PurchaseUnit: ['', [Validators.required]],
-    SalesUnit: ['', [Validators.required]],
-    PriceIndicator: ['', [Validators.required]],
-    StandardPrice: [''],
-    MovingAvgPrice: [''],
-    Plant: ['', [Validators.required]],
-    IsActive: [false],
+  isSAPEnabled!: string;
+  selectedPRId!: number;
+  currentUserRole!: number;
+  Role = Role;
+  currentUserId!: number;
+  rightsForApproval = false;
 
-  });
-
-  constructor(private productService: ProductService, private dialog: MatDialog,
+  constructor(private productService: ProductService, private dialog: MatDialog, private authService: AuthService,
     private productGroupService: ProductGroupService,
     private unitService: UnitService, private plantService: PlantService,
     private fb: FormBuilder,
     private toaster: ToastrService) { }
 
   ngOnInit() {
+    this.currentUserRole = this.authService.roles();
+    this.currentUserId = this.authService.userId();
+    this.isSAPEnabled = this.authService.isSAPEnable();
+    //  Temporary comment  
+    // if (this.isSAPEnabled == 'false')
+    //   this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPProductCode');
+    this.apiInitialize();
+
+  }
+
+  apiInitialize() {
     this.apiProductList();
     this.apiUnitList();
     this.apiProductGroup();
@@ -278,6 +299,15 @@ export class ProductListComponent {
     return true;
   }
 
+  onKeyPressWithDot(evt: any) {
+    const charCode = (evt.which) ? evt.which : evt.keyCode;
+    if(charCode !=46){
+    if (charCode > 31 && (charCode < 48 || charCode > 57) )
+      return false;
+    }
+    return true;
+  }
+
   openAddProductModel(templateRef: TemplateRef<any>) {
     this.isEdit = false;
     this.productForm.reset();
@@ -315,6 +345,8 @@ export class ProductListComponent {
               StandardPrice: this.productDetails.StandardPrice?.toString(),
               MovingAvgPrice: this.productDetails.MovingAvgPrice?.toString(),
               Plant: this.plantList.find(x => x.PlantCode == this.productDetails.Plant) as any,
+              HSNCode: this.productDetails.HSNCode,
+              GST: this.productDetails.GST as any,
               IsActive: this.productDetails.IsActive,
             });
           }
@@ -351,7 +383,7 @@ export class ProductListComponent {
     this.productForm.controls.MovingAvgPrice.updateValueAndValidity();
   }
 
-  onClickAddUser() {
+  onClickAddOrUpdateProduct() {
     const productData = this.productForm.value as any;
     const product = {
       Id: this.isEdit ? this.selectedProductId : 0,
@@ -366,6 +398,8 @@ export class ProductListComponent {
       MovingAvgPrice: productData.MovingAvgPrice ? productData.MovingAvgPrice : 0,
       Plant: productData.Plant?.PlantCode,
       IsActive: this.isEdit ? productData.IsActive : true,
+      HSNCode: productData.HSNCode,
+      GST: productData.GST
     } as Products;
 
     if (!this.isEdit) {

@@ -13,7 +13,9 @@ export interface Products {
     StandardPrice:number;
     MovingAvgPrice:number;
     Currency:string;
-    Plant:string;
+    Plant?:string;
+    HSNCode?:string;
+    GST?:number;
     IsActive?: boolean;
     CreatedBy?: string;
     CreatedOn?: Date;
