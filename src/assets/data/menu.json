@@ -77,7 +77,7 @@
       "route": "pages/purchase-order",
       "name": "puchaseorder",
       "type": "link",
-      "icon": "queue",
+      "icon": "add_shopping_cart",
       "permissions": {
         "only": [
           "UserTeam",
@@ -476,7 +476,7 @@
         }
       ],
       "permissions": {
-        "only": "Admin1"
+        "only": "Admin"
       }
     },
     {

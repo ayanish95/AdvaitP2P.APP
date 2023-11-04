@@ -12,3 +12,39 @@
 .mt-15{
   margin-top: 15px;
 }
+
+
+td.mat-column-ProductCode {
+  min-width: fit-content !important;
+  max-width: 250px !important;
+  padding-right: 8px;
+}
+td.mat-column-Description {
+  min-width: fit-content !important;
+  max-width: 300px !important;
+}
+td.mat-column-ProductGroup {
+  min-width: fit-content !important;
+  max-width: 250px !important;
+}
+td.mat-column-Qty {
+  min-width: fit-content !important;
+  max-width: 100px !important;
+}
+td.mat-column-Unit {
+  min-width: fit-content !important;
+  max-width: 350px !important;
+}
+td.mat-column-Plant {
+  min-width: fit-content !important;
+  max-width: 350px !important;
+}
+
+.example-container {
+  max-width: 100%;
+  overflow: auto;
+}
+
+// table {
+//   max-width: 100%;
+// }
