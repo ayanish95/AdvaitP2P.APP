@@ -8,6 +8,8 @@
     "purchaseRequisition":"Purchase Requisition",
     "puchaseorder":"Purchase order",
     "quotation":"quotation",
+    "ASN":"ASN",
+    "GRN":"GRN",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",

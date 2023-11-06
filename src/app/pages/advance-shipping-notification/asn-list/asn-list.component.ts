@@ -10,14 +10,12 @@ import { PurchaseRequistionService } from '@core/services/purchase-requistion.se
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 
-
 @Component({
-  selector: 'app-purchase-order-list',
-  templateUrl: './purchase-order-list.component.html',
-  styleUrls: ['./purchase-order-list.component.scss']
+  selector: 'app-asn-list',
+  templateUrl: './asn-list.component.html',
+  styleUrls: ['./asn-list.component.scss']
 })
-export class PurchaseOrderListComponent {
-
+export class AsnListComponent {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -25,10 +23,6 @@ export class PurchaseOrderListComponent {
     'PRDocType',
     'PRDate',
     'View',
-    'AddASN'
-
-
-
   ];
 
   dataSource = new MatTableDataSource<any>();
@@ -77,4 +71,5 @@ export class PurchaseOrderListComponent {
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
+
 }

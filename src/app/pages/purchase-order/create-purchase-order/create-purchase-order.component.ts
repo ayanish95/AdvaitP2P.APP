@@ -284,9 +284,7 @@ prDetailsData: PurchaseRequisitionDetailsLine[] = [];
   }
 
 getprno(selectedPRNumber: number) {
-  debugger;
   this.prService.getPRDetailsById(selectedPRNumber).subscribe(response => {
-    // console.log(response);
 
     // Update the prData array with the received data
     this.dataSource = response.Model.PRLineItems;

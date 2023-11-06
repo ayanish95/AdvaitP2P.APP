@@ -8,11 +8,13 @@ import { CreatePurchaseOrderComponent } from './create-purchase-order/create-pur
 import { ViewPurchaseOrderComponent } from './view-purchase-order/view-purchase-order.component';
 
 
+
 @NgModule({
     declarations: [
         PurchaseOrderListComponent,
         CreatePurchaseOrderComponent,
-        ViewPurchaseOrderComponent
+        ViewPurchaseOrderComponent,
+
     ],
     imports: [
         CommonModule,

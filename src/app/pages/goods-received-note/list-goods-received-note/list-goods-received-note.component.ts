@@ -9,15 +9,12 @@ import { PlantService } from '@core/services/plant.service';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
-
-
 @Component({
-  selector: 'app-purchase-order-list',
-  templateUrl: './purchase-order-list.component.html',
-  styleUrls: ['./purchase-order-list.component.scss']
+  selector: 'app-list-goods-received-note',
+  templateUrl: './list-goods-received-note.component.html',
+  styleUrls: ['./list-goods-received-note.component.scss']
 })
-export class PurchaseOrderListComponent {
-
+export class ListGoodsReceivedNoteComponent {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -25,10 +22,6 @@ export class PurchaseOrderListComponent {
     'PRDocType',
     'PRDate',
     'View',
-    'AddASN'
-
-
-
   ];
 
   dataSource = new MatTableDataSource<any>();
