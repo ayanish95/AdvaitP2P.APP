@@ -3,7 +3,14 @@
 <mat-card>
     <mat-card-header>
       <mat-card-title>Purchase Order Detail</mat-card-title>
+      <div class="col-md-3 d-flex  justify-content-end">
+        <button mat-raised-button color="primary" (click)="print()">
+          Print
+      </button>
+      </div>
     </mat-card-header>
+
+
     <mat-card-content *ngIf="PRDetails">
       <div class="row">
         <div class="col-md-2">

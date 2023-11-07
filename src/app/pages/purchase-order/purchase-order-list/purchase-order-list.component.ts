@@ -17,7 +17,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./purchase-order-list.component.scss']
 })
 export class PurchaseOrderListComponent {
-
+  
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -77,4 +77,6 @@ export class PurchaseOrderListComponent {
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
+
+
 }
