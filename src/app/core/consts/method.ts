@@ -54,4 +54,5 @@ export class Method {
   static GetApprovalStrategyByApprovalType = `/GetApprovalStrategyByApprovalType`;
   static CreatePurchaseOrder = `/CreatePurchaseOrder`;
   static GetAllPurchaseOrderHeaderList = `/GetAllPurchaseOrderHeaderList`;
+  static GetPurchaseOrderDetailsById = `/GetPurchaseOrderDetailsById`;
 }

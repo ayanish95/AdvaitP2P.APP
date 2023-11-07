@@ -17,4 +17,8 @@ export class PurchaseOrderService {
   getAllPOHeaderListByUserId(): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetAllPurchaseOrderHeaderList}`);
   }
+  
+  getPODetailsById(Id:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetPurchaseOrderDetailsById}/${Id}`);
+  }
 }

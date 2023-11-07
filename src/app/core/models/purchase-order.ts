@@ -126,5 +126,24 @@ export interface PurchaseOrderDetailsVM{
     PRHeaderId?:number;
     RFQHeaderId?:number;
     OAHeaderId?:number;
+    CreatedBy?:number;
+    CreatedOn?:Date;
+    UpdatedBy?:number;
+    UpdatedOn?:Date;
+    IsActive?:boolean;
+    IsDeleted?:boolean;
+    DeletedOn?:Date;
+    Extra1:string;
+    Extra2:string;
+    ApproverId?: number;
+    IsApprovedByAll?: boolean;
+    IsRejected?: boolean;
+    RejectedBy?: number;
+    RejectedDate?: Date;
+    PRPendingBy?: string;
+    IsApprovalStart?: boolean;
+    TotalNetPrice?: number;
+    TotalTaxAmount?: number;
+    TotalPOAmount?: number;
     POLineItems:PurchaseOrderLine[];
 }
