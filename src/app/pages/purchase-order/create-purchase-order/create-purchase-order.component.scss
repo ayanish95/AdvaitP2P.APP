@@ -13,31 +13,72 @@
   margin-top: 15px;
 }
 
-
+td.mat-column-srNo {
+  min-width: 90px !important;
+  max-width: 250px !important;
+  padding-right: 8px;
+}
 td.mat-column-ProductCode {
-  min-width: fit-content !important;
+  min-width: 150px !important;
   max-width: 250px !important;
   padding-right: 8px;
 }
 td.mat-column-Description {
-  min-width: fit-content !important;
+  min-width: 250px !important;
   max-width: 300px !important;
 }
 td.mat-column-ProductGroup {
-  min-width: fit-content !important;
+  min-width: 250px !important;
   max-width: 250px !important;
 }
 td.mat-column-Qty {
-  min-width: fit-content !important;
+  min-width: 50px !important;
   max-width: 100px !important;
 }
 td.mat-column-Unit {
-  min-width: fit-content !important;
-  max-width: 350px !important;
+  min-width: 100px !important;
+  max-width: 250px !important;
+}
+td.mat-column-NetPrice {
+  min-width: 100px !important;
+  max-width: 250px !important;
+}
+td.mat-column-TotalNetPrice {
+  min-width: 150px !important;
+  max-width: 250px !important;
+}
+td.mat-column-TotalAmount {
+  min-width: 150px !important;
+  max-width: 250px !important;
+}
+td.mat-column-DeliveryDate {
+  min-width: 150px !important;
+  max-width: 250px !important;
+}
+td.mat-column-StockType {
+  min-width: 200px !important;
+  max-width: 250px !important;
+}
+
+td.mat-column-TaxAmount {
+  min-width: 150px !important;
+  max-width: 250px !important;
 }
 td.mat-column-Plant {
-  min-width: fit-content !important;
+  min-width: 250px !important;
   max-width: 350px !important;
+}
+td.mat-column-Location {
+  min-width: 250px !important;
+  max-width: 350px !important;
+}
+td.mat-column-IsReturnItem {
+  min-width: 200px !important;
+  max-width: 250px !important;
+}
+td.mat-column-IsFreeOfCharge {
+  min-width: 200px !important;
+  max-width: 250px !important;
 }
 
 .example-container {
