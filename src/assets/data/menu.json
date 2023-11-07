@@ -74,31 +74,10 @@
       }
     },
     {
-      "route": "pages",
-      "name": "configuration",
-      "type": "sub",
-      "icon": "settings",
-      "children": [
-        {
-          "route": "approval-config",
-          "name": "approval",
-          "type": "link"
-        }
-
-      ],
-      "permissions": {
-        "only": [
-          "Admin"
-        ]
-      }
-
-    },
-
-    {
       "route": "pages/purchase-order",
       "name": "puchaseorder",
       "type": "link",
-      "icon": "queue",
+      "icon": "add_shopping_cart",
       "permissions": {
         "only": [
           "UserTeam",
@@ -150,8 +129,26 @@
       }
 
     },
+    {
+      "route": "pages",
+      "name": "configuration",
+      "type": "sub",
+      "icon": "settings",
+      "children": [
+        {
+          "route": "approval-config",
+          "name": "approval",
+          "type": "link"
+        }
 
+      ],
+      "permissions": {
+        "only": [
+          "Admin"
+        ]
+      }
 
+    },
     {
       "route": "design",
       "name": "design",
@@ -507,7 +504,7 @@
         }
       ],
       "permissions": {
-        "only": "Admin1"
+        "only": "Admin"
       }
     },
     {

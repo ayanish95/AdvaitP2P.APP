@@ -3,7 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
+import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Country } from '@core/models/country';
 import { Plants } from '@core/models/plants';
@@ -69,11 +71,19 @@ export class PlantListComponent implements OnInit {
     BusinessPlace: ['', [Validators.required]],
     IsActive: [false],
   });
-
+  isSAPEnabled!: string;
+  currentUserRole!: number;
+  Role = Role;
+  currentUserId!: number;
+  rightsForApproval = false;
+  
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private countryService: CountryService, private stateService: StateService,
-    private toaster: ToastrService) { }
+    private toaster: ToastrService,private authService: AuthService,) { }
 
   ngOnInit() {
+    this.currentUserRole = this.authService.roles();
+    this.currentUserId = this.authService.userId();
+    this.isSAPEnabled = this.authService.isSAPEnable();
     this.apiPlantList();
     this.apiCountryList();
     this.apiStateListByCountryCode();
@@ -241,6 +251,7 @@ export class PlantListComponent implements OnInit {
           if (this.plantDetails) {
             await this.apiStateListByCountryCode(this.plantDetails.Country ? this.plantDetails.Country : '');
             this.selectedCountryCode = this.plantDetails.Country ? this.plantDetails.Country : '';
+            let state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode ==  this.plantDetails.GSTStateCode);
             this.plantForm.patchValue({
               PlantName: this.plantDetails.PlantName,
               Email: this.plantDetails.Email,
@@ -250,7 +261,7 @@ export class PlantListComponent implements OnInit {
               City: this.plantDetails.City,
               PostalCode: this.plantDetails.Pincode,
               Country: this.countryList.find(x => x.CountryCode == this.plantDetails.Country) as any,
-              State: this.stateList.find(x => x.Id == this.plantDetails.StateId) as any,
+              State: state as any,
               BusinessPlace: this.plantDetails.BusinessPlace,
               GSTNumber: this.plantDetails.GST,
               TaxNumber: this.plantDetails.TaxNumber,
@@ -288,8 +299,8 @@ export class PlantListComponent implements OnInit {
       Street1: plantdata.Street1,
       Street2: plantdata.Street2,
       Country: plantdata.Country?.CountryCode,
-      StateId: plantdata.State?.Id,
-      ERPStateCode: plantdata.State?.ERPStateCode,
+      StateId: this.isSAPEnabled == 'false' ? plantdata.State?.Id.toString() : plantdata.State?.GSTStateCode,
+      GSTStateCode: plantdata.State?.GSTStateCode,
       City: plantdata.City,
       Pincode: plantdata.PostalCode,
       GST: plantdata.GSTNumber,

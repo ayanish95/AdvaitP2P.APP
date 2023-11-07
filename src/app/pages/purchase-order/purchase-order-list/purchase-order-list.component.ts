@@ -4,8 +4,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Plants } from '@core/models/plants';
+import { PurchaseOrderHeader } from '@core/models/purchase-order';
 import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { PlantService } from '@core/services/plant.service';
+import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
@@ -21,9 +23,12 @@ export class PurchaseOrderListComponent {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
+    'PONumber',
+    'PODate',
     'PRNumber',
-    'PRDocType',
-    'PRDate',
+    'DocType',
+    'Supplier',
+    'TotalPOAmount',
     'View',
     'AddASN'
 
@@ -35,25 +40,25 @@ export class PurchaseOrderListComponent {
   dataSource1: any;
   currentPage = 1;
   pageSize = 10;
-  PRHeaderList!: PurchaseRequisitionHeader[];
+  POHeaderList!: PurchaseOrderHeader[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
 
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService) {}
+  constructor(private purchaseOrderService:PurchaseOrderService,private toaster:ToastrService) {}
 
   ngOnInit() {
-    this.purchaseRequistionService
-      .getAllPRHeaderList()
+    this.purchaseOrderService
+      .getAllPOHeaderListByUserId()
       .pipe(
         finalize(() => {
         })
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          this.PRHeaderList = res[ResultEnum.Model];
-          this.dataSource.data = this.PRHeaderList;
+          this.POHeaderList = res[ResultEnum.Model];
+          this.dataSource.data = this.POHeaderList;
           this.dataSource.paginator = this.paginator;
           this.filter = new Filter();
           this.filter.OrderBy = OrderBy.DESC;

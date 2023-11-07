@@ -6,8 +6,8 @@ export interface Plants {
     Street2?: string;
     Street3?: string;
     City?: string;
-    StateId?: number;
-    ERPStateCode?: string;
+    StateId?: string;
+    GSTStateCode?: string;
     Country?: string;
     Pincode?: string;
     Email?: string;
