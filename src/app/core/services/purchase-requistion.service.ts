@@ -14,6 +14,9 @@ export class PurchaseRequistionService {
   getAllPRHeaderList(): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPRHeaderList}`);
   }
+  getAllPRNumber(): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPurchaseRequisitionNumber}`);
+  }
   getAllPRHeaderListByUserId(): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPRHeaderListByUserId}`);
   }
@@ -23,6 +26,10 @@ export class PurchaseRequistionService {
 
   getPRDetailsById(Id:number): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetPRDetailsById}/${Id}`);
+  }
+
+  getPRDetailsForPO(Id:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetPRDetailsForPO}/${Id}`);
   }
 
   createPR(PRVM: any,currentUserId:number) {

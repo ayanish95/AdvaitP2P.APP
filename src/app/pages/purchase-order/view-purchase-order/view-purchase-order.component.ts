@@ -18,8 +18,8 @@ import { formatDate } from '@angular/common';
 })
 export class ViewPurchaseOrderComponent {
 
-  public isPrint: boolean = false;
-  public fromOpenSales: boolean = false;
+  public isPrint = false;
+  public fromOpenSales = false;
 
 
   displayedColumns: string[] = [
@@ -94,35 +94,35 @@ export class ViewPurchaseOrderComponent {
   }
 
   print() {
-    debugger
-    let mergefile = "";
-    let orderRow = "";
-    let totalRow = "";
-    let grandTable = "";
-    let TotalNetPrice="";
+    debugger;
+    let mergefile = '';
+    let orderRow = '';
+    const totalRow = '';
+    const grandTable = '';
+    const TotalNetPrice='';
     let Pono = 0;
-    let Podate = "";
+    let Podate = '';
     let Suppliercode = '';
-    let Plantname = "";
-    let Suppliername = "";
-    let Supplieradd = '';
-    let Plantadd = '';
-    let Suppliercon = '';
-    let Plantcon = '';
-    let Supplieremail = '';
-    let Plantemail = '';
-    let Suppliergstin = '';
-    let Plantgstin = '';
-    let Supplierpan = '';
-    let Plantpan = '';
-    let custNum = "";
-    let city = "";
-    let orderBy = "";
-    let remarks = "";
-    let address = "";
+    let Plantname = '';
+    let Suppliername = '';
+    const Supplieradd = '';
+    const Plantadd = '';
+    const Suppliercon = '';
+    const Plantcon = '';
+    const Supplieremail = '';
+    const Plantemail = '';
+    const Suppliergstin = '';
+    const Plantgstin = '';
+    const Supplierpan = '';
+    const Plantpan = '';
+    const custNum = '';
+    let city = '';
+    let orderBy = '';
+    let remarks = '';
+    const address = '';
     let j = 0;
     let pagecount = 1;
-    let PODetailsForPrint = [];
+    const PODetailsForPrint = [];
     if (this.PODetails) {
       Pono = this.PODetails.Id ?? 0;
 
@@ -144,74 +144,74 @@ export class ViewPurchaseOrderComponent {
     }
 
 
-    let lastPage = Math.ceil(this.PODetails.POLineItems.length / 25);
+    const lastPage = Math.ceil(this.PODetails.POLineItems.length / 25);
     for (let i = 0; i < this.PODetails.POLineItems.length; i++) {
       let file = template.toString();
 
       if (j == 26) {
         j = 1;
-        orderRow = "";
-        pagecount++
+        orderRow = '';
+        pagecount++;
       }
 
       if (remarks == null) {
-        remarks = "";
+        remarks = '';
       }
 
 
-      orderRow += "<tr>";
-      orderRow += "<td>" + (1 + i) + "</td>";
-      orderRow += "<td>" + this.PODetails.POLineItems[i].ProductCode + "</td>";
-      orderRow += "<td>" + this.PODetails.POLineItems[i].ProductDescription + "</td>";
-      orderRow += "<td>" +   + "</td>";
-      orderRow += "<td>" + this.PODetails.POLineItems[i].Qty + "</td>";
-      orderRow +="<td>" + this.PODetails.POLineItems[i].UnitName + "</td>";
-      orderRow +="<td>" +  this.PODetails.POLineItems[i].NetPrice+ "</td>";
-      orderRow +="<td>" + formatDate(  this.PODetails.POLineItems[i].DeliveryDate  ,'dd-MM-yyyy', 'en-US'); + "</td>";
-      orderRow +="<td>" +  this.PODetails.POLineItems[i].TotalNetPrice+ "</td>";
+      orderRow += '<tr>';
+      orderRow += '<td>' + (1 + i) + '</td>';
+      orderRow += '<td>' + this.PODetails.POLineItems[i].ProductCode + '</td>';
+      orderRow += '<td>' + this.PODetails.POLineItems[i].ProductDescription + '</td>';
+      orderRow += '<td>' +   + '</td>';
+      orderRow += '<td>' + this.PODetails.POLineItems[i].Qty + '</td>';
+      orderRow +='<td>' + this.PODetails.POLineItems[i].UnitName + '</td>';
+      orderRow +='<td>' +  this.PODetails.POLineItems[i].NetPrice+ '</td>';
+      orderRow +='<td>' + formatDate(  this.PODetails.POLineItems[i].DeliveryDate  ,'dd-MM-yyyy', 'en-US'); + '</td>';
+      orderRow +='<td>' +  this.PODetails.POLineItems[i].TotalNetPrice+ '</td>';
 
-      orderRow += "</tr>";
+      orderRow += '</tr>';
 
-      file = file.replace(/(\r\n|\n|\r)/gm, "");
-      file = file.replace("##PAGE", "#" + pagecount + " of " + lastPage);
-      file = file.replace("##Pono", Pono.toString());
-      file = file.replace("##Podate", Podate.toString());
-      file = file.replace("##Suppliercode", Suppliercode);
-      file = file.replace("##Plantname", Plantname)
-      file = file.replace("##Suppliername", Suppliername);
-      file = file.replace("##ORDERITEM", orderRow);
-      file = file.replace("##Supplieradd", Supplieradd);
-      file = file.replace("##Plantadd", Plantadd);
-      file = file.replace("##Suppliercon", Suppliercon);
-      file = file.replace("##Plantcon", Plantcon);
-      file = file.replace("##Supplieremail", Supplieremail);
-      file = file.replace("##Plantemail", Plantemail);
-      file = file.replace("##Suppliergstin", Suppliergstin);
-      file = file.replace("##Plantgstin", Plantgstin);
-      file = file.replace("##Supplierpan", Supplierpan);
-      file = file.replace("##Plantpan", Plantpan);
-      file = file.replace("##CustNum", custNum);
-      file = file.replace("##CITY", city);
-      file = file.replace("##ORDERBY", orderBy);
-      file = file.replace("##REMARKS", remarks);
-      file = file.replace("##ADDRESS", address);
-      file = file.replace("##TOTAL", TotalNetPrice);
+      file = file.replace(/(\r\n|\n|\r)/gm, '');
+      file = file.replace('##PAGE', '#' + pagecount + ' of ' + lastPage);
+      file = file.replace('##Pono', Pono.toString());
+      file = file.replace('##Podate', Podate.toString());
+      file = file.replace('##Suppliercode', Suppliercode);
+      file = file.replace('##Plantname', Plantname);
+      file = file.replace('##Suppliername', Suppliername);
+      file = file.replace('##ORDERITEM', orderRow);
+      file = file.replace('##Supplieradd', Supplieradd);
+      file = file.replace('##Plantadd', Plantadd);
+      file = file.replace('##Suppliercon', Suppliercon);
+      file = file.replace('##Plantcon', Plantcon);
+      file = file.replace('##Supplieremail', Supplieremail);
+      file = file.replace('##Plantemail', Plantemail);
+      file = file.replace('##Suppliergstin', Suppliergstin);
+      file = file.replace('##Plantgstin', Plantgstin);
+      file = file.replace('##Supplierpan', Supplierpan);
+      file = file.replace('##Plantpan', Plantpan);
+      file = file.replace('##CustNum', custNum);
+      file = file.replace('##CITY', city);
+      file = file.replace('##ORDERBY', orderBy);
+      file = file.replace('##REMARKS', remarks);
+      file = file.replace('##ADDRESS', address);
+      file = file.replace('##TOTAL', TotalNetPrice);
 
       if (pagecount == 1 || lastPage == pagecount) {
-        file = file.replace("##PIXAL", '10px');
+        file = file.replace('##PIXAL', '10px');
       }
       else {
-        file = file.replace("##PIXAL", '20px');
+        file = file.replace('##PIXAL', '20px');
       }
       if (lastPage == pagecount) {
-        file = file.replace("##TOTAL", totalRow);
-        file = file.replace("##GRANDTABLE", grandTable);
+        file = file.replace('##TOTAL', totalRow);
+        file = file.replace('##GRANDTABLE', grandTable);
       }
       else {
-        file = file.replace("##TOTAL", "");
-        file = file.replace("##GRANDTABLE", "");
+        file = file.replace('##TOTAL', '');
+        file = file.replace('##GRANDTABLE', '');
       }
-      file = file.replace("##OrderForm", "NA");
+      file = file.replace('##OrderForm', 'NA');
       if (j == 25 || i + 1 == this.PODetails.POLineItems.length) {
         mergefile += file;
       }

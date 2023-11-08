@@ -21,7 +21,7 @@
     <ng-container *ngIf="rightsForApproval">
       <mat-tab-group dynamicHeight (selectedTabChange)="onTabChanged($event);">
         <mat-tab>
-          <ng-template mat-tab-label>PR Created By You</ng-template>
+          <ng-template mat-tab-label>Created PR</ng-template>
           <app-all-purchase-requisition-list [allPRHeaderList]="PRHeaderList"
                                              [ApprovalStrategyList]="approvalStrategyList"
                                              (LoadAllPR)="apiPRList()">
