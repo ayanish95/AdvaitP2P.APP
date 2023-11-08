@@ -34,7 +34,7 @@
                 <ng-container matColumnDef="View">
                     <th mat-header-cell *matHeaderCellDef> Action </th>
                     <td mat-cell *matCellDef="let element">
-                     <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}">   <mat-icon >remove_red_eye</mat-icon></button>
+                     <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}"  matTooltip="Click to View">   <mat-icon >remove_red_eye</mat-icon></button>
                      </td>
                 </ng-container>
 
