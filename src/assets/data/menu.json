@@ -81,6 +81,7 @@
       "permissions": {
         "only": [
           "UserTeam",
+          "ProcurementTeam",
           "Admin"
 
         ]
