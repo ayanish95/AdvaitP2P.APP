@@ -11,6 +11,7 @@ import { AllPurchaseOrderListComponent } from './all-purchase-order-list/all-pur
 import { PendingPOForApprovalComponent } from './pending-po-for-approval/pending-po-for-approval.component';
 
 
+
 @NgModule({
     declarations: [
         PurchaseOrderListComponent,

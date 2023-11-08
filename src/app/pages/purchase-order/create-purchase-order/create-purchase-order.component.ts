@@ -670,7 +670,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
           TotalPOAmount:this.calculateTotalForFooter('TotalAmount'),
           POLineItems: this.POLineItem
         };
-    
+
     this.purchaseOrderService.createPO(PODetails).subscribe({
       next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
@@ -685,7 +685,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
       },
       error: (e) => { this.toaster.error(e.Message); },
       complete() {
-    
+
       },
     });
   }}

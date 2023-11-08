@@ -35,6 +35,7 @@ export class AllPurchaseOrderListComponent implements OnInit {
     'Edit',
     'Delete',
     'View',
+    'AddASN',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;

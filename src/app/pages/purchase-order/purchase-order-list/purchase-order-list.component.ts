@@ -21,7 +21,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./purchase-order-list.component.scss']
 })
 export class PurchaseOrderListComponent {
-
+  
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -34,8 +34,12 @@ export class PurchaseOrderListComponent {
     'Edit',
     'Delete',
     'View',
+    'AddASN'
+
+
+
   ];
-  
+
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
   currentPage = 1;
