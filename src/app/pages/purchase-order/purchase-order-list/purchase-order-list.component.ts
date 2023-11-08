@@ -19,7 +19,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./purchase-order-list.component.scss']
 })
 export class PurchaseOrderListComponent {
-  
+
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',

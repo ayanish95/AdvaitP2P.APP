@@ -88,7 +88,7 @@ filtersupplierCode!:Observable<Suppliers[]>;
     'Location',
     'Suppliercode',
     'Edit',
-    'Delete',
+    
   ];
   minDate: Date = new Date();
   PRDetails!: PurchaseRequisitionDetailsVM;
