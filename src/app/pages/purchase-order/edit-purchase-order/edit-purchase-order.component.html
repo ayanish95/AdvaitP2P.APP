@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Create Purchase order</h2>
+        <h2>Update Purchase order</h2>
       </div>
     </div>
 
@@ -56,16 +56,9 @@
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="spcode"
                    formControlName="SupplierCode"
-                   placeholder="Supplier Code">
-            <mat-autocomplete #spcode="matAutocomplete" [displayWith]="supplierDisplayFn"
-                              (optionSelected)='onSelectChangeSupplier($event.option.value)'>
-              <mat-option *ngFor="let supplier of filtersupplierCode | async"
-                          [value]="supplier">
-                <span>{{ supplier.SupplierCode }}</span>
-              </mat-option>
-            </mat-autocomplete>
+                   placeholder="Supplier Code" readonly>
+          
             <mat-error *ngIf="POHeaderForm.get('SupplierCode')?.hasError('required')">
               Please select supplier code...
             </mat-error>
@@ -87,17 +80,8 @@
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="PrnoAutocomplete"
                    formControlName="PRno"
-                   placeholder="PR Number">
-            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-                              [displayWith]="prNumberDisplayForSAPFn"
-                              (optionSelected)='getprno($event.option.value.Id)'>
-              <mat-option *ngFor="let prno of filteredprno | async"
-                          [value]="prno">
-                <span>{{ prno?.ERPPRNumber }}</span>
-              </mat-option>
-            </mat-autocomplete>
+                   placeholder="PR Number" readonly>
             <mat-error *ngIf="POHeaderForm.get('PRno')?.hasError('required')">
               Please select PR number...
             </mat-error>
@@ -109,7 +93,7 @@
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="ContractNumber" readonly
-                   placeholder="Contract Number">
+                   placeholder="Contract Number" >
 
           </mat-form-field>
         </div>
@@ -118,19 +102,10 @@
             <h5> RFQ Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="docAutocomplete"
+            <input matInput readonly
                    formControlName="RFQNumber"
                    placeholder="RFQ Number">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="POHeaderForm.get('RFQNumber')?.hasError('required')">
-              Please select RFQ Number...
-            </mat-error>
+           
           </mat-form-field>
         </div>
 
@@ -290,8 +265,8 @@
         </div>
       </div>
       <div class="d-flex justify-content-end mt-20">
-        <button [disabled]="!dataSource?.data?.length || POHeaderForm.invalid" mat-raised-button
-                color="primary" (click)="onClickCreatePO()"> Create PO</button>
+        <button [disabled]="!dataSource.data.length || POHeaderForm.invalid" mat-raised-button
+                color="primary" (click)="onClickUpdatePO()"> Update PO</button>
       </div>
     </form>
   </mat-card-content>
@@ -431,7 +406,7 @@
             Item?</mat-checkbox>
         </div>
         <div class="col-sm-6">
-          <mat-checkbox color="primary" formControlName="IsFreeOfCharge" (change)="onCheckChangeFreeOfCharge($event)">Free Of
+          <mat-checkbox color="primary" formControlName="IsFreeOfCharge" (change)="onCheckChangeFreeOfCharge($event)"  >Free Of
             Charge?</mat-checkbox>
         </div>
       </div>
@@ -451,7 +426,7 @@
 
 <ng-template #deleteAlert>
   <h2 mat-dialog-title class="text-center">Delete Purchase Order Prodcut</h2>
-  <div mat-dialog-content>Are you sure want to delete this PO product?</div>
+  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to delete this item?</div>
   <div mat-dialog-actions class="d-flex justify-content-center">
     <button mat-button mat-dialog-close>Cancel</button>
     <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>

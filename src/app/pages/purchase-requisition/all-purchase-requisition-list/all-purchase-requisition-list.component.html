@@ -6,12 +6,12 @@
       </ng-container>
       <ng-container matColumnDef="PRNumber">
         <th mat-header-cell *matHeaderCellDef> PR Number </th>
-        <td mat-cell *matCellDef="let element"> {{element?.Id}}</td>
-      </ng-container>
-      <ng-container matColumnDef="ERPPRNumber">
-        <th mat-header-cell *matHeaderCellDef>ERP PR Number </th>
         <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
       </ng-container>
+      <!-- <ng-container matColumnDef="ERPPRNumber">
+        <th mat-header-cell *matHeaderCellDef>ERP PR Number </th>
+        <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
+      </ng-container> -->
       <ng-container matColumnDef="PRDocType">
         <th mat-header-cell *matHeaderCellDef> Doc. Type </th>
         <td mat-cell *matCellDef="let element"> {{element?.PRDocType}} </td>

@@ -6,28 +6,29 @@ import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
+import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-pending-for-approval',
-  templateUrl: './pending-for-approval.component.html',
-  styleUrls: ['./pending-for-approval.component.scss']
+  selector: 'app-pending-po-for-approval',
+  templateUrl: './pending-po-for-approval.component.html',
+  styleUrls: ['./pending-po-for-approval.component.scss']
 })
-export class PendingForApprovalComponent implements OnInit, OnChanges {
+export class PendingPOForApprovalComponent implements OnInit {
 
-  @Input() pendingPRHeaderList!: PurchaseRequisitionHeader[];
-  @Output() LoadPendingPR: EventEmitter<string> = new EventEmitter<string>();
+  @Input() PendingPOHeaderList!: PurchaseOrderHeader[];
+  @Output() LoadPendingPO: EventEmitter<string> = new EventEmitter<string>();
 
   displayedColumns: string[] = [
     'srNo',
+    'PONumber',
+    'PODate',
     'PRNumber',
-    // 'ERPPRNumber',
-    'PRDocType',
-    'PRDate',
-    'SAPStatus',
+    'DocType',
+    'Supplier',
+    'TotalPOAmount',
     'Edit',
     'Delete',
     'Approve',
@@ -38,7 +39,7 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
   filter: Filter = new Filter();
   index = 0;
   isSAPEnabled!: string;
-  selectedPRId!: number;
+  selectedPOId!: number;
   currentUserRole!: number;
   Role = Role;
   currentUserId!: number;
@@ -47,14 +48,14 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
   pageSize = 10;
   propChanges: any;
 
-  constructor(private dialog: MatDialog, private toaster: ToastrService, private authService: AuthService, private prService: PurchaseRequistionService,) {
+  constructor(private dialog: MatDialog, private toaster: ToastrService, private authService: AuthService, private poService: PurchaseOrderService,) {
 
   }
 
 
   ngOnInit(): void {
-    if (this.pendingPRHeaderList?.length > 0) {
-      this.dataSource.data = this.pendingPRHeaderList;
+    if (this.PendingPOHeaderList?.length > 0) {
+      this.dataSource.data = this.PendingPOHeaderList;
       this.dataSource.paginator = this.paginator;
       this.filter = new Filter();
       this.filter.OrderBy = OrderBy.DESC;
@@ -65,17 +66,17 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
     if (this.currentUserRole !== Role.Admin)
-      this.displayedColumns = this.displayedColumns.filter(x =>x != 'Delete');
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'Delete');
     if (this.isSAPEnabled == 'false')
-      this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPPRNumber' && x !='SAPStatus');
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPPRNumber' && x != 'SAPStatus');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.propChanges = changes;
-    if (this.propChanges.pendingPRHeaderList) {
-      const currentValue = this.propChanges.pendingPRHeaderList?.currentValue;
-      this.pendingPRHeaderList = currentValue;
-      this.dataSource.data = this.pendingPRHeaderList;
+    if (this.propChanges.PendingPOHeaderList) {
+      const currentValue = this.propChanges.PendingPOHeaderList?.currentValue;
+      this.PendingPOHeaderList = currentValue;
+      this.dataSource.data = this.PendingPOHeaderList;
       this.dataSource.paginator = this.paginator;
       this.filter = new Filter();
       this.filter.OrderBy = OrderBy.DESC;
@@ -98,42 +99,22 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
   }
 
   openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
-    this.selectedPRId = plantId;
+    this.selectedPOId = plantId;
     this.dialog.open(templateRef);
   }
 
   openApproveOrRejectPRModel(templateRef: TemplateRef<any>, PrId: number) {
-    this.selectedPRId = PrId;
+    this.selectedPOId = PrId;
     this.dialog.open(templateRef);
   }
-  onClickDeletePR() {
-    if (this.selectedPRId == 0 || this.selectedPRId == undefined)
-      throw this.toaster.error('Something went wrong');
-    this.prService
-      .deletePR(this.selectedPRId, this.currentUserId)
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.toaster.success(res[ResultEnum.Message]);
-          this.LoadPendingPR.emit();
-          this.selectedPRId = 0;
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
 
-        this.dialog.closeAll();
-      });
-  }
   onClickApprovePR() {
-    if (!this.selectedPRId)
+    if (!this.selectedPOId)
       throw this.toaster.error('Something went wrong');
 
-    this.prService.approvePRById(this.selectedPRId).subscribe({
+    this.poService.approvePOById(this.selectedPOId).subscribe({
       next: (res: any) => {
-        this.LoadPendingPR.emit();
+        this.LoadPendingPO.emit();
         if (res[ResultEnum.IsSuccess]) {
           this.toaster.success(res.Message);
           this.dialog.closeAll();
@@ -150,12 +131,12 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
   }
 
   onClickRejectPR() {
-    if (!this.selectedPRId)
+    if (!this.selectedPOId)
       throw this.toaster.error('Something went wrong');
 
-    this.prService.rejectPRById(this.selectedPRId).subscribe({
+    this.poService.rejectPOById(this.selectedPOId).subscribe({
       next: (res: any) => {
-        this.LoadPendingPR.emit();
+        this.LoadPendingPO.emit();
         if (res[ResultEnum.IsSuccess]) {
           this.toaster.success(res.Message);
           this.dialog.closeAll();
@@ -169,5 +150,27 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
 
       },
     });
+  }
+
+  onClickDeletePO() {
+    if (this.selectedPOId == 0 || this.selectedPOId == undefined)
+      throw this.toaster.error('Something went wrong');
+    this.poService
+      .deletePO(this.selectedPOId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res[ResultEnum.Message]);
+          this.LoadPendingPO.emit();
+          this.selectedPOId = 0;
+        }
+        else
+          this.toaster.error(res[ResultEnum.Message]);
+
+        this.dialog.closeAll();
+      });
   }
 }
