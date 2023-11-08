@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  baseUrl: 'API/api',
+  baseUrl: '',
+  apiURL:'API/api',
   WhitelistedDomains: ['API/api'],
   useHash: false,
   BlacklistedDomains: [''],

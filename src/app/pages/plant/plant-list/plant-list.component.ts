@@ -251,7 +251,7 @@ export class PlantListComponent implements OnInit {
           if (this.plantDetails) {
             await this.apiStateListByCountryCode(this.plantDetails.Country ? this.plantDetails.Country : '');
             this.selectedCountryCode = this.plantDetails.Country ? this.plantDetails.Country : '';
-            let state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode ==  this.plantDetails.GSTStateCode);
+            const state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode ==  this.plantDetails.GSTStateCode);
             this.plantForm.patchValue({
               PlantName: this.plantDetails.PlantName,
               Email: this.plantDetails.Email,

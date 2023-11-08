@@ -26,7 +26,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
   displayedColumns: string[] = [
     'srNo',
     'PRNumber',
-    'ERPPRNumber',
+    // 'ERPPRNumber',
     'PRDocType',
     'PRDate',
     'SAPStatus',
@@ -59,7 +59,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
     this.isSAPEnabled = this.authService.isSAPEnable();
    
     if (this.isSAPEnabled == 'false')
-      this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPPRNumber' && x != 'SAPStatus');
+      this.displayedColumns = this.displayedColumns.filter(x => x != 'SAPStatus');
 
       if (this.allPRHeaderList?.length > 0) {
         this.dataSource.data = this.allPRHeaderList;

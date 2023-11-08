@@ -53,6 +53,12 @@ export class Method {
   static GetApprovalStrategyDeailsByApprovalId = `/GetApprovalStrategyDeailsByApprovalId`;
   static GetApprovalStrategyByApprovalType = `/GetApprovalStrategyByApprovalType`;
   static CreatePurchaseOrder = `/CreatePurchaseOrder`;
+  static UpdatePurchaseOrder = `/UpdatePurchaseOrder`;
   static GetAllPurchaseOrderHeaderList = `/GetAllPurchaseOrderHeaderList`;
   static GetPurchaseOrderDetailsById = `/GetPurchaseOrderDetailsById`;
+  static DeletePurchaseOrderById = `/DeletePurchaseOrderById`;
+  static DeletePOLineItemByLineId = `/DeletePOLineItemByLineId`;
+  static GetPendingPurchaseOrderByUserId = `/GetPendingPurchaseOrderByUserId`;
+  static ApprovePOById = `/ApprovePOById`;
+  static RejectPOById = `/RejectPOById`;
 }
