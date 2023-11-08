@@ -41,8 +41,8 @@ container {
         <tbody>
             <tr style="height:50px">
                 <td colspan="2">
-                    <p style="display: block;margin-left: auto;margin-right: auto;width: 40%;height: 50%;">
-                        <b>##ORDERBY</b>
+                    <p style="display: block;margin-left: auto;margin-right: auto;width: 40%;height: 50%,text-align: center;">
+                        <b>Purchase Order</b>
                     </p>
                 </td>
             </tr>
@@ -53,46 +53,72 @@ container {
 <!-- Order Table -->
 <div class="row" style="padding-top: 10px">
     <table class="table" style="width: 100%; text-align: left">
+    <tbody>
+            <tr>
+                <td>
+                    <b>PO No :</b>  ##Pono
+                </td>
+                <td><b>PO Date :</b> ##Podate</td>
+            </tr>
+        </tbody>
         <tbody>
             <tr>
                 <td>
-                    <b>Order No :</b>  ##OrderNumber
+                    <b>Supplier Code :</b>  ##Suppliercode
                 </td>
-                <td><b>Order_Date :</b> ##OrderDate</td>
+                <td><b>Plant Name :</b> ##Plantname</td>
             </tr>
         </tbody>
         <tbody>
             <tr>
-                <td><b>Customer Name :</b> ##CustName</td>
-                <td><b>OrderFormID :</b> ##OrderForm</td>
+               <td><b>Supplier Name :</b>  ##Suppliername</td>
             </tr>
         </tbody>
         <tbody>
-            <tr >
-                <td><b>Customer Number :</b> ##CustNum</td>
-                <td><b>City :</b> ##CITY</td>
-            </tr>
-        </tbody>
-        <tbody>
-            <tr>
-                <td style="width:60%"><b>delivery Address :</b> ##ADDRESS</td>
-                <td style="width:40%"><b>Remarks :</b> ##REMARKS</td>
-            </tr>
-        </tbody>
-    </table>
+        <tr>
+           <td><b>Supplier Address :</b>  ##Supplieradd</td>
+            <td><b>Plant Address :</b> ##Plantadd</td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+           <td><b>Supplier Contact :</b>  ##Suppliercon</td>
+            <td><b>Plant Contact :</b> ##Plantcon</td>
+        </tr>
+    </tbody>
+    <tbody>
+    <tr>
+       <td><b>Supplier Email :</b>  ##Supplieremail</td>
+        <td><b>Plant Email :</b> ##Plantemail</td>
+    </tr>
+</tbody>
+<tbody>
+<tr>
+   <td><b>Supplier GSTIN :</b>  ##Suppliergstin</td>
+    <td><b>Plant GSTIN :</b> ##Plantgstin</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+   <td><b>Supplier PAN :</b>  ##Supplierpan</td>
+    <td><b>Plant PAN :</b> ##Plantpan</td>
+</tr>
+</tbody>
 </div>
 
 <div class="row" id="page" style="padding-top: 10px;">
     <table class="table" style="width: 100%; text-align: center">
         <thead>
             <tr>
-                <th>Sr. No</th>
-                <th style="width: 60%">Model</th>
+                <th>No</th>
+                <th>Product Code</th>
+                <th>Product Description</th>
+                <th>HSN/SAC</th>
                 <th>QTY</th>
-                <th>Unit Cost Rs</th>
-                <th>Total Rs</th>
-                <th>EKU</th>
-                <th>Total EKU</th>
+                <th>Unit</th>
+                <th>Rate</th>
+                <th>Delivery Date</th>
+                <th>Total Net Value</th>
             </tr>
         </thead>
         <tbody>
