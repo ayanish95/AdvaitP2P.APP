@@ -38,11 +38,11 @@ import { PurchaseOrderService } from '@core/services/purchase-order.service';
   templateUrl: './create-purchase-order.component.html',
   styleUrls: ['./create-purchase-order.component.scss'],
 })
-export class CreatePurchaseOrderComponent {
+export class CreatePurchaseOrderComponent implements OnInit {
 
   POHeaderForm = this.fb.group({
-    DocType: [null, [Validators.required]],
-    CompanyCode: [null],
+    DocType: ['', [Validators.required]],
+    CompanyCode: [''],
     PRno: [null, [Validators.required]],
     ContractNumber: [null],
     SupplierCode: [null, [Validators.required]],
@@ -129,6 +129,7 @@ export class CreatePurchaseOrderComponent {
   stateList!: States[];
   selectedLineId!: number;
   minDate!: Date;
+  companyCode!:string;
 
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService, private stateService: StateService,
     private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private supplierService: SupplierService, private prService: PurchaseRequistionService,
@@ -139,6 +140,7 @@ export class CreatePurchaseOrderComponent {
 
   ngOnInit(): void {
     this.POHeaderForm.controls.PODate.disable();
+    // this.POHeaderForm.controls['DocType'].disable();
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
@@ -153,7 +155,7 @@ export class CreatePurchaseOrderComponent {
   apiInitialize() {
     this.apiDocType();
     this.apiSupplier();
-    this.apiPRList();
+    this.apiPRNoList();
     this.apiUnit();
     this.apiProductList();
     this.apiPlantList();
@@ -203,9 +205,9 @@ export class CreatePurchaseOrderComponent {
       });
   }
 
-  apiPRList() {
+  apiPRNoList() {
     this.prService
-      .getAllPRHeaderList()
+      .getAllPRNumber()
       .pipe(
         finalize(() => {
         })
@@ -483,10 +485,11 @@ export class CreatePurchaseOrderComponent {
     }
 
     this.POLineItem = [];
-    this.prService.getPRDetailsById(selectedPRNumber).subscribe(res => {
+    this.dataSource.data = [];
+    this.prService.getPRDetailsForPO(selectedPRNumber).subscribe(res => {
       if (res[ResultEnum.IsSuccess]) {
         this.PRDetails = res[ResultEnum.Model];
-
+        this.POHeaderForm.get('DocType')?.setValue(this.PRDetails?.PRDocType ? this.PRDetails?.PRDocType : '');
         this.PRDetails.PRLineItems?.forEach((item, index) => {
           const product = this.productList?.find(x => x.ProductCode == item.ProductCode);
           const netPrice = product?.PriceIndicator == 'S' ? product?.StandardPrice : product?.MovingAvgPrice;
@@ -495,6 +498,9 @@ export class CreatePurchaseOrderComponent {
           const supplier = this.selectedSupplier;
           const plantState = this.stateList.find(x => x.Id == plant?.StateId as unknown as number);
           let IsGST = false;
+          if(plant && !this.POHeaderForm.get('CompanyCode')?.value){
+            this.POHeaderForm.get('CompanyCode')?.setValue(plant?.CompanyCode ? plant?.CompanyCode : '');
+          }
           if (supplier?.State == plantState?.GSTStateCode)
             IsGST = true;
           let taxAmount = 0;
@@ -529,8 +535,12 @@ export class CreatePurchaseOrderComponent {
         });
         this.dataSource.data = this.POLineItem;
       }
-      else
+      else{
+       
+        this.POHeaderForm.reset();
+        this.PRDetails = res[ResultEnum.Model];
         this.toaster.error(res[ResultEnum.Message]);
+      }
     });
   }
 
@@ -570,13 +580,26 @@ export class CreatePurchaseOrderComponent {
     });
   }
 
+  onCheckChangeFreeOfCharge(event:any){
+    if(event?.checked){
+      this.POLineForm.get('NetPrice')?.setValue('0');
+      this.POLineForm.get('NetPrice')?.disable();
+    }
+    else{
+      this.POLineForm.get('NetPrice')?.enable();
+    }
+  }
+
   onClickUpdateProduct() {
     const POline = this.POLineForm.value;
     if (this.selectedLineId > 0) {
       this.POLineItem.forEach(item => {
 
         if (item?.Id == this.selectedLineId) {
-          const netPrice = POline.NetPrice as unknown as number;
+          const IsFreeOfCharge = POline.IsFreeOfCharge;
+          let netPrice = POline.NetPrice as unknown as number;
+          if(!netPrice)
+          netPrice =this.POLineForm.get('NetPrice')?.getRawValue();
           const qty = POline.Qty as unknown as number;
           const totalNetPrice = Math.round(qty * netPrice);
           let IsGST = false;
@@ -596,10 +619,10 @@ export class CreatePurchaseOrderComponent {
 
 
           item.Qty = qty;
-          item.NetPrice = netPrice;
-          item.TotalNetPrice = totalNetPrice;
-          item.TaxAmount = taxAmount;
-          item.TotalAmount = totalAmount;
+          item.NetPrice = !IsFreeOfCharge ? netPrice : 0;
+          item.TotalNetPrice = !IsFreeOfCharge ?  totalNetPrice : 0;
+          item.TaxAmount = !IsFreeOfCharge ? taxAmount : 0;
+          item.TotalAmount = !IsFreeOfCharge ? totalAmount : 0;
           item.StockType = POline.StockType as any;
           item.DeliveryDate = POline.DeliveryDate as unknown as Date;
           item.IsReturnItem = POline.IsReturnItem as any;
@@ -629,6 +652,7 @@ export class CreatePurchaseOrderComponent {
       });
       this.dataSource.data = this.POLineItem;
     }
+    this.dialog.closeAll();
   }
   onClickCreatePO(){
     if (this.POLineItem?.length == 0)
@@ -652,7 +676,7 @@ export class CreatePurchaseOrderComponent {
           TotalPOAmount:this.calculateTotalForFooter('TotalAmount'),
           POLineItems: this.POLineItem
         };
-    
+
     this.purchaseOrderService.createPO(PODetails).subscribe({
       next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
@@ -667,7 +691,7 @@ export class CreatePurchaseOrderComponent {
       },
       error: (e) => { this.toaster.error(e.Message); },
       complete() {
-    
+
       },
     });
   }}

@@ -9,6 +9,7 @@ import { Filter, OrderBy } from '@core/models/base-filter';
 import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-pending-for-approval',
@@ -23,7 +24,7 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
   displayedColumns: string[] = [
     'srNo',
     'PRNumber',
-    'ERPPRNumber',
+    // 'ERPPRNumber',
     'PRDocType',
     'PRDate',
     'SAPStatus',
@@ -105,7 +106,27 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
     this.selectedPRId = PrId;
     this.dialog.open(templateRef);
   }
+  onClickDeletePR() {
+    if (this.selectedPRId == 0 || this.selectedPRId == undefined)
+      throw this.toaster.error('Something went wrong');
+    this.prService
+      .deletePR(this.selectedPRId, this.currentUserId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res[ResultEnum.Message]);
+          this.LoadPendingPR.emit();
+          this.selectedPRId = 0;
+        }
+        else
+          this.toaster.error(res[ResultEnum.Message]);
 
+        this.dialog.closeAll();
+      });
+  }
   onClickApprovePR() {
     if (!this.selectedPRId)
       throw this.toaster.error('Something went wrong');

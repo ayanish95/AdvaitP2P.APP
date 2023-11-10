@@ -48,7 +48,7 @@ const routes: Routes = [
       {
         path: 'pages/purchase-requisition',
         loadChildren: () => import('../pages/purchase-requisition/purchase-requisition.module').then(m => m.PurchaseRequisitionModule),
-      }, 
+      },
       {
         path: 'pages/approval-config',
         loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
@@ -64,6 +64,14 @@ const routes: Routes = [
       {
         path: 'pages/quotation',
         loadChildren: () => import('../pages/quotation/quotation.module').then(m => m.QuotationModule),
+      },
+      {
+        path: 'pages/advance-shipping-notification',
+        loadChildren: () => import('../pages/advance-shipping-notification/advance-shipping-notification.module').then(m => m.AdvanceShippingNotificationModule),
+      },
+      {
+        path: 'pages/goods-received-note',
+        loadChildren: () => import('../pages/goods-received-note/goods-received-note.module').then(m => m.GoodsReceivedNoteModule),
       },
       {
         path: 'design',

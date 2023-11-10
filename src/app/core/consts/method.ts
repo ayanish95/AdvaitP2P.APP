@@ -21,9 +21,11 @@ export class Method {
   static DeletePurchaseRequisitionById = `/DeletePurchaseRequisitionById`;
   static DeletePRLineItemByLineId = `/DeletePRLineItemByLineId`;
   static GetAllPRHeaderList = `/GetAllPRHeaderList`;
+  static GetAllPurchaseRequisitionNumber = `/GetAllPurchaseRequisitionNumber`;
   static GetAllPRHeaderListByUserId = `/GetAllPRHeaderListByUserId`;
   static GetPendingPRByUserId = `/GetPendingPRByUserId`;
   static GetPRDetailsById = `/GetPRDetailsById`;
+  static GetPRDetailsForPO = `/GetPRDetailsForPO`;
   static ApprovePRById = `/ApprovePRById`;
   static RejectPRById = `/RejectPRById`;
   static GetAllRolesList = `/GetAllRolesList`;
@@ -53,6 +55,12 @@ export class Method {
   static GetApprovalStrategyDeailsByApprovalId = `/GetApprovalStrategyDeailsByApprovalId`;
   static GetApprovalStrategyByApprovalType = `/GetApprovalStrategyByApprovalType`;
   static CreatePurchaseOrder = `/CreatePurchaseOrder`;
+  static UpdatePurchaseOrder = `/UpdatePurchaseOrder`;
   static GetAllPurchaseOrderHeaderList = `/GetAllPurchaseOrderHeaderList`;
   static GetPurchaseOrderDetailsById = `/GetPurchaseOrderDetailsById`;
+  static DeletePurchaseOrderById = `/DeletePurchaseOrderById`;
+  static DeletePOLineItemByLineId = `/DeletePOLineItemByLineId`;
+  static GetPendingPurchaseOrderByUserId = `/GetPendingPurchaseOrderByUserId`;
+  static ApprovePOById = `/ApprovePOById`;
+  static RejectPOById = `/RejectPOById`;
 }

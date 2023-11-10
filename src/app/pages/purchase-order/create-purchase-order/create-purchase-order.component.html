@@ -40,15 +40,9 @@
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
-                   formControlName="DocType"
+                   formControlName="DocType" readonly
                    placeholder="Doc Type">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
-              <mat-option *ngFor="let product of filteredDocType | async"
-                          [value]="product?.Type">
-                <span>{{ product?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
+           
             <mat-error *ngIf="POHeaderForm.get('DocType')?.hasError('required')">
               Please select doc type...
             </mat-error>
@@ -97,11 +91,11 @@
                    formControlName="PRno"
                    placeholder="PR Number">
             <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-                              [displayWith]=" isSAPEnabled =='false' ? prNumberDisplayFn : prNumberDisplayForSAPFn"
+                              [displayWith]="prNumberDisplayForSAPFn"
                               (optionSelected)='getprno($event.option.value.Id)'>
               <mat-option *ngFor="let prno of filteredprno | async"
                           [value]="prno">
-                <span>{{ isSAPEnabled =='false'? prno?.Id : prno?.ERPPRNumber }}</span>
+                <span>{{ prno?.ERPPRNumber }}</span>
               </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="POHeaderForm.get('PRno')?.hasError('required')">
@@ -146,15 +140,9 @@
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
                    formControlName="CompanyCode"
-                   placeholder="Company Code">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
+                   placeholder="Company Code" readonly>
+          
             <mat-error *ngIf="POHeaderForm.get('CompanyCode')?.hasError('required')">
               Please select Company Code...
             </mat-error>
@@ -443,7 +431,7 @@
             Item?</mat-checkbox>
         </div>
         <div class="col-sm-6">
-          <mat-checkbox color="primary" formControlName="IsFreeOfCharge">Free Of
+          <mat-checkbox color="primary" formControlName="IsFreeOfCharge" (change)="onCheckChangeFreeOfCharge($event)">Free Of
             Charge?</mat-checkbox>
         </div>
       </div>

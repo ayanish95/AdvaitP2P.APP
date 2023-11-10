@@ -6,20 +6,19 @@
       </ng-container>
       <ng-container matColumnDef="PRNumber">
         <th mat-header-cell *matHeaderCellDef> PR Number </th>
-        <td mat-cell *matCellDef="let element"> {{element?.Id}}</td>
-      </ng-container>
-      <ng-container matColumnDef="ERPPRNumber">
-        <th mat-header-cell *matHeaderCellDef>ERP PR Number </th>
         <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
       </ng-container>
+      <!-- <ng-container matColumnDef="ERPPRNumber">
+        <th mat-header-cell *matHeaderCellDef>ERP PR Number </th>
+        <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
+      </ng-container> -->
       <ng-container matColumnDef="PRDocType">
         <th mat-header-cell *matHeaderCellDef> Doc. Type </th>
         <td mat-cell *matCellDef="let element"> {{element?.PRDocType}} </td>
       </ng-container>
       <ng-container matColumnDef="PRDate">
         <th mat-header-cell *matHeaderCellDef> PR Date </th>
-        <td mat-cell *matCellDef="let element"> {{element?.PRDate | date : 'dd-MM-yyyy hh:mm
-          a' }} </td>
+        <td mat-cell *matCellDef="let element"> {{element?.PRDate | date : 'dd-MM-yyyy' }} </td>
       </ng-container>
       <ng-container matColumnDef="SAPStatus">
         <th mat-header-cell *matHeaderCellDef> SAP Status </th>
@@ -42,7 +41,7 @@
         <th mat-header-cell *matHeaderCellDef> Edit </th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button [routerLink]="['edit']" [queryParams]="{id: element.Id}"
-          [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart  && Role.Admin != currentUserRole) &&  Role.Admin != currentUserRole">
+          [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart  && Role.Admin != currentUserRole) &&  Role.Admin != currentUserRole"  matTooltip="Click to Edit">
             <mat-icon>edit</mat-icon>
           </button>
         </td>
@@ -51,7 +50,7 @@
         <th mat-header-cell *matHeaderCellDef> Delete </th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button  [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart && Role.Admin != currentUserRole) && Role.Admin != currentUserRole"
-                  (click)="openDeleteModel(deleteAlert,element?.Id)">
+                  (click)="openDeleteModel(deleteAlert,element?.Id)"  matTooltip="Click to Delete">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
@@ -59,7 +58,7 @@
       <ng-container matColumnDef="View">
         <th mat-header-cell *matHeaderCellDef> View </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}">
+          <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}"  matTooltip="Click to View">
             <mat-icon>remove_red_eye</mat-icon></button>
         </td>
       </ng-container>
@@ -91,6 +90,6 @@
     <div mat-dialog-content>Are you sure want to delete this PR?</div>
     <div mat-dialog-actions class="d-flex justify-content-center">
       <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="warn" (click)="onClickDeletePR()">Delete</button>
+      <button mat-raised-button color="warn" (click)="onClickDeletePR()"  matTooltip="Click to Delete">Delete</button>
     </div>
   </ng-template>

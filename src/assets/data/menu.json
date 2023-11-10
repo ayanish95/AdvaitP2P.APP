@@ -81,6 +81,7 @@
       "permissions": {
         "only": [
           "UserTeam",
+          "ProcurementTeam",
           "Admin"
 
         ]
@@ -90,6 +91,34 @@
     {
       "route": "pages/quotation",
       "name": "quotation",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/advance-shipping-notification",
+      "name": "ASN",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/goods-received-note",
+      "name": "GRN",
       "type": "link",
       "icon": "queue",
       "permissions": {

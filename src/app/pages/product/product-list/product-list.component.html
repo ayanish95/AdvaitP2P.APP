@@ -62,7 +62,7 @@
                     <th mat-header-cell *matHeaderCellDef> Edit </th>
                     <td mat-cell *matCellDef="let element">
                         <button mat-icon-button
-                                (click)="openEditModelPopup(addProduct,element?.Id)">
+                                (click)="openEditModelPopup(addProduct,element?.Id)"  matTooltip="Click to Edit">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </td>
@@ -71,7 +71,7 @@
                     <th mat-header-cell *matHeaderCellDef> Delete </th>
                     <td mat-cell *matCellDef="let element">
                         <button mat-icon-button
-                                (click)="openDeleteModel(deleteAlert,element?.Id)">
+                                (click)="openDeleteModel(deleteAlert,element?.Id)"  matTooltip="Click to Delete">
                             <mat-icon>delete</mat-icon>
                         </button>
                     </td>
@@ -338,6 +338,6 @@
     <div mat-dialog-content>Are you sure want to delete this product?</div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="warn" (click)="onClickDeleteProduct()">Delete</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteProduct()"  matTooltip="Click to Delete">Delete</button>
     </div>
 </ng-template>

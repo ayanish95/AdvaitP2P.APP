@@ -499,11 +499,12 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
       const PRHeaderData = this.PRHeaderForm.value;
+      const PRDate = this.PRHeaderForm.get('PRDate')?.getRawValue();
       const PRDetails: PurchaseRequisitionDataVM = {
         Id: this.PRId,
         ERPPRNumber: this.PRDetails.ERPPRNumber,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-        PRDate: PRHeaderData.PRDate ? PRHeaderData.PRDate : new Date(),
+        PRDate: PRDate ? PRDate : new Date(),
         PRLineItem: this.PRLineItem
       };
 

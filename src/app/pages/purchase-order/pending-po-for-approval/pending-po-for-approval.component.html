@@ -1,0 +1,101 @@
+<div class="mt-5">
+    <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="srNo">
+            <th mat-header-cell *matHeaderCellDef># </th>
+            <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+        </ng-container>
+        <ng-container matColumnDef="PONumber">
+            <th mat-header-cell *matHeaderCellDef> PO Number </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ERPPONumber}}</td>
+        </ng-container>
+        <ng-container matColumnDef="PODate">
+          <th mat-header-cell *matHeaderCellDef> PO Date </th>
+          <td mat-cell *matCellDef="let element"> {{element?.PODate | date : 'dd-MM-yyyy hh:mm a' }} </td>
+      </ng-container>
+         <ng-container matColumnDef="DocType">
+            <th mat-header-cell *matHeaderCellDef> Doc. Type </th>
+            <td mat-cell *matCellDef="let element"> {{element?.DocType}} </td>
+        </ng-container> 
+         <ng-container matColumnDef="PRNumber">
+            <th mat-header-cell *matHeaderCellDef> PR Number </th>
+            <td mat-cell *matCellDef="let element"> {{element?.PRHeaderId}} </td>
+        </ng-container> 
+        <ng-container matColumnDef="Supplier">
+            <th mat-header-cell *matHeaderCellDef> Supplier</th>
+            <td mat-cell *matCellDef="let element"> {{element?.SupplierCode}}  - {{element?.SupplierName}} </td>
+        </ng-container>
+        <ng-container matColumnDef="TotalPOAmount">
+            <th mat-header-cell *matHeaderCellDef> Total Amount</th>
+            <td mat-cell *matCellDef="let element"> {{element?.TotalPOAmount | number: '1.0-0'}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Edit">
+            <th mat-header-cell *matHeaderCellDef> Edit </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button [routerLink]="['edit']" [queryParams]="{id: element.Id}">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Delete">
+            <th mat-header-cell *matHeaderCellDef> Delete </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="openDeleteModel(deleteAlert,element?.Id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Approve">
+            <th mat-header-cell *matHeaderCellDef> Approve</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button  (click)="openApproveOrRejectPRModel(approveAlert,element?.Id)">
+                <mat-icon>how_to_reg</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Reject">
+              <th mat-header-cell *matHeaderCellDef>Reject </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button color="warn"
+                (click)="openApproveOrRejectPRModel(rejectAlert,element?.Id)">
+                <mat-icon>clear</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length" [columnCount]="displayedColumns.length"></app-no-record-found>
+    <mat-paginator #paginator
+    [pageSize]="filter.PageSize"
+      [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0" [length]="filter.TotalRecords"
+      (page)="pageChange($event)"
+    showFirstLastButtons></mat-paginator>
+</div>
+
+<ng-template #deleteAlert>
+    <h2 mat-dialog-title class="text-center">Delete Purchase Order</h2>
+    <div mat-dialog-content>Are you sure want to delete this Purchase Order?</div>
+    <div mat-dialog-actions class="d-flex justify-content-center">
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button color="warn" (click)="onClickDeletePO()">Delete</button>
+    </div>
+  </ng-template>
+
+  <ng-template #approveAlert>
+    <h2 mat-dialog-title class="text-center">Approve This Purchase Order</h2>
+    <div mat-dialog-content>Are you sure want to approve this Purchase Order?</div>
+    <div mat-dialog-actions class="d-flex justify-content-center">
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button color="primary" (click)="onClickApprovePR()">Approve</button>
+    </div>
+  </ng-template>
+  
+  <ng-template #rejectAlert>
+    <h2 mat-dialog-title class="text-center">Reject This Purchase Order</h2>
+    <div mat-dialog-content>Are you sure want to reject this Purchase Order?</div>
+    <div mat-dialog-actions class="d-flex justify-content-center">
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button color="warn" (click)="onClickRejectPR()">Reject</button>
+    </div>
+  </ng-template>
