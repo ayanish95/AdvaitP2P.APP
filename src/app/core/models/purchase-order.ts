@@ -1,7 +1,7 @@
-import { Plants } from "./plants";
-import { Products } from "./products";
-import { StorageLocations } from "./storage-location";
-import { Units } from "./units";
+import { Plants } from './plants';
+import { Products } from './products';
+import { StorageLocations } from './storage-location';
+import { Units } from './units';
 
 export interface PurchaseOrderHeader{
     Id?:number;

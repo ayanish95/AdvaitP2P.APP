@@ -109,14 +109,14 @@ export class CreatePurchaseOrderComponent {
     'Delete',
   ];
   stockTypeList= [
-    {'Id':'Unrestricted Stock', 'Type':'Unrestricted Stock'},
-    {'Id':'Blocked Stock', 'Type':'Blocked Stock'},
-    {'Id':'Quality Stock', 'Type':'Quality Stock'},
+    {Id:'Unrestricted Stock', Type:'Unrestricted Stock'},
+    {Id:'Blocked Stock', Type:'Blocked Stock'},
+    {Id:'Quality Stock', Type:'Quality Stock'},
   ];
   filteredStockType!: Observable<any>;
   currentDate: Date = new Date();
   // prDetailsData: any;
-  isSAPEnabled: string = 'false';
+  isSAPEnabled = 'false';
   selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
@@ -124,7 +124,7 @@ export class CreatePurchaseOrderComponent {
   rightsForApproval = false;
   PRDetails!: PurchaseRequisitionDetailsVM;
   POLineItem: PurchaseOrderLine[] = [];
-  supplierCurrency: string = 'INR';
+  supplierCurrency = 'INR';
   selectedSupplier!: Suppliers;
   stateList!: States[];
   selectedLineId!: number;
@@ -138,7 +138,7 @@ export class CreatePurchaseOrderComponent {
   }
 
   ngOnInit(): void {
-    this.POHeaderForm.controls['PODate'].disable();
+    this.POHeaderForm.controls.PODate.disable();
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
@@ -407,7 +407,7 @@ export class CreatePurchaseOrderComponent {
   }
 
   suppliercodee(supplierCode: Suppliers) {
-    return supplierCode ? supplierCode.SupplierCode! : ''; ``
+    return supplierCode ? supplierCode.SupplierCode! : ''; ``;
   }
 
   prNumberDisplayFn(prno: any) {
@@ -488,12 +488,12 @@ export class CreatePurchaseOrderComponent {
         this.PRDetails = res[ResultEnum.Model];
 
         this.PRDetails.PRLineItems?.forEach((item, index) => {
-          let product = this.productList?.find(x => x.ProductCode == item.ProductCode);
-          let netPrice = product?.PriceIndicator == 'S' ? product?.StandardPrice : product?.MovingAvgPrice;
-          let totalNetPrice = Math.round(item?.Qty * (netPrice ? netPrice : 0));
-          let plant = this.plantList?.find(x => x.Id == item.PlantId);
-          let supplier = this.selectedSupplier;
-          let plantState = this.stateList.find(x => x.Id == plant?.StateId as unknown as number);
+          const product = this.productList?.find(x => x.ProductCode == item.ProductCode);
+          const netPrice = product?.PriceIndicator == 'S' ? product?.StandardPrice : product?.MovingAvgPrice;
+          const totalNetPrice = Math.round(item?.Qty * (netPrice ? netPrice : 0));
+          const plant = this.plantList?.find(x => x.Id == item.PlantId);
+          const supplier = this.selectedSupplier;
+          const plantState = this.stateList.find(x => x.Id == plant?.StateId as unknown as number);
           let IsGST = false;
           if (supplier?.State == plantState?.GSTStateCode)
             IsGST = true;
@@ -502,7 +502,7 @@ export class CreatePurchaseOrderComponent {
           if (product?.GST && totalNetPrice) {
             taxAmount = Math.round((totalNetPrice * product.GST) / 100);
           }
-          let totalAmount = Math.round(totalNetPrice + taxAmount);
+          const totalAmount = Math.round(totalNetPrice + taxAmount);
           this.POLineItem.push({
             Product: product,
             ProductGroup: item.ProductGroup,
@@ -541,10 +541,10 @@ export class CreatePurchaseOrderComponent {
 
   openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
     this.POLineForm.reset();
-    this.POLineForm.controls['Product'].disable();
-    this.POLineForm.controls['Description'].disable();
-    this.POLineForm.controls['ProductGroup'].disable();
-    this.POLineForm.controls['Unit'].disable();
+    this.POLineForm.controls.Product.disable();
+    this.POLineForm.controls.Description.disable();
+    this.POLineForm.controls.ProductGroup.disable();
+    this.POLineForm.controls.Unit.disable();
     this.POLineForm.updateValueAndValidity();
     if (data) {
       this.selectedLineId = data?.Id;
@@ -562,7 +562,7 @@ export class CreatePurchaseOrderComponent {
         IsReturnItem: data.IsReturnItem,
         IsFreeOfCharge: data.IsFreeOfCharge,
       });
-      this.POLineForm.controls['DeliveryDate'].markAsTouched();
+      this.POLineForm.controls.DeliveryDate.markAsTouched();
     }
     this.dialog.open(templateRef, {
       width: '56vw',
@@ -576,9 +576,9 @@ export class CreatePurchaseOrderComponent {
       this.POLineItem.forEach(item => {
 
         if (item?.Id == this.selectedLineId) {
-          let netPrice = POline.NetPrice as unknown as number;
-          let qty = POline.Qty as unknown as number;
-          let totalNetPrice = Math.round(qty * netPrice);
+          const netPrice = POline.NetPrice as unknown as number;
+          const qty = POline.Qty as unknown as number;
+          const totalNetPrice = Math.round(qty * netPrice);
           let IsGST = false;
           if (item.GST)
             IsGST = true;
@@ -591,7 +591,7 @@ export class CreatePurchaseOrderComponent {
           }
           let totalAmount = 0;
           if (totalNetPrice) {
-            totalAmount = Math.round(totalNetPrice + taxAmount)
+            totalAmount = Math.round(totalNetPrice + taxAmount);
           }
 
 
