@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResultEnum } from '@core/enums/result-enum';
@@ -23,6 +24,7 @@ export class AsnListComponent {
     'PRDocType',
     'PRDate',
     'View',
+    'Delete',
   ];
 
   dataSource = new MatTableDataSource<any>();
@@ -32,10 +34,11 @@ export class AsnListComponent {
   PRHeaderList!: PurchaseRequisitionHeader[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
+  selectedPRId!: number;
   filter: Filter = new Filter();
   index = 0;
 
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService) {}
+  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.purchaseRequistionService
@@ -70,6 +73,10 @@ export class AsnListComponent {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
+  }
+  openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
+    this.selectedPRId = plantId;
+    this.dialog.open(templateRef);
   }
 
 }

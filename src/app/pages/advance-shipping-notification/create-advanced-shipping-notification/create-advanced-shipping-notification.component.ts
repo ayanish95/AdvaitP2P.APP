@@ -23,13 +23,8 @@ import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
-import { PurchaseOrderDetailsVM } from '@core/models/purchase-order';
+import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
 import { ASNDetailsLine } from '../asn';
-
-
-
-
-
 
 
 @Component({
@@ -45,6 +40,7 @@ export class CreateAdvancedShippingNotificationComponent {
     supplier: [null, [Validators.required]],
     spDescription: [null, [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
+
   });
 
   PRLineForm = this.fb.group({
@@ -57,8 +53,8 @@ export class CreateAdvancedShippingNotificationComponent {
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
-  polist!: PurchaseRequisitionHeader[];
-  filteredprno!: Observable<PurchaseRequisitionHeader[]>;
+  polist!: PurchaseOrderHeader[];
+  filteredprno!: Observable<PurchaseOrderHeader[]>;
 
   suppliercodelist!: Suppliers[];
   filtersupplierCode!: Observable<Suppliers[]>;
@@ -156,12 +152,13 @@ export class CreateAdvancedShippingNotificationComponent {
 
   }
   filterPono(name: any) {
-    if (name?.PRNumber) {
-      return this.polist.filter(pr => pr?.Id);
+    debugger
+    if (name?.ERPPONumber) {
+      return this.polist?.filter(Erppo => Erppo?.ERPPONumber);
 
     }
     else {
-      return this.polist.filter(pr => pr?.Id);
+      return this.polist?.filter(Erppo => Erppo?.ERPPONumber);
     }
   }
   filterSupplier(name: any) {
@@ -207,7 +204,7 @@ export class CreateAdvancedShippingNotificationComponent {
             this.PoDetails = res[ResultEnum.Model];
             if (this.PoDetails) {
               this.PRHeaderForm.patchValue({
-                pono: this.PoDetails.Id as any,
+                pono: this.PoDetails.ERPPONumber as any,
                 DocType: this.PoDetails.DocType as any,
                 Documentdate: this.formatDate(this.PoDetails.PODate) as any,
                 supplier: this.PoDetails.SupplierCode as any,

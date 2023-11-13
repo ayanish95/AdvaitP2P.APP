@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Advanced Shipping Notification </h2>
+        <h2>Return Goods Received Note </h2>
       </div>
     </div>
 
@@ -13,33 +13,12 @@
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> PO Number</h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="PrnoAutocomplete"
-                   formControlName="pono"
-                   placeholder="PO Number">
-            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-            (optionSelected)='getpono($event.option.value)'>
-              <mat-option *ngFor="let Pono of filteredprno | async"
-                          [value]="Pono?.ERPPONumber">
-                <span>{{ Pono?.Id }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
-              Please select  PurchaseOrder Number...
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-3">
-          <label class="custom-label">
-            <h5>ASN Doc Type</h5>
+            <h5>Doc Type</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
                    [matAutocomplete]="docAutocomplete"
-                   formControlName="DocType" readonly
+                   formControlName="DocType"
                    placeholder="Doc Type">
             <mat-autocomplete #docAutocomplete="matAutocomplete" >
               <mat-option *ngFor="let docType of filteredDocType | async"
@@ -54,51 +33,59 @@
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5>supplier Code<small>*</small></h5>
+            <h5> GR Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
-                   formControlName="supplier" readonly
-                   placeholder="supplier Code">
-                   <mat-autocomplete #docAutocomplete="matAutocomplete" >
-                    <mat-option *ngFor="let docType of filteredDocType | async"
-                                [value]="docType?.Type">
-                      <span>{{ docType?.Type }}</span>
-                    </mat-option>
-                  </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('Product')?.hasError('required')">
-              Please select supplier code...
+                   [matAutocomplete]="PrnoAutocomplete"
+                   formControlName="pono"
+                   placeholder="GR Number">
+            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
+            (optionSelected)='getpono($event.option.value)'>
+              <mat-option *ngFor="let Pono of filteredprno | async"
+                          [value]="Pono?.Id">
+                <span>{{ Pono?.Id }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
+              Please select  PurchaseOrder Number...
             </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5>supplier Name</h5>
+            <h5>Transaction<small>*</small></h5>
           </label>
-          <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput type="text" formControlName="spDescription" readonly
-            placeholder="supplier Name" readonly>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="spcode"
+                   formControlName="Transaction"
+                   placeholder="Transaction">
+            <mat-autocomplete #spcode="matAutocomplete" [displayWith]="supplierDisplayFn"
+                              (optionSelected)='getsupplier($event.option.value)'>
+              <mat-option *ngFor="let supplier of filtersupplierCode | async"
+                          [value]="supplier">
+                <span>{{ supplier.SupplierCode }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('Product')?.hasError('required')">
+              Please select supplier code...
+            </mat-error>
           </mat-form-field>
         </div>
+        <!-- <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>REF NO</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="REFNO"
+            placeholder="REF NO" readonly>
+
+          </mat-form-field>
+        </div> -->
         <div class="col-sm-3">
           <label class="custom-label">
             <h5> Document Date</h5>
-          </label>
-          <mat-form-field>
-            <input matInput
-                   [matDatepicker]="paymentPicker"
-                   required
-                   (focus)="paymentPicker.open()"
-                   formControlName="Deliverydate">
-            <mat-datepicker-toggle matSuffix
-            ></mat-datepicker-toggle>
-            <mat-datepicker format="dd-MM-yyyy"></mat-datepicker>
-          </mat-form-field>
-        </div>
-          <div class="col-sm-3">
-          <label class="custom-label">
-            <h5> Delivery Date</h5>
           </label>
           <mat-form-field>
             <input matInput
@@ -107,84 +94,91 @@
                    required
                    (focus)="paymentPicker.open()"
                    readonly
-                   formControlName="Documentdate" readonly>
+                   formControlName="Documentdate">
             <mat-datepicker-toggle matSuffix
-                                   ></mat-datepicker-toggle>
+                                   [for]="paymentPicker"></mat-datepicker-toggle>
             <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
           </mat-form-field>
         </div>
+        <!-- <div class="col-sm-12 d-flex align-items-center mt-15">
+          <button mat-button mat-raised-button color="primary"
+                  (click)="openModelForAddItem(editProduct)">
+            <mat-icon>add</mat-icon>
+            Add GR
+          </button>
+
+        </div> -->
+
       </div>
       <div class="mt-20">
-        <h4>PO List</h4>
+        <h4>Return GR List</h4>
         <table mat-table [dataSource]="dataSource">
           <ng-container matColumnDef="srNo">
             <th mat-header-cell *matHeaderCellDef># </th>
             <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
           </ng-container>
-          <ng-container matColumnDef="polineno">
-            <th mat-header-cell *matHeaderCellDef> PO Line No </th>
-            <td mat-cell *matCellDef="let element"> {{element?.PlantId}}
-            </td>
-          </ng-container>
           <ng-container matColumnDef="ProductCode">
             <th mat-header-cell *matHeaderCellDef> ProductCode </th>
             <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
-          </ng-container>
-          <ng-container matColumnDef="Sequanceno">
-            <th mat-header-cell *matHeaderCellDef>Sequance No  </th>
-            <td mat-cell *matCellDef="let element"> {{element?.PlantId}}
-            </td>
           </ng-container>
           <ng-container matColumnDef="Description">
             <th mat-header-cell *matHeaderCellDef> Description </th>
             <td mat-cell *matCellDef="let element"> {{element?.ProductDescription}} </td>
           </ng-container>
-          <ng-container matColumnDef="Deliveryqty">
-            <th mat-header-cell *matHeaderCellDef> Delivery Qty(ASN)</th>
-            <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+          <ng-container matColumnDef="grqty">
+            <th mat-header-cell *matHeaderCellDef> GR Qty </th>
+            <td mat-cell *matCellDef="let element"> {{element?.grqty}} </td>
           </ng-container>
-          <ng-container matColumnDef="putawayqty">
-            <th mat-header-cell *matHeaderCellDef> Open GR Qty </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+          <ng-container matColumnDef="Orderedqty">
+            <th mat-header-cell *matHeaderCellDef> Putaway Qty </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Orderedqty}} </td>
           </ng-container>
           <ng-container matColumnDef="Unit">
             <th mat-header-cell *matHeaderCellDef> Unit </th>
-            <td mat-cell *matCellDef="let element">
+            <td mat-cell *matCellDef="let element"> {{element?.UnitName}} -
               {{element?.UnitId}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Po">
+            <th mat-header-cell *matHeaderCellDef> PO </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Po}} </td>
+          </ng-container>
+          <ng-container matColumnDef="polineno">
+            <th mat-header-cell *matHeaderCellDef> PoLitem No </th>
+            <td mat-cell *matCellDef="let element"> {{element?.polineno}}
+            </td>
           </ng-container>
           <ng-container matColumnDef="Plant">
             <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
-            <td mat-cell *matCellDef="let element">
+            <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} -
               {{element?.PlantDescription}} </td>
           </ng-container>
           <ng-container matColumnDef="Location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
-            <td mat-cell *matCellDef="let element">
+            <td mat-cell *matCellDef="let element"> {{element?.LocationCode}} -
               {{element?.LocationDescription}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Suppliercode">
+            <th mat-header-cell *matHeaderCellDef> Supplier Code </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Suppliercode}}
+            </td>
           </ng-container>
           <ng-container matColumnDef="Edit">
             <th mat-header-cell *matHeaderCellDef> Edit </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button (click)="openModelForAddItem(editProduct,element)">
+                <button mat-icon-button (click)="openModelForAddItem(editProduct,element)" matTooltip="Click to Edit">
                     <mat-icon>edit</mat-icon>
                 </button>
             </td>
         </ng-container>
-          <ng-container matColumnDef="Delete">
-            <th mat-header-cell *matHeaderCellDef> Remove </th>
-            <td mat-cell *matCellDef="let element">
-             <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">  <mat-icon >delete</mat-icon></button>
-             </td>
-        </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-        <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
-                             [columnCount]="displayedColumns.length"></app-no-record-found>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                           [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">
         <button [disabled]="" mat-raised-button
-                color="primary"> Create ASN</button>
+                color="primary"> Create Return GR</button>
       </div>
     </form>
   </mat-card-content>
@@ -336,13 +330,12 @@
           </mat-form-field>
         </div>
       </div>
-
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
-    <!-- <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ? 'Update' : 'Add'}}</button> -->
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ? 'Update' : 'Add'}}</button>
   </mat-dialog-actions>
 </ng-template>
 
@@ -354,3 +347,4 @@
       <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
   </div>
 </ng-template>
+

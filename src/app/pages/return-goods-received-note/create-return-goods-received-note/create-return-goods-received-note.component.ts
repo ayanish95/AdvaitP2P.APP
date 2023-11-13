@@ -26,15 +26,15 @@ import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { Console } from 'console';
 import { SortDataSource } from 'app/routes/material/table/table.component';
+
 @Component({
-  selector: 'app-create-goods-received-note',
-  templateUrl: './create-goods-received-note.component.html',
-  styleUrls: ['./create-goods-received-note.component.scss']
+  selector: 'app-create-return-goods-received-note',
+  templateUrl: './create-return-goods-received-note.component.html',
+  styleUrls: ['./create-return-goods-received-note.component.scss']
 })
-export class CreateGoodsReceivedNoteComponent {
+export class CreateReturnGoodsReceivedNoteComponent {
   PRHeaderForm = this.fb.group({
     pono: [null, [Validators.required]],
-    asnno: [null, [Validators.required]],
     DocType: [null, [Validators.required]],
     Documentdate: [new Date(), [Validators.required]],
     Transaction: [null, [Validators.required]],
@@ -616,5 +616,4 @@ filtersupplierCode!:Observable<Suppliers[]>;
       });
     }
   }
-
 }

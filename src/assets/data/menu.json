@@ -131,6 +131,20 @@
 
     },
     {
+      "route": "pages/return-goods-received-note",
+      "name": "ReturnGRN",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
       "route": "pages",
       "name": "configuration",
       "type": "sub",

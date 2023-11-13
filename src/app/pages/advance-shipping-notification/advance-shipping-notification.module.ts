@@ -4,12 +4,14 @@ import { AdvanceShippingNotificationRoutingModule } from './advance-shipping-not
 import { CreateAdvancedShippingNotificationComponent } from './create-advanced-shipping-notification/create-advanced-shipping-notification.component';
 import { SharedModule } from '../../shared/shared.module';
 import { AsnListComponent } from './asn-list/asn-list.component';
+import { ViewAdvanceShippingNotificationComponent } from './view-advance-shipping-notification/view-advance-shipping-notification.component';
 
 
 @NgModule({
   declarations: [
     CreateAdvancedShippingNotificationComponent,
-    AsnListComponent
+    AsnListComponent,
+    ViewAdvanceShippingNotificationComponent
   ],
   imports: [
     CommonModule,

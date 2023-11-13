@@ -74,6 +74,10 @@ const routes: Routes = [
         loadChildren: () => import('../pages/goods-received-note/goods-received-note.module').then(m => m.GoodsReceivedNoteModule),
       },
       {
+        path: 'pages/return-goods-received-note',
+        loadChildren: () => import('../pages/return-goods-received-note/return-goods-received-note.module').then(m => m.ReturnGoodsReceivedNoteModule),
+      },
+      {
         path: 'design',
         loadChildren: () => import('./design/design.module').then(m => m.DesignModule),
       },

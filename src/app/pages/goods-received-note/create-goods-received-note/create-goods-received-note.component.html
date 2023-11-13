@@ -13,28 +13,6 @@
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> ASN Number</h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="PrnoAutocomplete"
-                   formControlName="pono"
-                   placeholder="ASN Number">
-            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-            (optionSelected)='getpono($event.option.value)'>
-              <mat-option *ngFor="let Pono of filteredprno | async"
-                          [value]="Pono?.Id">
-                <span>{{ Pono?.Id }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
-              Please select  PurchaseOrder Number...
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-sm-3">
-          <label class="custom-label">
             <h5>Doc Type</h5>
           </label>
           <mat-form-field class="demo-full-width">
@@ -50,6 +28,48 @@
             </mat-autocomplete>
             <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
               Please select doc type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> ASN Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="PrnoAutocomplete"
+                   formControlName="asnno"
+                   placeholder="Select ASN Number">
+            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
+            (optionSelected)='getpono($event.option.value)'>
+              <mat-option *ngFor="let Pono of filteredprno | async"
+                          [value]="Pono?.Id">
+                <span>{{ Pono?.Id }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
+              Please select  PurchaseOrder Number...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>PO Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="PrnoAutocomplete"
+                   formControlName="pono"
+                   placeholder="Select PO Number">
+            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
+            (optionSelected)='getpono($event.option.value)'>
+              <mat-option *ngFor="let Pono of filteredprno | async"
+                          [value]="Pono?.Id">
+                <span>{{ Pono?.Id }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
+              Please select  PurchaseOrder Number...
             </mat-error>
           </mat-form-field>
         </div>
@@ -74,7 +94,7 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div class="col-sm-3">
+        <!-- <div class="col-sm-3">
           <label class="custom-label">
             <h5>REF NO</h5>
           </label>
@@ -83,7 +103,7 @@
             placeholder="REF NO" readonly>
 
           </mat-form-field>
-        </div>
+        </div> -->
         <div class="col-sm-3">
           <label class="custom-label">
             <h5> Document Date</h5>
@@ -131,7 +151,7 @@
             <td mat-cell *matCellDef="let element"> {{element?.grqty}} </td>
           </ng-container>
           <ng-container matColumnDef="Orderedqty">
-            <th mat-header-cell *matHeaderCellDef> Ordered Qty </th>
+            <th mat-header-cell *matHeaderCellDef> Putaway Qty </th>
             <td mat-cell *matCellDef="let element"> {{element?.Orderedqty}} </td>
           </ng-container>
           <ng-container matColumnDef="Unit">
@@ -171,13 +191,16 @@
                 </button>
             </td>
         </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-        <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
-                             [columnCount]="displayedColumns.length"></app-no-record-found>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                           [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
-
+      <div class="d-flex justify-content-end mt-20">
+        <button [disabled]="" mat-raised-button
+                color="primary"> Create GR</button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>
