@@ -46,6 +46,7 @@ export class CreateAdvancedShippingNotificationComponent {
     SupplierCode: [null, [Validators.required]],
     SupplierName: [null, [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
+
   });
 
   ASNLineForm = this.fb.group({

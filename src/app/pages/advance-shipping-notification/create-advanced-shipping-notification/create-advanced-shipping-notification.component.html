@@ -79,7 +79,6 @@
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="SupplierName" readonly
             placeholder="supplier Name" readonly>
-
           </mat-form-field>
         </div>
         <div class="col-sm-3">
@@ -89,18 +88,17 @@
           <mat-form-field>
             <input matInput
                    [matDatepicker]="paymentPicker"
-                   #paymentDateModel
                    required
                    (focus)="paymentPicker.open()"
                    readonly
                    formControlName="Documentdate"  
                    placeholder="Document Date" readonly>
             <mat-datepicker-toggle matSuffix
-                                   [for]="paymentPicker"></mat-datepicker-toggle>
-            <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+            ></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy"></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col-sm-3">
+          <div class="col-sm-3">
           <label class="custom-label">
             <h5> Delivery Date</h5>
           </label>
@@ -190,7 +188,10 @@
         <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
-
+      <div class="d-flex justify-content-end mt-20">
+        <button [disabled]="" mat-raised-button
+                color="primary"> Create ASN</button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>

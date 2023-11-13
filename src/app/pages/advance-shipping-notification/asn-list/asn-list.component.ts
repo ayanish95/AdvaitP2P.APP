@@ -25,10 +25,10 @@ export class AsnListComponent implements OnInit{
   pendingASNList!: PurchaseOrderHeader[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
+  selectedPRId!: number;
   filter: Filter = new Filter();
   index = 0;
   isSAPEnabled!: string;
-  selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
   currentUserId!:number;

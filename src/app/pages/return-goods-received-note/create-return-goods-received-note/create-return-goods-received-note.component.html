@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Goods Received Note </h2>
+        <h2>Return Goods Received Note </h2>
       </div>
     </div>
 
@@ -33,34 +33,13 @@
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> ASN Number</h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="PrnoAutocomplete"
-                   formControlName="asnno"
-                   placeholder="Select ASN Number">
-            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-            (optionSelected)='getpono($event.option.value)'>
-              <mat-option *ngFor="let Pono of filteredprno | async"
-                          [value]="Pono?.Id">
-                <span>{{ Pono?.Id }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('PRno')?.hasError('required')">
-              Please select  PurchaseOrder Number...
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-3">
-          <label class="custom-label">
-            <h5>PO Number</h5>
+            <h5> GR Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
                    [matAutocomplete]="PrnoAutocomplete"
                    formControlName="pono"
-                   placeholder="Select PO Number">
+                   placeholder="GR Number">
             <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
             (optionSelected)='getpono($event.option.value)'>
               <mat-option *ngFor="let Pono of filteredprno | async"
@@ -132,7 +111,7 @@
 
       </div>
       <div class="mt-20">
-        <h4>GR List</h4>
+        <h4>Return GR List</h4>
         <table mat-table [dataSource]="dataSource">
           <ng-container matColumnDef="srNo">
             <th mat-header-cell *matHeaderCellDef># </th>
@@ -199,7 +178,7 @@
       </div>
       <div class="d-flex justify-content-end mt-20">
         <button [disabled]="" mat-raised-button
-                color="primary"> Create GR</button>
+                color="primary"> Create Return GR</button>
       </div>
     </form>
   </mat-card-content>
@@ -351,7 +330,6 @@
           </mat-form-field>
         </div>
       </div>
-
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end">

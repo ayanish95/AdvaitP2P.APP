@@ -1,5 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResultEnum } from '@core/enums/result-enum';
@@ -10,12 +9,13 @@ import { PlantService } from '@core/services/plant.service';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
+
 @Component({
-  selector: 'app-list-goods-received-note',
-  templateUrl: './list-goods-received-note.component.html',
-  styleUrls: ['./list-goods-received-note.component.scss']
+  selector: 'app-list-return-goods-received-note',
+  templateUrl: './list-return-goods-received-note.component.html',
+  styleUrls: ['./list-return-goods-received-note.component.scss']
 })
-export class ListGoodsReceivedNoteComponent {
+export class ListReturnGoodsReceivedNoteComponent {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -23,7 +23,6 @@ export class ListGoodsReceivedNoteComponent {
     'PRDocType',
     'PRDate',
     'View',
-    'Delete'
   ];
 
   dataSource = new MatTableDataSource<any>();
@@ -33,11 +32,10 @@ export class ListGoodsReceivedNoteComponent {
   PRHeaderList!: PurchaseRequisitionHeader[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
-  selectedPRId!: number;
   filter: Filter = new Filter();
   index = 0;
 
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService,private dialog: MatDialog) {}
+  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService) {}
 
   ngOnInit() {
     this.purchaseRequistionService
@@ -72,9 +70,5 @@ export class ListGoodsReceivedNoteComponent {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
-  }
-  openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
-    this.selectedPRId = plantId;
-    this.dialog.open(templateRef);
   }
 }
