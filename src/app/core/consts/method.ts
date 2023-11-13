@@ -63,4 +63,5 @@ export class Method {
   static GetPendingPurchaseOrderByUserId = `/GetPendingPurchaseOrderByUserId`;
   static ApprovePOById = `/ApprovePOById`;
   static RejectPOById = `/RejectPOById`;
+  static GetAllApprovedPurchaseOrderHeaderList = `/GetAllApprovedPurchaseOrderHeaderList`;
 }

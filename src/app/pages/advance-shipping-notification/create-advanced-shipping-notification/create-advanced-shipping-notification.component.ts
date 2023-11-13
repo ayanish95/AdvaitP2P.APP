@@ -1,6 +1,6 @@
 import { Component, TemplateRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { DateAdapter } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,40 +14,41 @@ import { Units } from '@core/models/units';
 import { DocTypeService } from '@core/services/doc-type.service';
 import { PlantService } from '@core/services/plant.service';
 import { ProductService } from '@core/services/product.service';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { StorageLocationService } from '@core/services/storage-location.service';
 import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
-import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
-import { PurchaseOrderDetailsVM } from '@core/models/purchase-order';
+import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
 import { ASNDetailsLine } from '../asn';
-
-
-
-
-
+import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
 
 @Component({
   selector: 'app-create-advanced-shipping-notification',
   templateUrl: './create-advanced-shipping-notification.component.html',
-  styleUrls: ['./create-advanced-shipping-notification.component.scss']
+  styleUrls: ['./create-advanced-shipping-notification.component.scss'],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    {
+      provide: MAT_SELECT_CONFIG,
+      useValue: { overlayPanelClass: 'customClass' }
+    }
+  ]
 })
 export class CreateAdvancedShippingNotificationComponent {
-  PRHeaderForm = this.fb.group({
-    pono: [null, [Validators.required]],
+  ASNHeaderForm = this.fb.group({
+    PoNo: [null, [Validators.required]],
     DocType: [null, [Validators.required]],
     Documentdate: [new Date(), [Validators.required]],
-    supplier: [null, [Validators.required]],
-    spDescription: [null, [Validators.required]],
+    SupplierCode: [null, [Validators.required]],
+    SupplierName: [null, [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
   });
 
-  PRLineForm = this.fb.group({
+  ASNLineForm = this.fb.group({
     Product: ['', [Validators.required]],
     Description: [''],
     ProductGroup: [''],
@@ -57,8 +58,8 @@ export class CreateAdvancedShippingNotificationComponent {
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
-  polist!: PurchaseRequisitionHeader[];
-  filteredprno!: Observable<PurchaseRequisitionHeader[]>;
+  approvedPolist!: PurchaseOrderHeader[];
+  filteredprno!: Observable<PurchaseOrderHeader[]>;
 
   suppliercodelist!: Suppliers[];
   filtersupplierCode!: Observable<Suppliers[]>;
@@ -90,7 +91,7 @@ export class CreateAdvancedShippingNotificationComponent {
     'ProductCode',
     'Description',
     'Deliveryqty',
-    'putawayqty',
+    'PutAwayqty',
     'Unit',
     'Plant',
     'Location',
@@ -102,7 +103,7 @@ export class CreateAdvancedShippingNotificationComponent {
   selectedLineId!: number;
   currentUserId!: number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
-    private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService, private purchaseOrderService: PurchaseOrderService,
+    private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
     private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
@@ -113,13 +114,14 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   ngOnInit() {
-    this.PRHeaderForm.get('Documentdate')?.disable();
+    this.ASNHeaderForm.get('Documentdate')?.disable();
     this.currentUserId = this.authService.userId();
     this.apiDocType();
     this.apiProductList();
     this.apiPlantList();
     this.apuUnitList();
     this.apiStorageLocationList();
+
     this.supplierService
       .getSupplierList()
       .pipe(
@@ -130,40 +132,42 @@ export class CreateAdvancedShippingNotificationComponent {
         if (res[ResultEnum.IsSuccess]) {
           this.suppliercodelist = res[ResultEnum.Model];
           this.suppliercodelist.map(x => x.ShortName = x.SupplierCode + (x.FirstName ? ' - ' + x.FirstName : ''));
-          this.filtersupplierCode = this.PRHeaderForm.get('supplier')!.valueChanges.pipe(
+          this.filtersupplierCode = this.ASNHeaderForm.get('SupplierCode')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterSupplier(value || ''))
           );
         }
       });
-    this.prService
-      .getAllPRHeaderList()
+
+    this.purchaseOrderService
+      .getAllApprovedPOHeaderListByUserId()
       .pipe(
         finalize(() => {
         })
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          this.polist = res[ResultEnum.Model];
+          this.approvedPolist = res[ResultEnum.Model];
 
-          this.filteredprno = this.PRHeaderForm.get('pono')!.valueChanges.pipe(
+          this.filteredprno = this.ASNHeaderForm.get('PoNo')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPono(value || ''))
           );
         }
       });
 
-
   }
+
   filterPono(name: any) {
-    if (name?.PRNumber) {
-      return this.polist.filter(pr => pr?.Id);
+    if (name?.ERPPONumber) {
+      return this.approvedPolist.filter(po => po?.Id);
 
     }
     else {
-      return this.polist.filter(pr => pr?.Id);
+      return this.approvedPolist.filter(po => po?.Id);
     }
   }
+
   filterSupplier(name: any) {
     if (name?.supplierCode) {
       return this.suppliercodelist.filter(Supplier => Supplier?.SupplierCode);
@@ -172,28 +176,54 @@ export class CreateAdvancedShippingNotificationComponent {
       return this.suppliercodelist.filter(Supplier => Supplier?.SupplierCode);
     }
   }
+
   supplierDisplayFn(supplier: Suppliers) {
     return supplier ? supplier.SupplierCode! : '';
   }
+
   suppliercodee(supplierCode: Suppliers) {
     return supplierCode ? supplierCode.SupplierCode! : ''; ``;
   }
+
   getsupplier(event: any) {
 
     const supplier = this.suppliercodelist.find(x => x.SupplierCode?.toLowerCase() == event?.SupplierCode?.toLowerCase());
     if (supplier) {
     }
   }
+
   getpono(selectedPRNumber: number) {
-    this.prService.getPRDetailsById(selectedPRNumber).subscribe(response => {
+    this.purchaseOrderService.getPODetailsById(selectedPRNumber).subscribe(response => {
+
+      
+    this.ASNHeaderForm.reset();
+    this.ASNHeaderForm.updateValueAndValidity();
+
+      this.PoDetails = response[ResultEnum.Model];
+      if (this.PoDetails) {
+        this.ASNHeaderForm.patchValue({
+          PoNo: this.PoDetails.Id as any,
+          DocType: this.PoDetails.DocType as any,
+          Documentdate: this.formatDate(this.PoDetails.PODate) as any,
+          SupplierCode: this.PoDetails.SupplierCode as any,
+          SupplierName: this.PoDetails.SupplierName as any,
+        });
+      }
 
       // Update the prData array with the received data
-      this.dataSource = response.Model.PRLineItems;
+      this.dataSource = response.Model.POLineItems;
+      this.ASNLineItems = response.Model.POLineItems;
     });
   }
 
-
   apiGetPoDetailsById(poId: number) {
+
+    this.ASNHeaderForm.reset();
+    this.ASNHeaderForm.updateValueAndValidity();
+
+    this.ASNLineForm.reset();
+    this.ASNLineForm.updateValueAndValidity();
+
     this.purchaseOrderService
       .getPODetailsById(poId)
       .pipe(
@@ -206,14 +236,15 @@ export class CreateAdvancedShippingNotificationComponent {
           if (res[ResultEnum.Model]) {
             this.PoDetails = res[ResultEnum.Model];
             if (this.PoDetails) {
-              this.PRHeaderForm.patchValue({
-                pono: this.PoDetails.Id as any,
+              this.ASNHeaderForm.patchValue({
+                PoNo: this.PoDetails.Id as any,
                 DocType: this.PoDetails.DocType as any,
                 Documentdate: this.formatDate(this.PoDetails.PODate) as any,
-                supplier: this.PoDetails.SupplierCode as any,
-                spDescription: this.PoDetails.SupplierName as any,
+                SupplierCode: this.PoDetails.SupplierCode as any,
+                SupplierName: this.PoDetails.SupplierName as any,
               });
             }
+
             this.PoDetails.POLineItems?.forEach((item, index) => {
               this.ASNLineItems.push({
                 ProductCode: item ? item?.ProductCode : '',
@@ -222,7 +253,7 @@ export class CreateAdvancedShippingNotificationComponent {
                 POHeaderId: 0,
                 ProductId: 0,
                 ProductGroup: '',
-                Qty:  item ? item?.POHeaderId : 0,
+                Qty: item ? item?.POHeaderId : 0,
                 DeliveryDate: item.DeliveryDate,
                 UnitId: item ? item?.UnitId : 0,
                 UnitName: item ? item?.UnitName : '',
@@ -278,7 +309,7 @@ export class CreateAdvancedShippingNotificationComponent {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.docTypeList = res[ResultEnum.Model];
-          this.filteredDocType = this.PRHeaderForm.get('DocType')!.valueChanges.pipe(
+          this.filteredDocType = this.ASNHeaderForm.get('DocType')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterDocType(value || ''))
           );
@@ -299,13 +330,14 @@ export class CreateAdvancedShippingNotificationComponent {
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
           if (this.PRId)
             this.apiGetPoDetailsById(this.PRId);
-          this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
+          this.filteredProducts = this.ASNLineForm.get('Product')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterProducts(value || ''))
           );
         }
       });
   }
+
   apiPlantList() {
     this.plantService
       .getPlantList()
@@ -316,7 +348,7 @@ export class CreateAdvancedShippingNotificationComponent {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.PRLineForm.get('Plant')!.valueChanges.pipe(
+          this.filteredPlants = this.ASNLineForm.get('Plant')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPlant(value || ''))
           );
@@ -324,7 +356,6 @@ export class CreateAdvancedShippingNotificationComponent {
       });
 
   }
-
 
   apuUnitList() {
     this.unitService
@@ -336,7 +367,7 @@ export class CreateAdvancedShippingNotificationComponent {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.PRLineForm.get('Unit')!.valueChanges.pipe(
+          this.filteredUnits = this.ASNLineForm.get('Unit')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterUnit(value || ''))
           );
@@ -353,7 +384,7 @@ export class CreateAdvancedShippingNotificationComponent {
         if (res[ResultEnum.IsSuccess]) {
           this.locationList = res[ResultEnum.Model];
 
-          this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+          this.filteredlocation = this.ASNLineForm.get('StorageLocation')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterStorageLocation(value || ''))
           );
@@ -446,15 +477,15 @@ export class CreateAdvancedShippingNotificationComponent {
   getPosts(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
-      this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
-      this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
+      this.ASNLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
+      this.ASNLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
     }
   }
 
 
   onChangePlant(event: any, IsEdit = false, locationId?: number) {
     this.locationList = [];
-    this.PRLineForm.get('StorageLocation')?.setValue(null);
+    this.ASNLineForm.get('StorageLocation')?.setValue(null);
     if (event) {
       this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
         finalize(() => {
@@ -464,10 +495,10 @@ export class CreateAdvancedShippingNotificationComponent {
           if (res[ResultEnum.IsSuccess]) {
             this.locationList = res[ResultEnum.Model];
             if (IsEdit && this.locationList?.length > 0) {
-              this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
+              this.ASNLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
             }
 
-            this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+            this.filteredlocation = this.ASNLineForm.get('StorageLocation')!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterStorageLocation(value || ''))
             );
@@ -483,13 +514,13 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
-    this.PRLineForm.reset();
-    this.PRLineForm.updateValueAndValidity();
+    this.ASNLineForm.reset();
+    this.ASNLineForm.updateValueAndValidity();
     if (data) {
       this.selectedLineId = data?.Id;
       this.minDate = data.DeliveryDate;
       await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
-      this.PRLineForm.patchValue({
+      this.ASNLineForm.patchValue({
         Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
@@ -506,45 +537,9 @@ export class CreateAdvancedShippingNotificationComponent {
     });
   }
 
-
-  // onClickAddProduct() {
-  //   const PRline = this.PRLineForm.value;
-  //   if (this.selectedLineId > 0) {
-  //     this.POLineItems.forEach(item => {
-  //       if (item?.Id == this.selectedLineId) {
-  //         item.Product = PRline.Product as unknown as Products,
-  //           item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
-  //           item.Description = PRline.Description ? PRline.Description : '',
-  //           item.Qty = PRline?.Qty as unknown as number,
-  //           item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-  //           item.Unit = PRline.Unit as unknown as Units,
-  //           item.Plant = PRline.Plant as unknown as Plants,
-  //           item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
-  //           item.LineId = item.LineId,
-  //           item.Id = item.Id;
-  //       }
-  //     });
-  //   }
-  //   else {
-  //     this.POLineItems.push({
-  //       Product: PRline.Product as unknown as Products,
-  //       ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
-  //       Description: PRline.Description ? PRline.Description : '',
-  //       Qty: PRline?.Qty as unknown as number,
-  //       DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-  //       Unit: PRline.Unit as unknown as Units,
-  //       Plant: PRline.Plant as unknown as Plants,
-  //       StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
-  //       Id: this.POLineItems.length + 1,
-  //       LineId: 0
-  //     });
-  //   }
-  //   this.selectedLineId = 0;
-  //   this.dataSource.data = this.POLineItems;
-  // }
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
     if (this.ASNLineItems?.length == 1)
-      throw this.toast.error('PR must have one line item, you can not delete....');
+      throw this.toast.error('ASN must have one line item, you can not delete....');
     if (data?.LineId > 0) {
       this.dialog.open(templateRef);
       this.selectedLineId = data?.Id;
@@ -570,7 +565,7 @@ export class CreateAdvancedShippingNotificationComponent {
       element.Id = index + 1;
       if (element.Id == id) {
         if (element?.LineId) {
-          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0, this.currentUserId).subscribe({
+          this.purchaseOrderService.deletePOLineByLineId(element.LineId ? element.LineId : 0).subscribe({
             next: (res: any) => {
               if (res[ResultEnum.IsSuccess]) {
                 this.toast.success(res.Message);
@@ -593,6 +588,17 @@ export class CreateAdvancedShippingNotificationComponent {
     });
     this.dataSource = new MatTableDataSource<any>(this.ASNLineItems);
     this.selectedLineId = 0;
+  }
+
+  DetLineChange(paramevent: any,paramIndex:number)
+  {
+    debugger
+    let _letNumber=Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Qty = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;      
+    this.dataSource.data = this.ASNLineItems;  
   }
 
 }

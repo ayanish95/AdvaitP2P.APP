@@ -44,4 +44,12 @@ export class PurchaseOrderService {
   rejectPOById(Id:number): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseOrder + Method.RejectPRById}/${Id}`);
   }
+
+  getAllApprovedPOHeaderListByUserId(): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetAllApprovedPurchaseOrderHeaderList}`);
+  }
+
+  getPendingASNByUserId(): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetAllApprovedPurchaseOrderHeaderList}`);
+  }
 }
