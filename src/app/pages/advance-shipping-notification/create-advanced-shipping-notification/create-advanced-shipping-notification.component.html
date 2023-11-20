@@ -104,7 +104,7 @@
           </label>
           <mat-form-field>
             <input matInput
-                   [matDatepicker]="deliveryDate"
+                   [matDatepicker]="paymentPicker"
                    #deliveryDateModel
                    required
                    (focus)="paymentPicker.open()"
@@ -112,8 +112,8 @@
                    formControlName="Deliverydate"
                    placeholder="Delivery Date">
                    <mat-datepicker-toggle matSuffix
-                   [for]="deliveryDate"></mat-datepicker-toggle>
-                  <mat-datepicker format="dd-MM-yyyy" #deliveryDate></mat-datepicker>
+                   [for]="paymentPicker"></mat-datepicker-toggle>
+                  <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
