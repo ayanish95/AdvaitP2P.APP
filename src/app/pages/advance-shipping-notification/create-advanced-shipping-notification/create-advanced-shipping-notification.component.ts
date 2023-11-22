@@ -24,6 +24,8 @@ import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
 import { ASNDetailsLine } from '../asn';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
+import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
+import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
 
 
 @Component({
@@ -59,7 +61,7 @@ export class CreateAdvancedShippingNotificationComponent {
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
-  approvedPolist!: PurchaseOrderHeader[];
+  approvedPolist: PurchaseOrderHeader[]=[];
   filteredprno!: Observable<PurchaseOrderHeader[]>;
 
   suppliercodelist!: Suppliers[];
@@ -103,7 +105,7 @@ export class CreateAdvancedShippingNotificationComponent {
   minDate: Date = new Date();
   selectedLineId!: number;
   currentUserId!: number;
-  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
+  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,private advanceShippingNotificationService: AdvanceShippingNotificationService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
     private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
     this.route.queryParams.subscribe((params: any) => {
@@ -147,9 +149,10 @@ export class CreateAdvancedShippingNotificationComponent {
         })
       )
       .subscribe(res => {
+        debugger
         if (res[ResultEnum.IsSuccess]) {
           this.approvedPolist = res[ResultEnum.Model];
-
+          console.log(this.approvedPolist)
           this.filteredprno = this.ASNHeaderForm.get('PoNo')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPono(value || ''))
@@ -160,12 +163,13 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   filterPono(name: any) {
-    if (name?.ERPPONumber) {
-      return this.approvedPolist.filter(po => po?.Id);
+    if (name?.Id) {
+      return this.approvedPolist.filter(po=>po.ERPPONumber);
+
 
     }
     else {
-      return this.approvedPolist.filter(po => po?.Id);
+      return this.approvedPolist.filter(po=>po.ERPPONumber);
     }
   }
 
@@ -193,17 +197,18 @@ export class CreateAdvancedShippingNotificationComponent {
     }
   }
 
-  getpono(selectedPRNumber: number) {
-    this.purchaseOrderService.getPODetailsById(selectedPRNumber).subscribe(response => {
 
-      
-    this.ASNHeaderForm.reset();
-    this.ASNHeaderForm.updateValueAndValidity();
+  getpono(selectedPRNumber: number) {
+
+    this.purchaseOrderService.getPODetailsById(selectedPRNumber).subscribe(response => {
+      console.log(response)
+    // this.ASNHeaderForm.reset();
+    // this.ASNHeaderForm.updateValueAndValidity();
 
       this.PoDetails = response[ResultEnum.Model];
       if (this.PoDetails) {
         this.ASNHeaderForm.patchValue({
-          PoNo: this.PoDetails.Id as any,
+          PoNo: this.PoDetails.ERPPONumber as any,
           DocType: this.PoDetails.DocType as any,
           Documentdate: this.formatDate(this.PoDetails.PODate) as any,
           SupplierCode: this.PoDetails.SupplierCode as any,
@@ -219,7 +224,7 @@ export class CreateAdvancedShippingNotificationComponent {
 
   apiGetPoDetailsById(poId: number) {
 
-    this.ASNHeaderForm.reset();
+    // this.ASNHeaderForm.reset();
     this.ASNHeaderForm.updateValueAndValidity();
 
     this.ASNLineForm.reset();
@@ -238,7 +243,7 @@ export class CreateAdvancedShippingNotificationComponent {
             this.PoDetails = res[ResultEnum.Model];
             if (this.PoDetails) {
               this.ASNHeaderForm.patchValue({
-                PoNo: this.PoDetails.Id as any,
+                PoNo: this.PoDetails.ERPPONumber as any,
                 DocType: this.PoDetails.DocType as any,
                 Documentdate: this.formatDate(this.PoDetails.PODate) as any,
                 SupplierCode: this.PoDetails.SupplierCode as any,
@@ -598,8 +603,42 @@ export class CreateAdvancedShippingNotificationComponent {
 
     this.ASNLineItems[paramIndex].Qty = _letNumber;
 
-    //this.dataSource.data[paramIndex].Qty = _letNumber;      
-    this.dataSource.data = this.ASNLineItems;  
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
   }
+  openForAddAsn(){
+    debugger
+    if (this.ASNHeaderForm)
+    console.log(this.ASNHeaderForm)
+    this.advanceShippingNotificationService;
+      if (this.ASNHeaderForm.valid) {
+        const PRHeaderData = this.ASNHeaderForm.value as any;
+        const ASNAdd: AdvancedShipmentNotificationVM = {
+          ERPPONumber: PRHeaderData.ERPPONumber?.Id as any,
+          DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
+          SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
+          SupplierName: PRHeaderData.SupplierName as any,
+          ASNDate: PRHeaderData.ASNDate ? PRHeaderData.ASNDate : new Date(),
+          DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
+          AsnDetVM: []
+        };
+
+    this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          console.log(res)
+
+        }
+        else {
+          // this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => {  },
+      complete() {
+
+      },
+    });
+  }}
+
 
 }

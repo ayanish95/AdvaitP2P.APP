@@ -145,6 +145,20 @@
 
     },
     {
+      "route": "pages/quality-control",
+      "name": "QualityControl",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
       "route": "pages",
       "name": "configuration",
       "type": "sub",

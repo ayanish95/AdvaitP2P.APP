@@ -5,7 +5,7 @@
   <mat-card-header>
     <div class="col-md-9">
       <h3>Advance Shipment Notification</h3>
-    </div>    
+    </div>
       <div class="col-md-3 d-flex  justify-content-end">
             <button mat-raised-button color="primary" routerLink="add-asn">
               Create ASN
@@ -24,11 +24,11 @@
         <mat-tab >
           <ng-template mat-tab-label>List of Created Advance Shipment Notification</ng-template>
 
-          <app-all-asn-list [allASNList]="pendingASNList">
-                            (LoadAllPR)="apiAllPendingList()">            
+          <app-all-asn-list [allASNListt]="AsnallList">
+                            (LoadAllPR)="apiAllPendingList()">
           </app-all-asn-list>
         </mat-tab>
       </mat-tab-group>
-    </ng-container>    
+    </ng-container>
   </mat-card-content>
 </mat-card>

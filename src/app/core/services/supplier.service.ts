@@ -26,7 +26,7 @@ export class SupplierService {
   approveSupplier(supplierId: any,currentRole:any) {
     return this.httpclient.authPost(`${Api.Supplier + Method.ApproveSupplier}/${currentRole}`,supplierId);
   }
-  
+
   getSupplierByGSTNumber(gstNumber: string): Observable<any> {
     return this.httpclient.authGet(`${Api.Supplier + Method.GetSupplierByGSTNumber}/${gstNumber}`);
   }
@@ -41,7 +41,7 @@ export class SupplierService {
   }
   deleteSupplier(supplierId: any) {
     return this.httpclient.authGet(`${Api.Supplier + Method.DeleteSupplier}/${supplierId}`);
-  } 
+  }
   rejectSupplier(supplierId: any) {
     return this.httpclient.authGet(`${Api.Supplier + Method.RejectSupplier}/${supplierId}`);
   }

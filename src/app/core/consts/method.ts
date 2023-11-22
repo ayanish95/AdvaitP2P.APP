@@ -64,4 +64,8 @@ export class Method {
   static ApprovePOById = `/ApprovePOById`;
   static RejectPOById = `/RejectPOById`;
   static GetAllApprovedPurchaseOrderHeaderList = `/GetAllApprovedPurchaseOrderHeaderList`;
+  static GetAllASNList = `/GetAllASNList`;
+  static AddASN = `/CreateASN`;
+
+
 }

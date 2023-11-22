@@ -11,6 +11,7 @@
     "ASN":"ASN",
     "GRN":"GRN",
     "ReturnGRN":"Return GRN",
+    "QualityControl":"Quality Control",
     "design": "Design",
     "design.colors": "Color System",
     "design.icons": "Material Icons",

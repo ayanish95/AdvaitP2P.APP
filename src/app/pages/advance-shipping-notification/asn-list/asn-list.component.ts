@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { AdvanceShippingNotificationService } from './../../../core/services/advance-shipment-notification.service';
 import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
 
 @Component({
   selector: 'app-asn-list',
@@ -20,9 +21,10 @@ import { PurchaseOrderHeader } from '@core/models/purchase-order';
   styleUrls: ['./asn-list.component.scss']
 })
 export class AsnListComponent implements OnInit{
- 
+
   ASNList!: PurchaseOrderHeader[];
   pendingASNList!: PurchaseOrderHeader[];
+  AsnallList!:AdvancedShipmentNotificationVM[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
   selectedPRId!: number;
@@ -36,12 +38,12 @@ export class AsnListComponent implements OnInit{
 
   constructor(private purchaseOrderService: PurchaseOrderService,private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog,private strategyService:ApprovalStrategyService) { }
 
-  ngOnInit() {    
+  ngOnInit() {
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
-    this.isSAPEnabled = this.authService.isSAPEnable(); 
-    this.apiASNList();  
-    this.apiAllPendingList(); 
+    this.isSAPEnabled = this.authService.isSAPEnable();
+    this.apiASNList();
+    this.apiAllPendingList();
   }
 
   searchSupplier(filterValue: any) {
@@ -56,7 +58,7 @@ export class AsnListComponent implements OnInit{
         })
       )
       .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {          
+        if (res[ResultEnum.IsSuccess]) {
           this.ASNList = res[ResultEnum.Model];
         }
         else
@@ -65,15 +67,15 @@ export class AsnListComponent implements OnInit{
   }
 
   apiAllPendingList(){
-    this.purchaseOrderService
-    .getPendingASNByUserId()
+    this.advanceShippingNotificationService
+    .GetAllASNList()
     .pipe(
       finalize(() => {
       })
     )
     .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {        
-        this.pendingASNList = res[ResultEnum.Model];
+      if (res[ResultEnum.IsSuccess]) {
+        this.AsnallList = res[ResultEnum.Model];
       }
       else {
         this.toaster.error(res[ResultEnum.Message]);

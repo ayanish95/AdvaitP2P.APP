@@ -78,6 +78,10 @@ const routes: Routes = [
         loadChildren: () => import('../pages/return-goods-received-note/return-goods-received-note.module').then(m => m.ReturnGoodsReceivedNoteModule),
       },
       {
+        path: 'pages/quality-control',
+        loadChildren: () => import('../pages/quality-control/quality-control.module').then(m => m.QualityControlModule),
+      },
+      {
         path: 'design',
         loadChildren: () => import('./design/design.module').then(m => m.DesignModule),
       },
