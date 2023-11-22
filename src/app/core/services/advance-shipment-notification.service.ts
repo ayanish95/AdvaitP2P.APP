@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
-import { HttpClientService } from "./http-client.service";
-import { Observable } from "rxjs";
-import { Api } from "@core/consts/api";
-import { Method } from "@core/consts/method";
+import { Injectable } from '@angular/core';
+import { HttpClientService } from './http-client.service';
+import { Observable } from 'rxjs';
+import { Api } from '@core/consts/api';
+import { Method } from '@core/consts/method';
 
 @Injectable({
       providedIn: 'root'
