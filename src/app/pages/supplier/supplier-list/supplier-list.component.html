@@ -48,6 +48,13 @@
                                                [searchText]="searchText"></app-approved-suplier-list>
                 </div>
             </mat-tab>
+            <mat-tab>
+              <ng-template mat-tab-label>Reject</ng-template>
+              <div class="mt-5">
+                <app-reject-suplier-list [supplierList]="rejectsuplierlist"
+                [searchText]="searchText"></app-reject-suplier-list>
+              </div>
+          </mat-tab>
         </mat-tab-group>
     </mat-card-content>
 </mat-card>

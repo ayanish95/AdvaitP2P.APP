@@ -19,7 +19,7 @@ export class SupplierService {
       url += `/${isApproved}`;
     return this.httpclient.authGet(url);
   }
-
+ 
   supplierRegister(supplier: any) {
     return this.httpclient.authPost(`${Api.Supplier + Method.CreateSupplier}`, supplier);
   }

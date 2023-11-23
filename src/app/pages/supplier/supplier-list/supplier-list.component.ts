@@ -8,7 +8,7 @@ import { Suppliers } from '@core/models/suppliers';
 import { Users } from '@core/models/users';
 import { SupplierService } from '@core/services/supplier.service';
 import { ToastrService } from 'ngx-toastr';
-import { finalize } from 'rxjs';
+import { filter, finalize } from 'rxjs';
 import { AddSupplierForAdminComponent } from '../add-supplier-for-admin/add-supplier-for-admin.component';
 import { AuthService } from '@core';
 import { Role } from '@core/enums/role';
@@ -24,6 +24,8 @@ export class SupplierListComponent implements OnInit {
   allSuppliierList!: Suppliers[];
   pendingSuppliierList!: Suppliers[];
   approveSuppliierList!: Suppliers[];
+  rejectsuplierlist!: Suppliers[];
+
   userRole!:number;
   Role = Role;
 
@@ -42,15 +44,19 @@ export class SupplierListComponent implements OnInit {
       })
     )
     .subscribe(res => {
+      debugger
       if (res[ResultEnum.IsSuccess]) {
         this.allSuppliierList = res[ResultEnum.Model];
+        this.rejectsuplierlist = this.allSuppliierList.filter(x => x.IsRejected == true);
+        console.log(this.rejectsuplierlist);
+
+
       }
       else {
         this.toast.error(res[ResultEnum.Message]);
       }
     });
   }
-
   apiAllPendingList(){
     this.supplierService
     .getSupplierList(false)
@@ -94,6 +100,7 @@ export class SupplierListComponent implements OnInit {
         }
       });
     }
+
   }
 
   onClickAddSupplier(){

@@ -10,9 +10,10 @@ import { ApprovedSuplierListComponent } from './approved-suplier-list/approved-s
 import { AddSupplierForAdminComponent } from './add-supplier-for-admin/add-supplier-for-admin.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatChipsModule } from '@angular/material/chips';
+import { RejectSuplierListComponent } from './reject-suplier-list/reject-suplier-list.component';
 
 @NgModule({
-  declarations: [SupplierListComponent, AllSuplierListComponent, PendingSuplierListComponent, ApprovedSuplierListComponent, AddSupplierForAdminComponent],
+  declarations: [SupplierListComponent, AllSuplierListComponent, PendingSuplierListComponent, ApprovedSuplierListComponent, AddSupplierForAdminComponent, RejectSuplierListComponent],
   imports: [CommonModule, SupplierRoutingModule, SharedModule,MatChipsModule,NgSelectModule],
 })
 export class SupplierModule {}
