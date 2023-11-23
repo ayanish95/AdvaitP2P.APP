@@ -48,10 +48,38 @@ const routes: Routes = [
       {
         path: 'pages/purchase-requisition',
         loadChildren: () => import('../pages/purchase-requisition/purchase-requisition.module').then(m => m.PurchaseRequisitionModule),
-      }, 
+      },
       {
         path: 'pages/approval-config',
         loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
+      },
+      {
+        path: 'pages/approval-config',
+        loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
+      },
+      {
+        path: 'pages/purchase-order',
+        loadChildren: () => import('../pages/purchase-order/purchase-order.module').then(m => m.PurchaseOrderModule),
+      },
+      {
+        path: 'pages/quotation',
+        loadChildren: () => import('../pages/quotation/quotation.module').then(m => m.QuotationModule),
+      },
+      {
+        path: 'pages/advance-shipping-notification',
+        loadChildren: () => import('../pages/advance-shipping-notification/advance-shipping-notification.module').then(m => m.AdvanceShippingNotificationModule),
+      },
+      {
+        path: 'pages/goods-received-note',
+        loadChildren: () => import('../pages/goods-received-note/goods-received-note.module').then(m => m.GoodsReceivedNoteModule),
+      },
+      {
+        path: 'pages/return-goods-received-note',
+        loadChildren: () => import('../pages/return-goods-received-note/return-goods-received-note.module').then(m => m.ReturnGoodsReceivedNoteModule),
+      },
+      {
+        path: 'pages/quality-control',
+        loadChildren: () => import('../pages/quality-control/quality-control.module').then(m => m.QualityControlModule),
       },
       {
         path: 'design',

@@ -62,7 +62,7 @@
                     <th mat-header-cell *matHeaderCellDef> Edit </th>
                     <td mat-cell *matCellDef="let element">
                         <button mat-icon-button
-                                (click)="openEditModelPopup(addProduct,element?.Id)">
+                                (click)="openEditModelPopup(addProduct,element?.Id)"  matTooltip="Click to Edit">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </td>
@@ -71,7 +71,7 @@
                     <th mat-header-cell *matHeaderCellDef> Delete </th>
                     <td mat-cell *matCellDef="let element">
                         <button mat-icon-button
-                                (click)="openDeleteModel(deleteAlert,element?.Id)">
+                                (click)="openDeleteModel(deleteAlert,element?.Id)"  matTooltip="Click to Delete">
                             <mat-icon>delete</mat-icon>
                         </button>
                     </td>
@@ -131,6 +131,20 @@
                                placeholder="Product Description">
                         <mat-error
                                    *ngIf="productForm.get('ProductDescription')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-6">
+                    <label class="custom-label">
+                        <h5>HSN Code<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="HSNCode"
+                               placeholder="HSN Code">
+                        <mat-error
+                                   *ngIf="productForm.get('HSNCode')?.hasError('required')">
                             This filed is required...
                         </mat-error>
                     </mat-form-field>
@@ -228,7 +242,8 @@
                         <mat-form-field class="demo-full-width">
                             <input matInput
                                    formControlName="StandardPrice"
-                                   placeholder="Standard Price" (keypress)="onKeyPress($event)">
+                                   placeholder="Standard Price"
+                                   (keypress)="onKeyPressWithDot($event)">
                             <mat-error
                                        *ngIf="productForm.get('StandardPrice')?.hasError('required')">
                                 This filed is required...
@@ -244,10 +259,35 @@
                         <mat-form-field class="demo-full-width">
                             <input matInput
                                    formControlName="MovingAvgPrice"
-                                   placeholder="Moving Avg. Price" (keypress)="onKeyPress($event)">
+                                   placeholder="Moving Avg. Price"
+                                   (keypress)="onKeyPressWithDot($event)">
                             <mat-error
                                        *ngIf="productForm.get('MovingAvgPrice')?.hasError('required')">
                                 This filed is required...
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+                <ng-container>
+                    <div class="col-sm-6">
+                        <label class="custom-label">
+                            <h5>GST(%) <small>*</small></h5>
+                        </label>
+                        <mat-form-field class="demo-full-width">
+                            <input matInput
+                                   formControlName="GST"
+                                   placeholder="GST(%)" (keypress)="onKeyPressWithDot($event)">
+                            <mat-error
+                                       *ngIf="productForm.get('GST')?.hasError('required')">
+                                This filed is required...
+                            </mat-error>
+                            <mat-error
+                                       *ngIf="productForm.get('GST')?.hasError('min')">
+                                GST(%) must be minimum 0% and maximum 28%.
+                            </mat-error>
+                            <mat-error
+                                       *ngIf="productForm.get('GST')?.hasError('max')">
+                                GST(%) must be maximum 28%.
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -287,7 +327,8 @@
     <mat-dialog-actions align="end">
         <button mat-raised-button mat-dialog-close>Close</button>
         <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-                [disabled]="productForm.invalid" (click)="onClickAddUser()">{{ !isEdit ? 'Add' : 'Update' }}</button>
+                [disabled]="productForm.invalid" (click)="onClickAddOrUpdateProduct()">{{ !isEdit ?
+            'Add' : 'Update' }}</button>
     </mat-dialog-actions>
 
 </ng-template>
@@ -297,6 +338,6 @@
     <div mat-dialog-content>Are you sure want to delete this product?</div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="warn" (click)="onClickDeleteProduct()">Delete</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteProduct()"  matTooltip="Click to Delete">Delete</button>
     </div>
 </ng-template>

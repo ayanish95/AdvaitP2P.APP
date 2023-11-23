@@ -27,7 +27,7 @@
           "Supplier",
           "Admin",
           "ProcurementTeam"
-          
+
         ]
       }
     },
@@ -40,7 +40,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -53,7 +53,7 @@
         "only": [
           "Supplier",
           "Admin"
-          
+
         ]
       }
     },
@@ -69,9 +69,94 @@
           "ProcurementTeam",
           "CommercialTeam",
           "FinanceTeam"
-          
+
         ]
       }
+    },
+    {
+      "route": "pages/purchase-order",
+      "name": "puchaseorder",
+      "type": "link",
+      "icon": "add_shopping_cart",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "ProcurementTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/quotation",
+      "name": "quotation",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/advance-shipping-notification",
+      "name": "ASN",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/goods-received-note",
+      "name": "GRN",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/return-goods-received-note",
+      "name": "ReturnGRN",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/quality-control",
+      "name": "QualityControl",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
     },
     {
       "route": "pages",
@@ -84,13 +169,14 @@
           "name": "approval",
           "type": "link"
         }
-        
+
       ],
       "permissions": {
         "only": [
-          "Admin"          
+          "Admin"
         ]
       }
+
     },
     {
       "route": "design",
@@ -111,6 +197,7 @@
       ],
       "permissions": {
         "only": [
+          "Admin1",
           "Admin1",
           "MANAGER"
         ]
@@ -446,7 +533,7 @@
         }
       ],
       "permissions": {
-        "only": "Admin1"
+        "only": "Admin"
       }
     },
     {

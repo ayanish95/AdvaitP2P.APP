@@ -68,6 +68,7 @@ export class AddApprovalStrategyComponent implements OnInit {
   approvalItems: ApprovalStrategy[] = [];
   selectedRole: any;
   selectedApprover: any;
+  selectedSequence!: number;
   configForm = this.fb.group({
     ApprovalType: [null, [Validators.required]],
     DisplayText: ['', [Validators.required]],
@@ -126,7 +127,7 @@ export class AddApprovalStrategyComponent implements OnInit {
               this.approvalDetailsList?.forEach(item => {
                 this.approvalItems.push({
                   Id: item?.Id,
-                  ApprovalType:  this.approvalFor?.find(x => x.id == item?.ApprovalType) as any,
+                  ApprovalType: this.approvalFor?.find(x => x.id == item?.ApprovalType) as any,
                   ConfigurationFor: item?.ConfigurationFor as any,
                   Sequence: item?.Sequence as any,
                   Role: item?.Role as any,
@@ -139,7 +140,7 @@ export class AddApprovalStrategyComponent implements OnInit {
 
               this.dataSource.data = this.approvalItems;
             }
-            else{
+            else {
               this.apiApprovalTypeById();
             }
           }
@@ -379,8 +380,8 @@ export class AddApprovalStrategyComponent implements OnInit {
       throw this.toaster.error('Role and approver already exist for other sequence.');
 
     const sequence = lineItem?.Sequence;
-    if (this.approvalItems?.filter(x => x.Sequence == sequence)?.length > 0)
-      throw this.toaster.error('Strategy already exist for sequence ' + lineItem?.Sequence);
+    // if (this.approvalItems?.filter(x => x.Sequence == sequence)?.length > 0)
+    //   throw this.toaster.error('Strategy already exist for sequence ' + lineItem?.Sequence);
     this.approvalItems.push({
       Id: 0,
       ApprovalType: lineItem.ApprovalType as any,
@@ -406,11 +407,19 @@ export class AddApprovalStrategyComponent implements OnInit {
     this.dataSource.data = this.approvalItems;
   }
 
-  onClickDeleteItem(sequence: number) {
-    const data = this.approvalItems.find(x => x.Sequence == sequence);
-    this.approvalItems = this.approvalItems.filter(x=>x.Sequence!=sequence);
-    this.approvalItems.forEach((element,index) => {
-        return element.Sequence = index+1;
+  openDeleteModel(templateRef: TemplateRef<any>, sequence: number) {
+    this.selectedSequence = sequence;
+    this.dialog.open(templateRef);
+  }
+
+  onClickDeleteItem() {
+    if (!this.selectedSequence)
+      throw this.toaster.error('Something went wrong...');
+    this.dialog.closeAll();
+    const data = this.approvalItems.find(x => x.Sequence == this.selectedSequence);
+    this.approvalItems = this.approvalItems.filter(x => x.Sequence != this.selectedSequence);
+    this.approvalItems.forEach((element, index) => {
+      return element.Sequence = index + 1;
     });
     this.dataSource.data = this.approvalItems;
   }

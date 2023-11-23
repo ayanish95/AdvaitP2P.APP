@@ -1,0 +1,54 @@
+<breadcrumb></breadcrumb>
+
+<mat-card>
+  <mat-card-header>
+    <div class="col-md-9">
+      <h3>List OF Purchase Order</h3>
+    </div>
+    <!-- <div class="col-md-3">
+        <mat-form-field  appearance="outline">
+          <mat-label>Search</mat-label>
+          <input matInput type="text" name="supplier" (keyup)="searchSupplier($event)" placeholder="Search" >
+        </mat-form-field>
+      </div> -->
+    <div class="col-md-3 d-flex  justify-content-end">
+      <button mat-raised-button color="primary" routerLink="create">
+        Create Purchase Order
+      </button>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <ng-container *ngIf="rightsForApproval">
+      <mat-tab-group dynamicHeight (selectedTabChange)="onTabChanged($event);">
+        <mat-tab>
+          <ng-template mat-tab-label>Created PO </ng-template>
+          <app-all-purchase-order-list [allPOHeaderList]="POHeaderList"
+                                       [ApprovalStrategyList]="approvalStrategyList"
+                                       (LoadAllPO)="apiPurchaseOder()"></app-all-purchase-order-list>
+        </mat-tab>
+        <mat-tab *ngIf="rightsForApproval || Role.Admin == currentUserRole">
+          <ng-template mat-tab-label>Pendiing For Approval</ng-template>
+
+          <app-pending-po-for-approval [PendingPOHeaderList]="pendingPOHeaderList"
+                                       (LoadPendingPO)="apiAllPendingList()">
+          </app-pending-po-for-approval>
+        </mat-tab>
+      </mat-tab-group>
+    </ng-container>
+    <ng-container *ngIf="!rightsForApproval">
+      <app-all-purchase-order-list [allPOHeaderList]="POHeaderList"
+                                   [ApprovalStrategyList]="approvalStrategyList"
+                                   (LoadAllPO)="apiPurchaseOder()"></app-all-purchase-order-list>
+    </ng-container>
+
+  </mat-card-content>
+</mat-card>
+
+<ng-template #deleteAlert>
+  <h2 mat-dialog-title class="text-center">Delete Purchase Order</h2>
+  <div mat-dialog-content>Are you sure want to delete this Purchase Order?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeletePO()">Delete</button>
+  </div>
+</ng-template>

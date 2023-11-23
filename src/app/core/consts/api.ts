@@ -17,4 +17,7 @@ export class Api {
   static Role = `role`;
   static ApprovalType = `ApprovalType`;
   static ApprovalStrategy = `ApprovalStrategy`;
+  static PurchaseOrder = `PurchaseOrder`;
+  static AdvancedShipmentNotification = `AdvancedShipmentNotification`;
+
 }

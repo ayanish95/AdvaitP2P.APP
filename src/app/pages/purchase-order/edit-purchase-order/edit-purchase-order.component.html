@@ -1,0 +1,434 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+  <mat-card-header>
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <h2>Update Purchase order</h2>
+      </div>
+    </div>
+
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="POHeaderForm" class="form-field-full">
+      <div class="row mt-5">
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> PO Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="paymentPicker"
+                   #paymentDateModel
+                   required
+                   (focus)="paymentPicker.open()"
+                   readonly
+                   formControlName="PODate">
+            <mat-datepicker-toggle matSuffix
+                                   [for]="paymentPicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+            <!-- <mat-error *ngIf="paymentDateModel.hasError('required')">
+                          Please choose a date.
+                        </mat-error>
+                        <mat-error *ngIf="paymentDateModel.hasError('matDatepickerMin')">
+                          Please choose a later date.
+                        </mat-error> -->
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Doc Type</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="DocType" readonly
+                   placeholder="Doc Type">
+           
+            <mat-error *ngIf="POHeaderForm.get('DocType')?.hasError('required')">
+              Please select doc type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Supplier Code<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="SupplierCode"
+                   placeholder="Supplier Code" readonly>
+          
+            <mat-error *ngIf="POHeaderForm.get('SupplierCode')?.hasError('required')">
+              Please select supplier code...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Supplier Name</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="SupplierName"
+                   placeholder="Supplier Name" readonly>
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> PR Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="PRno"
+                   placeholder="PR Number" readonly>
+            <mat-error *ngIf="POHeaderForm.get('PRno')?.hasError('required')">
+              Please select PR number...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Contract Number</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="ContractNumber" readonly
+                   placeholder="Contract Number" >
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> RFQ Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput readonly
+                   formControlName="RFQNumber"
+                   placeholder="RFQ Number">
+           
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Company Code</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="CompanyCode"
+                   placeholder="Company Code" readonly>
+          
+            <mat-error *ngIf="POHeaderForm.get('CompanyCode')?.hasError('required')">
+              Please select Company Code...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+      </div>
+      <div class="mt-20 ">
+        <h4>Purchase Order Product List</h4>
+        <div class="example-container">
+          <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="srNo">
+              <th mat-header-cell *matHeaderCellDef># </th>
+              <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+              <th  mat-footer-cell *matFooterCellDef > <b *ngIf="POLineItem?.length">Total : </b></th>
+            </ng-container>
+            <ng-container matColumnDef="ProductCode">
+              <th mat-header-cell *matHeaderCellDef> Product Code </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductCode}}</td>
+              <th mat-footer-cell *matFooterCellDef> </th>
+            </ng-container>
+            <ng-container matColumnDef="Description">
+              <th mat-header-cell *matHeaderCellDef> Description </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Product?.Description}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="ProductGroup">
+              <th mat-header-cell *matHeaderCellDef> Product Group </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductGroup}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="Qty">
+              <th mat-header-cell *matHeaderCellDef> Qty </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="Unit">
+              <th mat-header-cell *matHeaderCellDef> Unit </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Unit?.UnitName}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="NetPrice">
+              <th mat-header-cell *matHeaderCellDef> Net Price </th>
+              <td mat-cell *matCellDef="let element"> {{element?.NetPrice }} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="TotalNetPrice">
+              <th mat-header-cell *matHeaderCellDef>Total Net Price </th>
+              <td mat-cell *matCellDef="let element"> {{element?.TotalNetPrice | number: '1.0-0'}}
+              </td>
+              <td mat-footer-cell *matFooterCellDef> <b *ngIf="POLineItem?.length"> {{calculateTotalForFooter('TotalNetPrice') |
+                number: '1.0-0'}}</b> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="GST">
+              <th mat-header-cell *matHeaderCellDef> CSGST(%) </th>
+              <td mat-cell *matCellDef="let element"> {{element?.GST}}% </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="IGST">
+              <th mat-header-cell *matHeaderCellDef> IGST(%) </th>
+              <td mat-cell *matCellDef="let element"> {{element?.IGST}}% </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="TaxAmount">
+              <th mat-header-cell *matHeaderCellDef> Tax Amount </th>
+              <td mat-cell *matCellDef="let element"> {{element?.TaxAmount | number: '1.0-0'}} </td>
+              <td mat-footer-cell *matFooterCellDef><b *ngIf="POLineItem?.length"> {{calculateTotalForFooter('TaxAmount') |
+                number: '1.0-0'}} </b></td>
+            </ng-container>
+            <ng-container matColumnDef="TotalAmount">
+              <th mat-header-cell *matHeaderCellDef> Total Amount </th>
+              <td mat-cell *matCellDef="let element"> {{element?.TotalAmount | number: '1.0-0'}}
+              </td>
+              <td mat-footer-cell *matFooterCellDef> <b *ngIf="POLineItem?.length">{{calculateTotalForFooter('TotalAmount') |
+                number: '1.0-0'}} </b></td>
+            </ng-container>
+            <ng-container matColumnDef="Currency">
+              <th mat-header-cell *matHeaderCellDef>Currency </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Currency}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="DeliveryDate">
+              <th mat-header-cell *matHeaderCellDef> Delivery Date </th>
+              <td mat-cell *matCellDef="let element"> {{element?.DeliveryDate | date :
+                'dd-MM-yyyy'}}
+              </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="StockType">
+              <th mat-header-cell *matHeaderCellDef> Stock Type </th>
+              <td mat-cell *matCellDef="let element"> {{element?.StockType }}
+              </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="Plant">
+              <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Plant?.PlantCode}} -
+                {{element?.Plant?.PlantName}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="Location">
+              <th mat-header-cell *matHeaderCellDef> Location </th>
+              <td mat-cell *matCellDef="let element"> {{element?.StorageLocation?.LocationCode}} -
+                {{element?.StorageLocation?.LocationName}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="IsReturnItem">
+              <th mat-header-cell *matHeaderCellDef> Is Return Item? </th>
+              <td mat-cell *matCellDef="let element"><mat-checkbox color="primary" disabled
+                              [checked]="element?.IsReturnItem"></mat-checkbox> </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="IsFreeOfCharge">
+              <th mat-header-cell *matHeaderCellDef> Free Of Charge? </th>
+              <td mat-cell *matCellDef="let element"><mat-checkbox color="primary" disabled
+                              [checked]="element?.IsFreeOfCharge"></mat-checkbox> </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="Edit" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef> Edit </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="openModelForAddItem(editProduct,element)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="Delete" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef> Delete </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button
+                        (click)="onClickOpenDeleteAlertPopup(deleteAlert,element?.Id)">
+                  <mat-icon>delete</mat-icon></button>
+              </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+          </table>
+          <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                               [columnCount]="displayedColumns.length"></app-no-record-found>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-20">
+        <button [disabled]="!dataSource.data.length || POHeaderForm.invalid" mat-raised-button
+                color="primary" (click)="onClickUpdatePO()"> Update PO</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+
+<!-- Modal popup -->
+<ng-template #editProduct style="width: 56vw;">
+  <h2 mat-dialog-title>Update Product Details</h2>
+
+  <mat-dialog-content>
+    <form [formGroup]="POLineForm">
+      <div class="row mt-5">
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Product Code<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Product"
+                   placeholder="Product Code">
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Description</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="Description"
+                   placeholder="Product Group">
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Product Group</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="ProductGroup"
+                   placeholder="Product Group">
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Unit<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="unitAutocomplete"
+                   formControlName="Unit"
+                   placeholder="Unit">
+            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
+              <mat-option *ngFor="let unit of filteredUnits | async"
+                          [value]="unit">
+                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="POLineForm.get('Unit')?.hasError('required')">
+              Please select unit...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Qty<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="Qty" (keypress)="onKeyPressWithDot($event)"
+                   placeholder="Qty"
+                   required>
+            <mat-error *ngIf="POLineForm.get('Qty')?.hasError('required')">
+              Please enter Qty...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>NetPrice<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="NetPrice"
+                   (keypress)="onKeyPressWithDot($event)"
+                   placeholder="Qty"
+                   required>
+            <mat-error *ngIf="POLineForm.get('NetPrice')?.hasError('required')">
+              Please enter Qty...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Delivery Date<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matDatepicker]="deliveryDate"
+                   #deliveryDateModel
+                   required
+                   (focus)="deliveryDate.open()"
+                   [min]="minDate"
+                   readonly
+                   formControlName="DeliveryDate"
+                   placeholder="Delivery Date">
+            <mat-datepicker-toggle matSuffix
+                                   [for]="deliveryDate"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #deliveryDate></mat-datepicker>
+            <mat-error *ngIf="POLineForm.get('DeliveryDate')?.hasError('required')">
+              Please select date...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Stock Type<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="stockTypeAutocomplete"
+                   formControlName="StockType"
+                   placeholder="Stock Type">
+            <mat-autocomplete #stockTypeAutocomplete="matAutocomplete">
+              <mat-option *ngFor="let stockType of filteredStockType | async"
+                          [value]="stockType.Type">
+                <span>{{ stockType?.Type }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="POLineForm.get('StockType')?.hasError('required')">
+              Please select stock type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <mat-checkbox color="primary" formControlName="IsReturnItem">Is Return
+            Item?</mat-checkbox>
+        </div>
+        <div class="col-sm-6">
+          <mat-checkbox color="primary" formControlName="IsFreeOfCharge" (change)="onCheckChangeFreeOfCharge($event)"  >Free Of
+            Charge?</mat-checkbox>
+        </div>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+            (click)="onClickUpdateProduct()"
+            [disabled]="POLineForm.invalid">Update</button>
+  </mat-dialog-actions>
+
+</ng-template>
+
+
+<ng-template #deleteAlert>
+  <h2 mat-dialog-title class="text-center">Delete Purchase Order Prodcut</h2>
+  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to delete this item?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
+  </div>
+</ng-template>
