@@ -24,7 +24,7 @@ import { Observable, finalize, map, startWith } from 'rxjs';
 export class UserListComponent {
   list: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['srNo', 'userName', 'name','roleName', 'erpUserId', 'email', 'mobile','isActive', 'edit','delete'];
+  displayedColumns: string[] = ['srNo', 'userName', 'name', 'roleName', 'erpUserId', 'email', 'mobile', 'isActive', 'edit', 'delete'];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
   currentPage = 1;
@@ -37,7 +37,7 @@ export class UserListComponent {
   filter: Filter = new Filter();
   index = 0;
   filteredRoles!: Observable<Roles[]>;
-  selectedUserId=0;
+  selectedUserId = 0;
   userForm = this.fb.group({
     FirstName: ['', [Validators.required]],
     LastName: [''],
@@ -53,7 +53,7 @@ export class UserListComponent {
     Role: ['', [Validators.required]],
     Email: ['', [Validators.required]],
     Mobile: ['', [Validators.required]],
-    IsActive:[false]
+    IsActive: [false]
   });
 
   constructor(
@@ -66,7 +66,7 @@ export class UserListComponent {
   ) { }
 
   ngOnInit() {
-    this.selectedUserId=0;
+    this.selectedUserId = 0;
     this.apiUserList();
 
     this.roleService
@@ -151,46 +151,46 @@ export class UserListComponent {
     });
   }
 
-  openModelEditUser(templateRef: TemplateRef<any>,userId:number) {
+  openModelEditUser(templateRef: TemplateRef<any>, userId: number) {
     this.editUserForm.reset();
     this.editUserForm.updateValueAndValidity();
     this.userService
-    .getUserDetailById(userId)
-    .pipe(
-      finalize(() => {
-        this.isLoading = false;
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.userDetails = res[ResultEnum.Model];
-        if(this.userDetails){
-          this.editUserForm.patchValue({
-            FirstName:this.userDetails.FirstName,
-            LastName:this.userDetails.LastName,
-            UserName:this.userDetails.UserName,
-            Role: this.roleList.find(x=>x.Id == Number(this.userDetails.RoleId)) as any,
-            Email:this.userDetails.Email,
-            Mobile:this.userDetails.Mobile,
-            IsActive:this.userDetails.IsActive,
-          });
+      .getUserDetailById(userId)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.userDetails = res[ResultEnum.Model];
+          if (this.userDetails) {
+            this.editUserForm.patchValue({
+              FirstName: this.userDetails.FirstName,
+              LastName: this.userDetails.LastName,
+              UserName: this.userDetails.UserName,
+              Role: this.roleList.find(x => x.Id == Number(this.userDetails.RoleId)) as any,
+              Email: this.userDetails.Email,
+              Mobile: this.userDetails.Mobile,
+              IsActive: this.userDetails.IsActive,
+            });
+          }
+          else {
+            this.toaster.error('User not found');
+          }
         }
-        else{
-          this.toaster.error('User not found');
+        else {
+          this.toaster.error(res[ResultEnum.Message]);
         }
-      }
-      else{
-        this.toaster.error(res[ResultEnum.Message]);
-      }
-    });
+      });
     this.dialog.open(templateRef, {
       width: '56vw',
       panelClass: 'custom-modalbox'
     });
   }
 
-  openDeleteModel(templateRef: TemplateRef<any>,userId:number){
-    this.selectedUserId=userId;
+  openDeleteModel(templateRef: TemplateRef<any>, userId: number) {
+    this.selectedUserId = userId;
     this.dialog.open(templateRef);
   }
 
@@ -256,23 +256,23 @@ export class UserListComponent {
       },
     });
   }
-  onClickDeleteUser(){
+  onClickDeleteUser() {
     this.userService
-    .deleteUser(this.selectedUserId)
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.toaster.success(res[ResultEnum.Message]);
-        this.apiUserList();
-        this.selectedUserId=0;
-      }
-      else
-      this.toaster.error(res[ResultEnum.Message]);
+      .deleteUser(this.selectedUserId)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res[ResultEnum.Message]);
+          this.apiUserList();
+          this.selectedUserId = 0;
+        }
+        else
+          this.toaster.error(res[ResultEnum.Message]);
 
-      this.dialog.closeAll();
-    });
+        this.dialog.closeAll();
+      });
   }
 }

@@ -189,7 +189,7 @@
             <h5>Qty<small>*</small></h5>
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput type="text" formControlName="Qty" (keypress)="onKeyPress($event)"
+            <input matInput type="text" formControlName="Qty" (keypress)="onKeyPressWithDot($event)"
             placeholder="Qty"
                    required>
                    <mat-error *ngIf="PRLineForm.get('Qty')?.hasError('required')">

@@ -149,10 +149,9 @@ export class CreateAdvancedShippingNotificationComponent {
         })
       )
       .subscribe(res => {
-        debugger
         if (res[ResultEnum.IsSuccess]) {
           this.approvedPolist = res[ResultEnum.Model];
-          console.log(this.approvedPolist)
+          console.log(this.approvedPolist);
           this.filteredprno = this.ASNHeaderForm.get('PoNo')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPono(value || ''))
@@ -201,7 +200,7 @@ export class CreateAdvancedShippingNotificationComponent {
   getpono(selectedPRNumber: number) {
 
     this.purchaseOrderService.getPODetailsById(selectedPRNumber).subscribe(response => {
-      console.log(response)
+      console.log(response);
     // this.ASNHeaderForm.reset();
     // this.ASNHeaderForm.updateValueAndValidity();
 
@@ -217,7 +216,7 @@ export class CreateAdvancedShippingNotificationComponent {
       }
 
       // Update the prData array with the received data
-      this.dataSource = response.Model.POLineItems;
+      this.dataSource.data = response.Model.POLineItems;
       this.ASNLineItems = response.Model.POLineItems;
     });
   }
@@ -598,8 +597,8 @@ export class CreateAdvancedShippingNotificationComponent {
 
   DetLineChange(paramevent: any,paramIndex:number)
   {
-    debugger
-    let _letNumber=Number(paramevent.target.value);
+    debugger;
+    const _letNumber=Number(paramevent.target.value);
 
     this.ASNLineItems[paramIndex].Qty = _letNumber;
 
@@ -607,9 +606,9 @@ export class CreateAdvancedShippingNotificationComponent {
     this.dataSource.data = this.ASNLineItems;
   }
   openForAddAsn(){
-    debugger
+    debugger;
     if (this.ASNHeaderForm)
-    console.log(this.ASNHeaderForm)
+    console.log(this.ASNHeaderForm);
     this.advanceShippingNotificationService;
       if (this.ASNHeaderForm.valid) {
         const PRHeaderData = this.ASNHeaderForm.value as any;
@@ -626,7 +625,7 @@ export class CreateAdvancedShippingNotificationComponent {
     this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
       next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res)
+          console.log(res);
 
         }
         else {
