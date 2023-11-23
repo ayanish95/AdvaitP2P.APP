@@ -149,7 +149,6 @@ export class CreateAdvancedShippingNotificationComponent {
         })
       )
       .subscribe(res => {
-        debugger;
         if (res[ResultEnum.IsSuccess]) {
           this.approvedPolist = res[ResultEnum.Model];
           console.log(this.approvedPolist);
@@ -217,7 +216,7 @@ export class CreateAdvancedShippingNotificationComponent {
       }
 
       // Update the prData array with the received data
-      this.dataSource = response.Model.POLineItems;
+      this.dataSource.data = response.Model.POLineItems;
       this.ASNLineItems = response.Model.POLineItems;
     });
   }

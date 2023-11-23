@@ -87,15 +87,15 @@
           </label>
           <mat-form-field>
             <input matInput
-                   [matDatepicker]="paymentPicker"
+                   [matDatepicker]="documentPicker"
                    required
-                   (focus)="paymentPicker.open()"
+                   (focus)="documentPicker.open()"
                    readonly
                    formControlName="Documentdate"
                    placeholder="Document Date" readonly>
-            <mat-datepicker-toggle matSuffix
+            <mat-datepicker-toggle matSuffix [for]="documentPicker"
             ></mat-datepicker-toggle>
-            <mat-datepicker format="dd-MM-yyyy"></mat-datepicker>
+            <mat-datepicker format="dd-MM-yyyy" #documentPicker></mat-datepicker>
           </mat-form-field>
         </div>
           <div class="col-sm-3">
@@ -185,7 +185,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+        <app-no-record-found *ngIf="!dataSource?.data?.length"
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">

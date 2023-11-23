@@ -165,7 +165,7 @@
                 <ng-container matColumnDef="Delete">
                     <th mat-header-cell *matHeaderCellDef> Delete </th>
                     <td mat-cell *matCellDef="let element">
-                        <button mat-icon-button (click)="onClickDeleteItem(element?.Sequence)">
+                        <button mat-icon-button (click)="openDeleteModel(deleteAlert,element?.Sequence)">
                             <mat-icon>delete</mat-icon></button>
                     </td>
                 </ng-container>
@@ -258,4 +258,13 @@
   <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
           (click)="onClickUpdateItem()" [disabled]="configEditForm.invalid">Update</button>
 </mat-dialog-actions>
+</ng-template>
+
+<ng-template #deleteAlert>
+    <h2 mat-dialog-title class="text-center">Remove Approval Strategy</h2>
+    <div mat-dialog-content>Are you sure want to remove this approval?</div>
+    <div mat-dialog-actions class="d-flex justify-content-center">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Remove</button>
+    </div>
 </ng-template>
