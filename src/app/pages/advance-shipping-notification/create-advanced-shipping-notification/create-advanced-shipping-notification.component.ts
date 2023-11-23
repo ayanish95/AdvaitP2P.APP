@@ -1,5 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,10 +12,6 @@ import { Products } from '@core/models/products';
 import { StorageLocations } from '@core/models/storage-location';
 import { Units } from '@core/models/units';
 import { DocTypeService } from '@core/services/doc-type.service';
-import { PlantService } from '@core/services/plant.service';
-import { ProductService } from '@core/services/product.service';
-import { StorageLocationService } from '@core/services/storage-location.service';
-import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { Suppliers } from '@core/models/suppliers';
@@ -50,8 +46,6 @@ export class CreateAdvancedShippingNotificationComponent {
     Deliverydate: [new Date(), [Validators.required]],
 
   });
-  orderForm!: FormGroup;
-  items!: FormArray;
 
   BatchAndSerialNoForm = this.fb.group({
     items: new FormArray([]),
@@ -110,10 +104,6 @@ export class CreateAdvancedShippingNotificationComponent {
       //   this.router.navigateByUrl('/pages/purchase-requisition');
     });
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
-
-    this.orderForm = new FormGroup({
-      items: new FormArray([])
-    });
   }
 
   ngOnInit() {
@@ -331,10 +321,12 @@ export class CreateAdvancedShippingNotificationComponent {
     while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
       this.BatchAndSerialNoForm.controls.items.removeAt(0)
     }
-    const creds = this.BatchAndSerialNoForm?.get('items') as FormArray;
     if (data?.Qty) {
       for (let index = 0; index < data?.Qty; index++) {
-        this.addItem();
+        this.batchAndSerialNoGroupForm().push(this.fb.group({
+          BatchNo: [],
+          SerialNo: [],
+        }));
 
       }
     }
@@ -346,16 +338,8 @@ export class CreateAdvancedShippingNotificationComponent {
     });
   }
 
-  createItem(): FormGroup {
-    return this.fb.group({
-      BatchNo: '',
-      SerialNo: '',
-    });
-  }
-  
-  addItem(): void {
-    this.items = this.orderForm.get('items') as FormArray;
-    this.items.push(this.createItem());
+  batchAndSerialNoGroupForm(): FormArray {
+    return this.BatchAndSerialNoForm.get('items') as FormArray;
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {

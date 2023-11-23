@@ -203,48 +203,48 @@
 <ng-template #addBatchOrSerialNo style="width: 56vw;">
   <h2 mat-dialog-title>{{ selectedLineId ? 'Update' : 'Add'}} Batch / Serial Number </h2>
   <mat-dialog-content>
-    <form [formGroup]="orderForm">
-      <div class="row mt-5">
+    <form [formGroup]="BatchAndSerialNoForm">
+      <ng-container formArrayName="items">
+        <div class="row mt-5">
 
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Batch No<small>*</small></h5>
-          </label>
-         
+          <div class="col-sm-6">
+            <label class="custom-label">
+              <h5>Batch No<small>*</small></h5>
+            </label>
 
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Serial No<small>*</small></h5>
-          </label>
 
-        </div>
-        <ng-container formArrayName="items"
-        *ngFor="let item of orderForm.controls['items'].value; let i = index;">
-          <ng-container [formGroup]="item">
-            <div class="col-sm-6">
-              <mat-form-field appearance="outline" class="demo-full-width">
-                <input matInput formControlName="BatchNo" placeholder="Batch No.">
-               
-              </mat-form-field>
+          </div>
+          <div class="col-sm-6">
+            <label class="custom-label">
+              <h5>Serial No<small>*</small></h5>
+            </label>
 
-            </div>
-            <div class="col-sm-6">
-              <mat-form-field appearance="outline" class="demo-full-width">
-                <input matInput formControlName="SerialNo" placeholder="Serial No. {{i}}">
-              
-              </mat-form-field>
+          </div>
+          <ng-container *ngFor="let data of batchAndSerialNoGroupForm().controls; let i=index">
+            <ng-container [formGroupName]="i">
+              <div class="col-sm-6">
+                <mat-form-field appearance="outline" class="demo-full-width">
+                  <input matInput formControlName="BatchNo" placeholder="Batch No.">
 
-            </div>
+                </mat-form-field>
+
+              </div>
+              <div class="col-sm-6">
+                <mat-form-field appearance="outline" class="demo-full-width">
+                  <input matInput formControlName="SerialNo" placeholder="Serial No.">
+
+                </mat-form-field>
+
+              </div>
+            </ng-container>
           </ng-container>
-        </ng-container>
-      </div>
-
+        </div>
+      </ng-container>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
-    <button mat-raised-button color="primary" mat-dialog-close >{{ selectedLineId ?
+    <button mat-raised-button color="primary" mat-dialog-close>{{ selectedLineId ?
       'Update' :
       'Add'}}</button>
   </mat-dialog-actions>
