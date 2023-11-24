@@ -37,6 +37,7 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
     'Phone',
     'Approved',
     'Edit',
+    'View',
     'Delete'
   ];
   dataSource = new MatTableDataSource<any>();
@@ -58,6 +59,20 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+  //   this.supplierService
+  //   .getSupplierList()
+  //   .pipe(
+  //     finalize(() => {
+  //     })
+  //   )
+  //   .subscribe(res => {
+  //     if (res[ResultEnum.IsSuccess]) {
+  //       this.allSuppliierList = res[ResultEnum.Model];
+  //       this.dataSource.paginator = this.paginator;
+
+  //     }
+
+  // })
     this.currentUserRole = this.authService.roles();
     this.isSAPEnabled = this.authService.isSAPEnable();
     if (this.currentUserRole !== Role.Admin) {

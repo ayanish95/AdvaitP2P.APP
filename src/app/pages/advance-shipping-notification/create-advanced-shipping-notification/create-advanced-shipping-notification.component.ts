@@ -47,6 +47,7 @@ export class CreateAdvancedShippingNotificationComponent {
     Documentdate: [new Date(), [Validators.required]],
     SupplierCode: [null, [Validators.required]],
     SupplierName: [null, [Validators.required]],
+    Shippingdate: [new Date(), [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
 
   });
