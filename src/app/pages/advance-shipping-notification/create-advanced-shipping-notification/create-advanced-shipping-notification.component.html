@@ -103,16 +103,16 @@
           </label>
           <mat-form-field>
             <input matInput
-                   [matDatepicker]="paymentPicker"
+                   [matDatepicker]="shippingDatePicker"
                    #deliveryDateModel
                    required
-                   (focus)="paymentPicker.open()"
+                   (focus)="shippingDatePicker.open()"
                    [min]="minDate"
                    formControlName="Shippingdate"
                    placeholder="Shipping Date">
                    <mat-datepicker-toggle matSuffix
-                   [for]="paymentPicker"></mat-datepicker-toggle>
-                  <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+                   [for]="shippingDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker format="dd-MM-yyyy" #shippingDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
           <div class="col-sm-3">
@@ -121,16 +121,16 @@
           </label>
           <mat-form-field>
             <input matInput
-                   [matDatepicker]="paymentPicker"
+                   [matDatepicker]="deliveryDatePicker"
                    #deliveryDateModel
                    required
-                   (focus)="paymentPicker.open()"
+                   (focus)="deliveryDatePicker.open()"
                    [min]="minDate"
                    formControlName="Deliverydate"
                    placeholder="Delivery Date">
             <mat-datepicker-toggle matSuffix
-                                   [for]="paymentPicker"></mat-datepicker-toggle>
-            <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+                                   [for]="deliveryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #deliveryDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>

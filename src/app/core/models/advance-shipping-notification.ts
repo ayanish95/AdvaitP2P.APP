@@ -11,12 +11,14 @@ export interface AdvancedShipmentNotificationVM{
     ASNNo?:string;
     ASNDate?:Date;
     DeliveryDate?:Date;
+    Shippingdate?:Date;
     POId?:number;
     TotalWeight?:number;
     SequenceNo?:number;
     Remark?:string;
     ASNCreatedBy?:string;
     ASNDetails:AdvancedShipmentNotificationDetVM[];
+    ASNProductDetails:AdvancedShipmentNotificationProductDet[];
 
 }
 export interface AdvancedShipmentNotificationDetVM{
@@ -46,6 +48,7 @@ export interface ASNDetailsLine{
   Id?: number,
   LineId : number,
   POHeaderId: number,
+  POLineId: number,
   ProductId: number,
   ProductCode: string,
   ProductDescription: string,
