@@ -1,0 +1,45 @@
+<breadcrumb></breadcrumb>
+
+<div class="d-flex justify-content-end">
+  <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+</div>
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>Plant Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="plantDetails">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="mb-0">Plant Name</h5>
+          <p class="mt-0">{{plantDetails.PlantName}}</p>
+       </div>
+        <div class="col-md-2">
+          <h5 class="mb-0" style="color: rgb(30, 24, 24);">Plant Code</h5>
+          <p class="mt-0">{{plantDetails.PlantCode}}</p>
+       </div>
+           <div class="col-md-2">
+            <h5 class="mb-0">Plant City</h5>
+            <p class="mt-0">{{plantDetails.City}}</p>
+         </div>
+        <div class="col-md-2">
+           <h5 class="mb-0">Plant Country</h5>
+           <p class="mt-0">{{plantDetails.Country}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">Email</h5>
+            <p class="mt-0">{{plantDetails.Email}}</p>
+         </div>
+         <div class="col-md-2">
+          <h5 class="mb-0">Mobile No</h5>
+          <p class="mt-0">{{plantDetails.Mobile}}</p>
+       </div>
+       <div class="col-md-2">
+        <h5 class="mb-0">Street Code</h5>
+        <p class="mt-0">{{plantDetails.Street1}}</p>
+     </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+
+
