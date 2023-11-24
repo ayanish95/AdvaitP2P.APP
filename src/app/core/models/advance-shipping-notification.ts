@@ -39,6 +39,14 @@ export interface AdvancedShipmentNotificationDetVM{
   DeliveryDate: Date,
 }
 
+export class BatchAndSerialNumber{
+  Id?:number;
+  POLineId?:number;
+  Qty?:number;
+  BatchNo?:string;
+  SerialNo?:string;
+}
+
 export interface ASNDetailsLine{
   Id?: number,
   LineId : number,
@@ -76,6 +84,12 @@ export interface ASNDetailsLine{
   OADetId?: number;
   IsReturnItem?: boolean;
   IsFreeOfCharge?: boolean;
+  IsSerialNo?: boolean;
+  IsBatchNo?: boolean;
+  IsASNGenerated?: boolean,
+  IsGRGenerated?: boolean,
+  IsInvoiceGenerated?: boolean,
+  IsQualityChecked?: boolean,
   IsActive: boolean,
   CreatedBy: number,
   CreatedOn: Date,
