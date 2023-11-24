@@ -38,6 +38,8 @@ export class ProductListComponent {
     Plant: ['', [Validators.required]],
     HSNCode:['',[Validators.required]],
     GST:['',[Validators.required,Validators.min(0),Validators.max(28)]],
+    IsBatchNo:[true],
+    IsSerialNo:[false],
     IsActive: [false],
 
   });
@@ -52,6 +54,8 @@ export class ProductListComponent {
     'StandardPrice',
     'MovingAvgPrice',
     'Plant',
+    'IsBatchNo',
+    'IsSerialNo',
     'Edit',
     'Delete',
   ];
@@ -347,6 +351,8 @@ export class ProductListComponent {
               Plant: this.plantList.find(x => x.PlantCode == this.productDetails.Plant) as any,
               HSNCode: this.productDetails.HSNCode,
               GST: this.productDetails.GST as any,
+              IsBatchNo:this.productDetails.IsBatchNo,
+              IsSerialNo:this.productDetails.IsSerialNo,
               IsActive: this.productDetails.IsActive,
             });
           }
@@ -397,6 +403,8 @@ export class ProductListComponent {
       StandardPrice: productData.StandardPrice ? productData.StandardPrice : 0,
       MovingAvgPrice: productData.MovingAvgPrice ? productData.MovingAvgPrice : 0,
       Plant: productData.Plant?.PlantCode,
+      IsBatchNo: productData.IsBatchNo,
+      IsSerialNo:productData.IsSerialNo,
       IsActive: this.isEdit ? productData.IsActive : true,
       HSNCode: productData.HSNCode,
       GST: productData.GST
@@ -421,23 +429,7 @@ export class ProductListComponent {
       });
     }
     else {
-      this.productService.updateProduct(product).subscribe({
-        next: (res: any) => {
-          if (res[ResultEnum.IsSuccess]) {
-            this.toaster.success(res.Message);
-            this.productForm.reset();
-            this.apiProductList();
-            this.selectedProductId = 0;
-          }
-          else {
-            this.toaster.error(res.Message);
-          }
-        },
-        error: (e) => { this.toaster.error(e.Message); },
-        complete() {
-
-        },
-      });
+      this.updateProductService(product);
     }
   }
 
@@ -461,5 +453,37 @@ export class ProductListComponent {
 
         this.dialog.closeAll();
       });
+  }
+
+  IsBatchNoOrIsSerialNo(type:string, e:any, product: any){  
+    if(type == 'IsBatchNo'){
+      product.IsBatchNo = e.srcElement.checked;
+      this.updateProductService(product);      
+    }
+
+    if(type == 'IsSerialNo'){
+      product.IsSerialNo = e.srcElement.checked;
+      this.updateProductService(product);      
+    }
+  }
+
+  updateProductService(product:any){
+    this.productService.updateProduct(product).subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res.Message);
+          this.productForm.reset();
+          this.apiProductList();
+          this.selectedProductId = 0;
+        }
+        else {
+          this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() {
+
+      },
+    });
   }
 }

@@ -239,22 +239,7 @@ export class UserListComponent {
       IsActive: userFormValue.IsActive
     } as Users;
 
-    this.userService.updateUser(user).subscribe({
-      next: (res: any) => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.toaster.success(res.Message);
-          this.editUserForm.reset();
-          this.apiUserList();
-        }
-        else {
-          this.toaster.error(res.Message);
-        }
-      },
-      error: (e) => { this.toaster.error(e.Message); },
-      complete() {
-
-      },
-    });
+    this.updateService(user);
   }
   onClickDeleteUser() {
     this.userService
@@ -274,5 +259,29 @@ export class UserListComponent {
 
         this.dialog.closeAll();
       });
+  }
+
+ async updateService(user:any){
+    await this.userService.updateUser(user).subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res.Message);
+          this.editUserForm.reset();
+          this.apiUserList();
+        }
+        else {
+          this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() {
+
+      },
+    });
+  }
+
+  IsActiveFlagUpdate(element:any,e:any){
+    element.IsActive = e.srcElement.checked;
+    this.updateService(element);
   }
 }

@@ -34,6 +34,12 @@ export interface ASNDetailsLine{
   OADetId?: number;
   IsReturnItem?: boolean;
   IsFreeOfCharge?: boolean;
+  IsSerialNo?: boolean;
+  IsBatchNo?: boolean;
+  IsASNGenerated?: boolean,
+  IsGRGenerated?: boolean,
+  IsInvoiceGenerated?: boolean,
+  IsQualityChecked?: boolean,
   IsActive: boolean,
   CreatedBy: number,
   CreatedOn: Date,
