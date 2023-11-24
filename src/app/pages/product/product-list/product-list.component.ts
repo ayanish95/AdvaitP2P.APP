@@ -56,6 +56,7 @@ export class ProductListComponent {
     'Plant',
     'IsBatchNo',
     'IsSerialNo',
+    'View',
     'Edit',
     'Delete',
   ];
@@ -102,7 +103,7 @@ export class ProductListComponent {
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
-    //  Temporary comment  
+    //  Temporary comment
     // if (this.isSAPEnabled == 'false')
     //   this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPProductCode');
     this.apiInitialize();
@@ -455,15 +456,15 @@ export class ProductListComponent {
       });
   }
 
-  IsBatchNoOrIsSerialNo(type:string, e:any, product: any){  
+  IsBatchNoOrIsSerialNo(type:string, e:any, product: any){
     if(type == 'IsBatchNo'){
       product.IsBatchNo = e.srcElement.checked;
-      this.updateProductService(product);      
+      this.updateProductService(product);
     }
 
     if(type == 'IsSerialNo'){
       product.IsSerialNo = e.srcElement.checked;
-      this.updateProductService(product);      
+      this.updateProductService(product);
     }
   }
 
