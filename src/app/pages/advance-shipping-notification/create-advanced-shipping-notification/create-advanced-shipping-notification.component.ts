@@ -20,7 +20,7 @@ import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
-import { ASNDetailsLine, AdvancedShipmentNotificationVM, BatchAndSerialNumber } from '@core/models/advance-shipping-notification';
+import { ASNDetailsLine, AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet } from '@core/models/advance-shipping-notification';
 import { CommonEnum } from '@core/enums/common-enum';
 
 
@@ -95,9 +95,10 @@ export class CreateAdvancedShippingNotificationComponent {
   minDate: Date = new Date();
   selectedLineId!: number;
   currentUserId!: number;
-  selecteItemQty!:number;
-  selecteLineId!:number;
-  batchAndSerialNoList:BatchAndSerialNumber[]=[];
+  selecteItemQty!: number;
+  selectePOLineId!: number;
+  selectePOId!: number;
+  batchAndSerialNoList: AdvancedShipmentNotificationProductDet[] = [];
   constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private advanceShippingNotificationService: AdvanceShippingNotificationService,
     private toaster: ToastrService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
     private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
@@ -235,9 +236,9 @@ export class CreateAdvancedShippingNotificationComponent {
                 LineId: 0,
                 POHeaderId: item ? item?.POHeaderId : 0,
                 ProductId: item ? item?.ProductId : 0,
-                ProductGroup: item ? item?.ProductGroup :'',
+                ProductGroup: item ? item?.ProductGroup : '',
                 POQty: item ? item?.Qty : 0,
-                Qty: item ? item?.Qty : 0,                
+                Qty: item ? item?.Qty : 0,
                 DeliveryDate: item.DeliveryDate,
                 UnitId: item ? item?.UnitId : 0,
                 UnitName: item ? item?.UnitName : '',
@@ -339,15 +340,18 @@ export class CreateAdvancedShippingNotificationComponent {
     const type = this.checkProductType(isSerialNo, isBatchNo);
     if (data?.Qty) {
       this.selecteItemQty = data.Qty;
-      this.selecteLineId = data.Id;
+      this.selectePOLineId = data?.Id;
+      this.selectePOId = data?.POHeaderId;
+      if (!this.selectePOId || !this.selectePOLineId)
+        throw this.toaster.error('PO Id or PO Line Id not found for selected row...')
       if (type != CommonEnum.None) {
         if (type != CommonEnum.BatchNo) {
           for (let index = 0; index < data?.Qty; index++) {
-            this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type,this.selecteLineId));
+            this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, this.selectePOId, this.selectePOLineId));
           }
         }
-        else{
-          this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type,this.selecteLineId));
+        else {
+          this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, this.selectePOId, this.selectePOLineId));
         }
       }
     }
@@ -358,9 +362,10 @@ export class CreateAdvancedShippingNotificationComponent {
     });
   }
 
-  createFormForBatchAndSerialNo(type: any,lineId:number) {
+  createFormForBatchAndSerialNo(type: any, PoId: number, lineId: number) {
     if (type == CommonEnum.All) {
       return this.fb.group({
+        PoId: [PoId],
         POLineId: [lineId],
         BatchNo: [],
         SerialNo: [],
@@ -368,6 +373,7 @@ export class CreateAdvancedShippingNotificationComponent {
     }
     else if (type == CommonEnum.BatchNo) {
       return this.fb.group({
+        PoId: [PoId],
         POLineId: [lineId],
         BatchNo: [],
         Qty: []
@@ -375,6 +381,7 @@ export class CreateAdvancedShippingNotificationComponent {
     }
     else if (type == CommonEnum.SerialNo) {
       return this.fb.group({
+        PoId: [PoId],
         POLineId: [lineId],
         SerialNo: []
       });
@@ -382,11 +389,11 @@ export class CreateAdvancedShippingNotificationComponent {
     else return null;
   }
 
-  addBatchNumberFormRow(){
-    this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(CommonEnum.BatchNo,this.selecteLineId));
+  addBatchNumberFormRow() {
+    this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(CommonEnum.BatchNo, this.selectePOId, this.selectePOLineId));
   }
 
-  removeBatchNumberFormRow(i:any) {
+  removeBatchNumberFormRow(i: any) {
     const remove = this.BatchAndSerialNoForm.get('items') as FormArray;
     remove.removeAt(i);
   }
@@ -407,19 +414,20 @@ export class CreateAdvancedShippingNotificationComponent {
     return this.BatchAndSerialNoForm.get('items') as FormArray;
   }
 
-  onClickAddBatchSerialNo(){
-     console.log('bathc form',this.BatchAndSerialNoForm.get('items')?.value);
+  onClickAddBatchSerialNo() {
+    console.log('bathc form', this.BatchAndSerialNoForm.get('items')?.value);
     const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
-    batchSerialNo?.forEach((data:any) => {
+    batchSerialNo?.forEach((data: any) => {
       this.batchAndSerialNoList.push({
-        Id:0,
-        POLineId:data?.POLineId,
-        BatchNo:data?.BatchNo ? data?.BatchNo : '',
-        Qty:data?.Qty ? data?.Qty : null,
-        SerialNo:data?.SerialNo ? data?.SerialNo : '',
+        Id: 0,
+        PoId: data?.PoId,
+        PoDetId: data?.POLineId,
+        BatchNo: data?.BatchNo ? data?.BatchNo : '',
+        Qty: data?.Qty ? data?.Qty : null,
+        SerialNo: data?.SerialNo ? data?.SerialNo : '',
       });
     });
-    console.log('batchAndSerialNoList',this.batchAndSerialNoList);
+    console.log('batchAndSerialNoList', this.batchAndSerialNoList);
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
@@ -476,13 +484,12 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   DetLineChange(paramevent: any, paramIndex: number) {
-    debugger;
     const _letNumber = Number(paramevent.target.value);
-    
+
     //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
-    this.ASNLineItems[paramIndex].OpenGRQty =  this.ASNLineItems[paramIndex].POQty - _letNumber;
-    this.ASNLineItems[paramIndex].Qty = _letNumber;    
-    
+    this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty - _letNumber;
+    this.ASNLineItems[paramIndex].Qty = _letNumber;
+
     this.dataSource.data = this.ASNLineItems;
   }
   openForAddAsn() {
@@ -495,11 +502,10 @@ export class CreateAdvancedShippingNotificationComponent {
       const ASNAdd: AdvancedShipmentNotificationVM = {
         ERPPONumber: PRHeaderData.ERPPONumber?.Id as any,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-        SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-        SupplierName: PRHeaderData.SupplierName as any,
+        SupplierId: PRHeaderData.SupplierCode?.Id as any,
         ASNDate: PRHeaderData.ASNDate ? PRHeaderData.ASNDate : new Date(),
         DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
-        AsnDetVM: []
+        ASNDetails: []
       };
 
       this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
@@ -519,6 +525,7 @@ export class CreateAdvancedShippingNotificationComponent {
       });
     }
   }
+
 
 
 }

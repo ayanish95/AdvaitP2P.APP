@@ -4,8 +4,6 @@ export interface AdvancedShipmentNotificationVM{
     ERPPONumber:string;
     DocType:string;
     SupplierId?:number;
-    SupplierCode?:string;
-    SupplierName?:string;
     PODate?:Date;
     CompanyCode?:string;
     CompanyName?:string;
@@ -18,7 +16,7 @@ export interface AdvancedShipmentNotificationVM{
     SequenceNo?:number;
     Remark?:string;
     ASNCreatedBy?:string;
-    AsnDetVM:AdvancedShipmentNotificationDetVM[];
+    ASNDetails:AdvancedShipmentNotificationDetVM[];
 
 }
 export interface AdvancedShipmentNotificationDetVM{
@@ -29,23 +27,20 @@ export interface AdvancedShipmentNotificationDetVM{
   ProductCode: string,
   Description: string,
   ProductGroup: string,
+  UnitName?:string;
   StockType: string,
   Plant: string,
   StorageLocation: string,
   TotalWeight?: number;
   QtyWeight?: number;
   DeliveryQty?: number;
+  DeliveryDate?: Date,
   OpenGRQty: number,
-  DeliveryDate: Date,
+  Length?: number,
+  Hight?: number,
+  Width?: number,
 }
 
-export class BatchAndSerialNumber{
-  Id?:number;
-  POLineId?:number;
-  Qty?:number;
-  BatchNo?:string;
-  SerialNo?:string;
-}
 
 export interface ASNDetailsLine{
   Id?: number,
@@ -99,4 +94,21 @@ export interface ASNDetailsLine{
   DeletedOn: Date,
   Extra1: string,
   Extra2: string,
+}
+
+export class AdvancedShipmentNotificationProductDet{
+  Id?:number;
+  PoId?:number;
+  PoDetId?:number;
+  ASNHeaderId?:number;
+  ASNDetId?:number;
+  GRId?:number;
+  QCId?:number;
+  BatchNo?:string;
+  Qty?:number;
+  SerialNo?:string;
+  SAPStatus?:boolean;
+  IsInvoiceGenerated?:boolean;
+  IsQualityChecked?:boolean;
+  IsGRGenerated?:boolean;
 }
