@@ -222,6 +222,7 @@
           </div>
           <ng-container *ngFor="let data of batchAndSerialNoGroupForm().controls; let i=index">
             <ng-container [formGroupName]="i">
+              {{data.get('BatchNo')?.value}}
               <div class="col-sm-6">
                 <mat-form-field appearance="outline" class="demo-full-width">
                   <input matInput formControlName="BatchNo" placeholder="Batch No.">

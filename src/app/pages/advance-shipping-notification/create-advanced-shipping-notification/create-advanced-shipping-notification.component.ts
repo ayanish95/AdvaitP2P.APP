@@ -230,21 +230,28 @@ export class CreateAdvancedShippingNotificationComponent {
                 ProductCode: item ? item?.ProductCode : '',
                 ProductDescription: item ? item?.ProductDescription : '',
                 LineId: 0,
-                POHeaderId: 0,
-                ProductId: 0,
-                ProductGroup: '',
+                POHeaderId: item?.POHeaderId,
+                ProductId: item?.ProductId,
+                ProductGroup: item?.ProductGroup,
                 Qty: item ? item?.Qty : 0,
                 DeliveryDate: item.DeliveryDate,
                 UnitId: item ? item?.UnitId : 0,
                 UnitName: item ? item?.UnitName : '',
-                UnitDescription: '',
+                UnitDescription: item?.UnitDescription,
                 PlantId: item ? item?.POHeaderId : 0,
-                PlantCode: '',
+                PlantCode: item?.PlantCode,
                 PlantDescription: item ? item?.PlantDescription : '',
-                StorageLocationId: 0,
-                LocationCode: '',
+                StorageLocationId: item?.StorageLocationId,
+                LocationCode: item?.LocationCode,
                 LocationDescription: item ? item?.LocationDescription : '',
                 IsActive: false,
+                IsReturnItem: item?.IsReturnItem,
+                IsGRGenerated: item?.IsGRGenerated,
+                IsASNGenerated: item?.IsASNGenerated,
+                IsInvoiceGenerated: item?.IsInvoiceGenerated,
+                IsQualityChecked: item?.IsQualityChecked,
+                IsSerialNo: item?.IsSerialNo,
+                IsBatchNo: item?.IsBatchNo,
                 CreatedBy: 0,
                 CreatedOn: item.CreatedOn,
                 UpdatedBy: 0,
@@ -318,20 +325,19 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
+    console.log('data',data);
+    
     while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
       this.BatchAndSerialNoForm.controls.items.removeAt(0)
     }
     if (data?.Qty) {
       for (let index = 0; index < data?.Qty; index++) {
         this.batchAndSerialNoGroupForm().push(this.fb.group({
-          BatchNo: [],
-          SerialNo: [],
+          BatchNo: [1],
+          SerialNo: [2],
         }));
-
       }
     }
-
-
     this.dialog.open(templateRef, {
       width: '56vw',
       panelClass: 'custom-modalbox'
