@@ -21,7 +21,8 @@ import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purcha
 import { ASNDetailsLine } from '../asn';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
-import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
+import { AdvancedShipmentNotificationVM, BatchAndSerialNumber } from '@core/models/advance-shipping-notification';
+import { CommonEnum } from '@core/enums/common-enum';
 
 
 @Component({
@@ -95,6 +96,9 @@ export class CreateAdvancedShippingNotificationComponent {
   minDate: Date = new Date();
   selectedLineId!: number;
   currentUserId!: number;
+  selecteItemQty!:number;
+  selecteLineId!:number;
+  batchAndSerialNoList:BatchAndSerialNumber[]=[];
   constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private advanceShippingNotificationService: AdvanceShippingNotificationService,
     private toaster: ToastrService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
     private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
@@ -325,27 +329,97 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
-    console.log('data',data);
-    
+    console.log('data', data);
+    this.selecteItemQty = 0;
+    let isSerialNo = data?.IsSerialNo;
+    let isBatchNo = data?.IsBatchNo;
     while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
       this.BatchAndSerialNoForm.controls.items.removeAt(0)
     }
+    let type = this.checkProductType(isSerialNo, isBatchNo);
     if (data?.Qty) {
-      for (let index = 0; index < data?.Qty; index++) {
-        this.batchAndSerialNoGroupForm().push(this.fb.group({
-          BatchNo: [1],
-          SerialNo: [2],
-        }));
+      this.selecteItemQty = data.Qty;
+      this.selecteLineId = data.Id;
+      if (type != CommonEnum.None) {
+        if (type != CommonEnum.BatchNo) {
+          for (let index = 0; index < data?.Qty; index++) {
+            this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type,this.selecteLineId));
+          }
+        }
+        else{
+          this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type,this.selecteLineId));
+        }
       }
     }
+
     this.dialog.open(templateRef, {
-      width: '56vw',
+      width: type == CommonEnum.All ? '56vw' : '45vw',
       panelClass: 'custom-modalbox'
     });
   }
 
+  createFormForBatchAndSerialNo(type: any,lineId:number) {
+    if (type == CommonEnum.All) {
+      return this.fb.group({
+        POLineId: [lineId],
+        BatchNo: [],
+        SerialNo: [],
+      });
+    }
+    else if (type == CommonEnum.BatchNo) {
+      return this.fb.group({
+        POLineId: [lineId],
+        BatchNo: [],
+        Qty: []
+      });
+    }
+    else if (type == CommonEnum.SerialNo) {
+      return this.fb.group({
+        POLineId: [lineId],
+        SerialNo: []
+      });
+    }
+    else return null;
+  }
+
+  addBatchNumberFormRow(){
+    this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(CommonEnum.BatchNo,this.selecteLineId));
+  }
+
+  removeBatchNumberFormRow(i:any) {
+    const remove = this.BatchAndSerialNoForm.get('items') as FormArray;
+    remove.removeAt(i);
+  }
+
+  checkProductType(isSerialNo: any, isBatchNo: any) {
+    if (isBatchNo && !isSerialNo)
+      return CommonEnum.BatchNo;
+    else if (!isBatchNo && isSerialNo)
+      return CommonEnum.SerialNo;
+    else if (isBatchNo && isSerialNo)
+      return CommonEnum.All;
+    else if (!isBatchNo && !isSerialNo)
+      return CommonEnum.None;
+    return CommonEnum.None;
+  }
+
   batchAndSerialNoGroupForm(): FormArray {
     return this.BatchAndSerialNoForm.get('items') as FormArray;
+  }
+
+  onClickAddBatchSerialNo(){
+     console.log('bathc form',this.BatchAndSerialNoForm.get('items')?.value);
+    let batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
+    batchSerialNo?.forEach((data:any) => {
+      this.batchAndSerialNoList.push({
+        Id:0,
+        POLineId:data?.POLineId,
+        BatchNo:data?.BatchNo ? data?.BatchNo : '',
+        Qty:data?.Qty ? data?.Qty : null,
+        SerialNo:data?.SerialNo ? data?.SerialNo : '',
+      });
+    });
+    console.log('batchAndSerialNoList',this.batchAndSerialNoList);
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {

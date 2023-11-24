@@ -171,7 +171,8 @@
           <ng-container matColumnDef="Edit">
             <th mat-header-cell *matHeaderCellDef> Add Batch/Serial No </th>
             <td mat-cell *matCellDef="let element">
-              <button mat-icon-button (click)="openModelForAddItem(addBatchOrSerialNo,element)">
+              <button mat-icon-button (click)="openModelForAddItem(addBatchOrSerialNo,element)"
+                      [disabled]="!element?.IsSerialNo && !element?.IsBatchNo">
                 <mat-icon>add</mat-icon>
               </button>
             </td>
@@ -206,37 +207,47 @@
     <form [formGroup]="BatchAndSerialNoForm">
       <ng-container formArrayName="items">
         <div class="row mt-5">
-
-          <div class="col-sm-6">
-            <label class="custom-label">
-              <h5>Batch No<small>*</small></h5>
-            </label>
-
-
-          </div>
-          <div class="col-sm-6">
-            <label class="custom-label">
-              <h5>Serial No<small>*</small></h5>
-            </label>
-
+          <div class="col-md-12 mb-10">
+            Upload Excel : <input type="file" accept=".xlsx,.xlsm,.xls,.xml" />
           </div>
           <ng-container *ngFor="let data of batchAndSerialNoGroupForm().controls; let i=index">
             <ng-container [formGroupName]="i">
-              {{data.get('BatchNo')?.value}}
-              <div class="col-sm-6">
-                <mat-form-field appearance="outline" class="demo-full-width">
-                  <input matInput formControlName="BatchNo" placeholder="Batch No.">
-
-                </mat-form-field>
-
-              </div>
-              <div class="col-sm-6">
-                <mat-form-field appearance="outline" class="demo-full-width">
-                  <input matInput formControlName="SerialNo" placeholder="Serial No.">
-
-                </mat-form-field>
-
-              </div>
+              <ng-container *ngIf="data.get('BatchNo')">
+                <div class="col-sm-6" >
+                  <label *ngIf="i==0" class="custom-label">
+                    <h5>Batch No<small>*</small></h5>
+                  </label>
+                  <mat-form-field appearance="outline" class="demo-full-width">
+                    <input matInput formControlName="BatchNo" placeholder="Batch No.">
+                  </mat-form-field>
+                </div>
+                <ng-container *ngIf="!data.get('SerialNo')">
+                  <div class="col-sm-4" >
+                    <label *ngIf="i==0" class="custom-label">
+                      <h5>Qty<small>*</small></h5>
+                    </label>
+                    <mat-form-field appearance="outline" class="demo-full-width">
+                      <input matInput formControlName="Qty" placeholder="Qty">
+                    </mat-form-field>
+                  </div>
+                  <div class="col-sm-2 d-flex align-items-center" >
+                    <button mat-icon-button color="primary" [disabled]="selecteItemQty==BatchAndSerialNoForm.controls['items'].value.length" (click)="addBatchNumberFormRow()" ><mat-icon>add</mat-icon></button>
+                    <button mat-icon-button color="warn" *ngIf="BatchAndSerialNoForm.controls['items'].value.length > 1"
+                      (click)="removeBatchNumberFormRow(i)" >
+                      <mat-icon>delete</mat-icon></button>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="data.get('SerialNo')">
+                <div class="col-sm-6" [ngClass]=" data.get('BatchNo') ? 'col-sm-6' : 'col-sm-12'">
+                  <label *ngIf="i==0" class="custom-label">
+                    <h5>Serial No<small>*</small></h5>
+                  </label>
+                  <mat-form-field appearance="outline" class="demo-full-width">
+                    <input matInput formControlName="SerialNo" placeholder="Serial No.">
+                  </mat-form-field>
+                </div>
+              </ng-container>
             </ng-container>
           </ng-container>
         </div>
@@ -245,7 +256,7 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
-    <button mat-raised-button color="primary" mat-dialog-close>{{ selectedLineId ?
+    <button mat-raised-button color="primary" mat-dialog-close (click)="onClickAddBatchSerialNo()">{{ selectedLineId ?
       'Update' :
       'Add'}}</button>
   </mat-dialog-actions>

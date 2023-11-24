@@ -42,3 +42,11 @@ export interface AdvancedShipmentNotificationDetVM{
   OpenGRQty: number,
   DeliveryDate: Date,
 }
+
+export class BatchAndSerialNumber{
+  Id?:number;
+  POLineId?:number;
+  Qty?:number;
+  BatchNo?:string;
+  SerialNo?:string;
+}
