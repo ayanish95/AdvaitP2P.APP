@@ -42,7 +42,7 @@ export class SupplierService {
   deleteSupplier(supplierId: any) {
     return this.httpclient.authGet(`${Api.Supplier + Method.DeleteSupplier}/${supplierId}`);
   }
-  rejectSupplier(supplierId: any) {
-    return this.httpclient.authGet(`${Api.Supplier + Method.RejectSupplier}/${supplierId}`);
+  rejectSupplier(supplierId: any,comment:string) {
+    return this.httpclient.authGet(`${Api.Supplier + Method.RejectSupplier}/${supplierId}/${comment}`);
   }
 }
