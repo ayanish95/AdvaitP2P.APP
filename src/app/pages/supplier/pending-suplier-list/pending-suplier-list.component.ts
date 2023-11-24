@@ -37,7 +37,8 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
     'Phone',
     'PendingFrom',
     'Edit',
-    'Reject'
+    'Reject',
+    'View',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;

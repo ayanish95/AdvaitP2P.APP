@@ -18,7 +18,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
   @Input() searchText!:string;
   @Input() supplierList!:Suppliers[];
   propChanges: any;
-  
+
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -30,6 +30,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
     'City',
     'Country',
     'Phone',
+    'View',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -40,7 +41,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
-  
+
   constructor(private supplierService: SupplierService,private toast:ToastrService){
 
   }
