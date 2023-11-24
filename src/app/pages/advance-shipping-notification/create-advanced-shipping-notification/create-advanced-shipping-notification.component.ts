@@ -256,7 +256,6 @@ export class CreateAdvancedShippingNotificationComponent {
                 IsQualityChecked: item?.IsQualityChecked,
                 IsSerialNo: item?.IsSerialNo,
                 IsBatchNo: item?.IsBatchNo,
-                CreatedBy: 0,
                 CreatedBy: item ? item?.CreatedBy : 0,
                 CreatedOn: item.CreatedOn,
                 UpdatedBy: item ? item?.UpdatedBy : 0,
@@ -332,12 +331,12 @@ export class CreateAdvancedShippingNotificationComponent {
   async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
     console.log('data', data);
     this.selecteItemQty = 0;
-    let isSerialNo = data?.IsSerialNo;
-    let isBatchNo = data?.IsBatchNo;
+    const isSerialNo = data?.IsSerialNo;
+    const isBatchNo = data?.IsBatchNo;
     while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
-      this.BatchAndSerialNoForm.controls.items.removeAt(0)
+      this.BatchAndSerialNoForm.controls.items.removeAt(0);
     }
-    let type = this.checkProductType(isSerialNo, isBatchNo);
+    const type = this.checkProductType(isSerialNo, isBatchNo);
     if (data?.Qty) {
       this.selecteItemQty = data.Qty;
       this.selecteLineId = data.Id;
@@ -410,7 +409,7 @@ export class CreateAdvancedShippingNotificationComponent {
 
   onClickAddBatchSerialNo(){
      console.log('bathc form',this.BatchAndSerialNoForm.get('items')?.value);
-    let batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
+    const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
     batchSerialNo?.forEach((data:any) => {
       this.batchAndSerialNoList.push({
         Id:0,
