@@ -99,6 +99,24 @@
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
+            <h5> Shipping Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="paymentPicker"
+                   #deliveryDateModel
+                   required
+                   (focus)="paymentPicker.open()"
+                   [min]="minDate"
+                   formControlName="Shippingdate"
+                   placeholder="Shipping Date">
+                   <mat-datepicker-toggle matSuffix
+                   [for]="paymentPicker"></mat-datepicker-toggle>
+                  <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+          <div class="col-sm-3">
+          <label class="custom-label">
             <h5> Delivery Date</h5>
           </label>
           <mat-form-field>

@@ -29,6 +29,7 @@ export class RejectSuplierListComponent {
     'City',
     'Country',
     'Phone',
+    'View'
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;

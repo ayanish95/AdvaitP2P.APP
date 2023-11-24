@@ -44,7 +44,6 @@ export class SupplierListComponent implements OnInit {
       })
     )
     .subscribe(res => {
-      debugger
       if (res[ResultEnum.IsSuccess]) {
         this.allSuppliierList = res[ResultEnum.Model];
         this.rejectsuplierlist = this.allSuppliierList.filter(x => x.IsRejected == true);
