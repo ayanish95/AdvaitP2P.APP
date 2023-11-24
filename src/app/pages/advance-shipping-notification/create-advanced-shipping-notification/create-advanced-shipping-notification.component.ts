@@ -18,10 +18,9 @@ import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
-import { ASNDetailsLine } from '../asn';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
-import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
+import { ASNDetailsLine, AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
 
 
 @Component({
@@ -176,7 +175,7 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   getpono(selectedPRNumber: number) {
-
+    debugger;
     this.purchaseOrderService.getPODetailsById(selectedPRNumber).subscribe(response => {
       console.log(response);
       // this.ASNHeaderForm.reset();
@@ -200,7 +199,7 @@ export class CreateAdvancedShippingNotificationComponent {
   }
 
   apiGetPoDetailsById(poId: number) {
-
+    debugger;
     // this.ASNHeaderForm.reset();
     this.ASNHeaderForm.updateValueAndValidity();
 
@@ -230,24 +229,25 @@ export class CreateAdvancedShippingNotificationComponent {
                 ProductCode: item ? item?.ProductCode : '',
                 ProductDescription: item ? item?.ProductDescription : '',
                 LineId: 0,
-                POHeaderId: 0,
-                ProductId: 0,
-                ProductGroup: '',
-                Qty: item ? item?.Qty : 0,
+                POHeaderId: item ? item?.POHeaderId : 0,
+                ProductId: item ? item?.ProductId : 0,
+                ProductGroup: item ? item?.ProductGroup :'',
+                POQty: item ? item?.Qty : 0,
+                Qty: item ? item?.Qty : 0,                
                 DeliveryDate: item.DeliveryDate,
                 UnitId: item ? item?.UnitId : 0,
                 UnitName: item ? item?.UnitName : '',
-                UnitDescription: '',
+                UnitDescription: item ? item?.UnitDescription : '',
                 PlantId: item ? item?.POHeaderId : 0,
-                PlantCode: '',
+                PlantCode: item ? item?.PlantCode : '',
                 PlantDescription: item ? item?.PlantDescription : '',
-                StorageLocationId: 0,
-                LocationCode: '',
+                StorageLocationId: item ? item?.StorageLocationId : 0,
+                LocationCode: item ? item?.LocationCode : '',
                 LocationDescription: item ? item?.LocationDescription : '',
                 IsActive: false,
-                CreatedBy: 0,
+                CreatedBy: item ? item?.CreatedBy : 0,
                 CreatedOn: item.CreatedOn,
-                UpdatedBy: 0,
+                UpdatedBy: item ? item?.UpdatedBy : 0,
                 UpdatedOn: item.UpdatedOn,
                 IsDeleted: true,
                 DeletedOn: item.DeletedOn,
@@ -398,10 +398,11 @@ export class CreateAdvancedShippingNotificationComponent {
   DetLineChange(paramevent: any, paramIndex: number) {
     debugger;
     const _letNumber = Number(paramevent.target.value);
-
-    this.ASNLineItems[paramIndex].Qty = _letNumber;
-
-    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    
+    //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
+    this.ASNLineItems[paramIndex].OpenGRQty =  this.ASNLineItems[paramIndex].POQty - _letNumber;
+    this.ASNLineItems[paramIndex].Qty = _letNumber;    
+    
     this.dataSource.data = this.ASNLineItems;
   }
   openForAddAsn() {
