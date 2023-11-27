@@ -326,7 +326,7 @@ export class CreateAdvancedShippingNotificationComponent {
       this.selectePOLineId = data?.POLineId;
       this.selectePOId = data?.POHeaderId;
       if (!this.selectePOId || !this.selectePOLineId)
-        throw this.toaster.error('PO Id or PO Line Id not found for selected row...')
+        throw this.toaster.error('PO Id or PO Line Id not found for selected row...');
       if (type != CommonEnum.None) {
         if (type != CommonEnum.BatchNo) {
           for (let index = 0; index < data?.Qty; index++) {
@@ -476,9 +476,9 @@ export class CreateAdvancedShippingNotificationComponent {
   openForAddAsn() {
     // if(this.batchAndSerialNoList?.length == 0)
 
-    let lineDet: AdvancedShipmentNotificationDetVM[] = [];
+    const lineDet: AdvancedShipmentNotificationDetVM[] = [];
     this.ASNLineItems.forEach(element => {
-      let asnLineDetails = this.batchAndSerialNoList.filter(x=>x.PoDetId == element.POLineId);
+      const asnLineDetails = this.batchAndSerialNoList.filter(x=>x.PoDetId == element.POLineId);
       lineDet.push({
         ASNHeaderId: 0,
         POId: element.POHeaderId,
@@ -493,7 +493,7 @@ export class CreateAdvancedShippingNotificationComponent {
         DeliveryQty: element.Qty ? element.Qty : 0,
         DeliveryDate: element.DeliveryDate,
         ASNProductDetails: asnLineDetails
-      })
+      });
     });
 
     this.advanceShippingNotificationService;

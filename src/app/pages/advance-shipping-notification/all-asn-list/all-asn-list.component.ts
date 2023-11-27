@@ -91,7 +91,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    debugger
+    debugger;
     this.propChanges = changes;
     if (this.propChanges?.allASNList && this.Type=='ASN') {
       this.allPOList=[];
