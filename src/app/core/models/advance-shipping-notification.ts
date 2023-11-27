@@ -1,26 +1,27 @@
 
 export interface AdvancedShipmentNotificationVM{
   ASNId?:number;
-    ERPPONumber:string;
-    DocType:string;
-    SupplierId?:number;
-    PODate?:Date;
-    CompanyCode?:string;
-    CompanyName?:string;
-    SAPStatus?:boolean;
-    ASNNo?:string;
-    ASNDate?:Date;
-    DeliveryDate?:Date;
-    Shippingdate?:Date;
-    POId?:number;
-    TotalWeight?:number;
-    SequenceNo?:number;
-    Remark?:string;
-    ASNCreatedBy?:string;
-    ASNDetails:AdvancedShipmentNotificationDetVM[];
-   
-
+  ERPPONumber:string;
+  DocType:string;
+  SupplierId?:number;
+  PODate?:Date;
+  CompanyCode?:string;
+  CompanyName?:string;
+  SupplierCode?:string;
+  SupplierName?:string;
+  SAPStatus?:boolean;
+  ASNNo?:string;
+  ASNDate?:Date;
+  DeliveryDate?:Date;
+  ShippingDate?:Date;
+  POId?:number;
+  TotalWeight?:number;
+  SequenceNo?:number;
+  Remark?:string;
+  ASNCreatedBy?:string;
+  ASNDetails:AdvancedShipmentNotificationDetVM[];  
 }
+
 export interface AdvancedShipmentNotificationDetVM{
   LineId?: number,
   POId: number,
@@ -43,7 +44,6 @@ export interface AdvancedShipmentNotificationDetVM{
   Width?: number,
   ASNProductDetails:AdvancedShipmentNotificationProductDet[];
 }
-
 
 export interface ASNDetailsLine{
   Id?: number,
