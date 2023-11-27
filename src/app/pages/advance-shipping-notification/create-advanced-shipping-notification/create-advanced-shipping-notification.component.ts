@@ -505,7 +505,7 @@ export class CreateAdvancedShippingNotificationComponent {
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData?.SupplierId as any,
         DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
-        Shippingdate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
+        ShippingDate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
         ASNDetails: lineDet,
        
       };
