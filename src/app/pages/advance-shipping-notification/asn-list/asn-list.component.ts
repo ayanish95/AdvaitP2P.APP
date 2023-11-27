@@ -1,16 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
-import { Filter, OrderBy } from '@core/models/base-filter';
-import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
+import { Filter } from '@core/models/base-filter';
 import { ApprovalStrategyService } from '@core/services/approval-strategy.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { ToastrService } from 'ngx-toastr';
-import { finalize } from 'rxjs';
 import { AdvanceShippingNotificationService } from './../../../core/services/advance-shipment-notification.service';
 import { PurchaseOrderHeader } from '@core/models/purchase-order';
 import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
