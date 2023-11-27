@@ -20,11 +20,11 @@ import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-no
   templateUrl: './asn-list.component.html',
   styleUrls: ['./asn-list.component.scss']
 })
-export class AsnListComponent implements OnInit{
+export class AsnListComponent implements OnInit {
 
   ASNList!: PurchaseOrderHeader[];
   pendingASNList!: PurchaseOrderHeader[];
-  AsnallList!:AdvancedShipmentNotificationVM[];
+  AsnallList!: AdvancedShipmentNotificationVM[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
   selectedPRId!: number;
@@ -33,10 +33,10 @@ export class AsnListComponent implements OnInit{
   isSAPEnabled!: string;
   currentUserRole!: number;
   Role = Role;
-  currentUserId!:number;
+  currentUserId!: number;
   rightsForApproval = false;
 
-  constructor(private purchaseOrderService: PurchaseOrderService,private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog,private strategyService:ApprovalStrategyService) { }
+  constructor(private purchaseOrderService: PurchaseOrderService, private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog, private strategyService: ApprovalStrategyService) { }
 
   ngOnInit() {
     this.currentUserRole = this.authService.roles();
@@ -52,42 +52,44 @@ export class AsnListComponent implements OnInit{
 
   apiASNList() {
     this.purchaseOrderService
-      .getAllApprovedPOHeaderListByUserId()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.ASNList = res[ResultEnum.Model];
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
+      .getAllApprovedPOHeaderListByUserId().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.ASNList = res[ResultEnum.Model];
+          }
+          else {
+            this.toaster.error(res.Message);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); },
+        complete() {
+
+        },
       });
   }
 
-  apiAllPendingList(){
-    this.advanceShippingNotificationService
-    .GetAllASNList()
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.AsnallList = res[ResultEnum.Model];
-      }
-      else {
-        this.toaster.error(res[ResultEnum.Message]);
-      }
+  apiAllPendingList() {
+    this.advanceShippingNotificationService.GetAllASNList().subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.AsnallList = res[ResultEnum.Model];
+        }
+        else {
+          this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() {
+
+      },
     });
   }
 
   onTabChanged(event: any) {
-    if (event?.index==1) {
+    if (event?.index == 1) {
       this.apiASNList();
     }
-    else if(event.index==0){
+    else if (event.index == 0) {
       this.apiAllPendingList();
     }
   }

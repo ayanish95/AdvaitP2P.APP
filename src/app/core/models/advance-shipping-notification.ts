@@ -18,7 +18,7 @@ export interface AdvancedShipmentNotificationVM{
     Remark?:string;
     ASNCreatedBy?:string;
     ASNDetails:AdvancedShipmentNotificationDetVM[];
-    ASNProductDetails:AdvancedShipmentNotificationProductDet[];
+   
 
 }
 export interface AdvancedShipmentNotificationDetVM{
@@ -41,6 +41,7 @@ export interface AdvancedShipmentNotificationDetVM{
   Length?: number,
   Hight?: number,
   Width?: number,
+  ASNProductDetails:AdvancedShipmentNotificationProductDet[];
 }
 
 
