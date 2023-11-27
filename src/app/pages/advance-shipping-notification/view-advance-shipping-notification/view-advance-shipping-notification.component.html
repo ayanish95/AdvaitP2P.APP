@@ -84,6 +84,15 @@
                 <mat-checkbox color="primary"></mat-checkbox>
              </td>
         </ng-container>
+
+        <ng-container matColumnDef="View">
+          <th mat-header-cell *matHeaderCellDef> View Packing</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="openModelForViewItem(viewBatchOrSerialNo,element)"
+                    matTooltip="Click to View"> <mat-icon>remove_red_eye</mat-icon></button>
+          </td>
+        </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
@@ -92,3 +101,31 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+
+  <ng-template #viewBatchOrSerialNo style="width: 56vw;">
+    <h2 mat-dialog-title>View Batch / Serial Number </h2>
+    <mat-dialog-content>
+      <table mat-table [dataSource]="packingdataSource">
+        <ng-container matColumnDef="srNo">
+          <th mat-header-cell *matHeaderCellDef># </th>
+          <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+        </ng-container>
+        <ng-container matColumnDef="BatchNo">
+          <th mat-header-cell *matHeaderCellDef> Batch No </th>
+          <td mat-cell *matCellDef="let element"> {{element?.ProductGroup}} </td>
+        </ng-container>
+        <ng-container matColumnDef="SerialNo">
+          <th mat-header-cell *matHeaderCellDef> Serial No </th>
+          <td mat-cell *matCellDef="let element"> {{element?.ProductCode}} - {{element?.ProductDescription}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Qty">
+          <th mat-header-cell *matHeaderCellDef> Qty </th>
+          <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedPackingColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedPackingColumns;"></tr>
+      </table>
+    </mat-dialog-content>
+  </ng-template>
