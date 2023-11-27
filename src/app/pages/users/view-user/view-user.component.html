@@ -1,0 +1,45 @@
+<breadcrumb></breadcrumb>
+
+<div class="d-flex justify-content-end">
+  <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+</div>
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>User Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="userList">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="mb-0">User Name</h5>
+          <p class="mt-0">{{userList.UserName}}</p>
+       </div>
+        <div class="col-md-2">
+          <h5 class="mb-0" style="color: rgb(30, 24, 24);">Fist Name</h5>
+          <p class="mt-0">{{userList.FirstName}}</p>
+       </div>
+           <div class="col-md-2">
+            <h5 class="mb-0">Lest Name</h5>
+            <p class="mt-0">{{userList.LastName}}</p>
+         </div>
+        <div class="col-md-2">
+           <h5 class="mb-0">Contact Number</h5>
+           <p class="mt-0">{{userList.Mobile}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">Email Id</h5>
+            <p class="mt-0">{{userList.Email}}</p>
+         </div>
+         <div class="col-md-2">
+          <h5 class="mb-0">User Id</h5>
+          <p class="mt-0">{{userList.Id}}</p>
+       </div>
+       <div class="col-md-2">
+        <h5 class="mb-0">Role Name</h5>
+        <p class="mt-0">{{userList.RoleName}}</p>
+     </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+
+
