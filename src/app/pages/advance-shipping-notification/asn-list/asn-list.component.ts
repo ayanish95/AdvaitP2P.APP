@@ -87,10 +87,10 @@ export class AsnListComponent implements OnInit {
 
   onTabChanged(event: any) {
     if (event?.index == 1) {
-      this.apiASNList();
+      this.apiAllPendingList();
     }
     else if (event.index == 0) {
-      this.apiAllPendingList();
+      this.apiASNList();
     }
   }
 
