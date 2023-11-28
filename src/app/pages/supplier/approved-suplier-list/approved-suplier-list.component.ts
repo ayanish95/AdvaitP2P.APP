@@ -89,8 +89,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
     this.filter.Page = page.pageIndex + 1;
   }
 
-  updateSupplierr(element: any,e:any) {
-    debugger
+  updateSupplierr(element: any,e:any) {    
     element.IsActive = e.srcElement.checked;
     this.supplierService.updateSupplier(element)
       .subscribe(response => {
