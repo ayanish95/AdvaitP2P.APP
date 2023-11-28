@@ -11,15 +11,68 @@
   <mat-card-content>
     <form [formGroup]="PRHeaderForm" class="form-field-full">
       <div class="row mt-5">
+        <!-- <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Doc Type</h5>
+          </label>
+          <div>
+            <ng-select [items]="filteredDocType | async" bindLabel="Type" [(ngModel)]="docTypeList"
+            placeholder="Select Doc Type" class="custom-dropdown">
+            <ng-template ng-label-tmp let-item="item" class="custom-selected">
+              {{ item?.Type }}
+            </ng-template>
+            <ng-template ng-option-tmp let-item="item">
+              {{ item?.Type }}
+            </ng-template>
+          </ng-select>
+          <div class="cutom-error"
+                                 *ngIf="PRHeaderForm.get('productGroup')?.hasError('required')" class="error-message">
+                                 Please select doc type...
+                                <span>{{'validations.required' | translate}}</span>
+                            </div>
+          </div>
+        </div> -->
+
         <div class="col-sm-3">
           <label class="custom-label">
             <h5> Doc Type</h5>
           </label>
-          <mat-form-field class="demo-full-width">
+          <mat-form-field>
+            <mat-select [formControl]="docTypeControl" formControlName="DocType" placeholder="DocType" #singleSelect>
+              <mat-option>
+                <ngx-mat-select-search [formControl]="docTypeControl" noEntriesFoundLabel
+                ="No Record Found..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let DocType of filteredDocType | async" [value]="DocType.Type">
+                {{DocType.Type}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select doc type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+          <!-- <mat-form-field>
+            <mat-select  formControlName="DocType" placeholder="DocType" #singleSelect>
+              <mat-option>
+                <ngx-mat-select-search formControlName="docTypeList"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let docType of filteredDocType | async"
+              [value]="docType?.Type">
+                {{docType.Type}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select doc type...
+            </mat-error>
+          </mat-form-field> -->
+
+          <!-- <mat-form-field class="demo-full-width">
             <input matInput
                    [matAutocomplete]="docAutocomplete"
                    formControlName="DocType"
-                   placeholder="Doc Type">
+                   placeholder="Doc Type"
+                   >
             <mat-autocomplete #docAutocomplete="matAutocomplete" >
               <mat-option *ngFor="let docType of filteredDocType | async"
                           [value]="docType?.Type">
@@ -29,8 +82,8 @@
             <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
               Please select doc type...
             </mat-error>
-          </mat-form-field>
-        </div>
+          </mat-form-field> -->
+
         <div class="col-sm-3">
           <label class="custom-label">
             <h5> PR Date</h5>
@@ -117,7 +170,7 @@
         </ng-container>
           <ng-container matColumnDef="Delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
-            <td mat-cell *matCellDef="let element"> 
+            <td mat-cell *matCellDef="let element">
              <button mat-icon-button (click)="onClickDeleteItem(element.Id)">  <mat-icon >delete</mat-icon></button>
              </td>
         </ng-container>
@@ -201,15 +254,11 @@
           <label class="custom-label">
             <h5>Unit<small>*</small></h5>
           </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="unitAutocomplete"
-                   formControlName="Unit"
-                   placeholder="Unit">
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput [matAutocomplete]="unitAutocomplete" formControlName="Unit" placeholder="Unit" >
             <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
-              <mat-option *ngFor="let unit of filteredUnits | async"
-                          [value]="unit">
-                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
+              <mat-option *ngFor="let unit of filteredUnits | async" [value]="unit">
+                {{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}
               </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
@@ -217,6 +266,28 @@
             </mat-error>
           </mat-form-field>
         </div>
+        <!-- <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Unit<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput
+                   [matAutocomplete]="unitAutocomplete"
+                   formControlName="Unit"
+                   placeholder="Unit"
+                  >
+            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
+              <mat-option *ngFor="let unit of filteredUnits | async"
+                          [value]="unit">
+                          {{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}
+                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
+              Please select unit...
+            </mat-error>
+          </mat-form-field>
+        </div> -->
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Delivery Date<small>*</small></h5>
@@ -243,11 +314,12 @@
           <label class="custom-label">
             <h5>Plant / Warehouse<small>*</small></h5>
           </label>
-          <mat-form-field class="demo-full-width">
+          <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput
                    [matAutocomplete]="plantAutocomplete"
                    formControlName="Plant"
-                   placeholder="Plant / Warehouse">
+                   placeholder="Plant / Warehouse"
+                   (keydown)="clearInput($event)">
             <mat-autocomplete #plantAutocomplete="matAutocomplete"
                               (optionSelected)="onChangePlant($event.option.value.PlantCode)"
                               [displayWith]="plantDisplayFn">
@@ -269,7 +341,8 @@
             <input matInput
                    [matAutocomplete]="storageAutocomplete"
                    formControlName="StorageLocation"
-                   placeholder="Storage Location">
+                   placeholder="Storage Location"
+                   (keydown)="clearInput($event)">
             <mat-autocomplete #storageAutocomplete="matAutocomplete"
                               [displayWith]="storageLocationDisplayFn">
               <mat-option *ngFor="let location of filteredlocation | async"
