@@ -29,12 +29,13 @@ export class ViewAdvanceShippingNotificationComponent {
     // 'RFQ',
   ];
 
-  displayedPackingColumns: string[] = [
-    'srNo',
-    'BatchNo',
-    'SerialNo',
-    'Qty'    
-  ];
+  displayedPackingColumns!:string[];
+  // displayedPackingColumns: string[] = [
+  //   'srNo',
+  //   'BatchNo',
+  //   'SerialNo',
+  //   'Qty'    
+  // ];
   ASNId!: number;
   ASNDetails!: AdvancedShipmentNotificationVM;
   dataSource = new MatTableDataSource<any>();
@@ -69,28 +70,43 @@ export class ViewAdvanceShippingNotificationComponent {
       });
   }
 
-  async openModelForViewItem(templateRef: TemplateRef<any>,data?: any) {
-    //this.selecteItemQty = 0;
-    const isSerialNo = data?.IsSerialNo;
-    const isBatchNo = data?.IsBatchNo;
+  async openModelForViewItem(templateRef: TemplateRef<any>,data?: any) {        
+    //const isSerialNo = data?.IsSerialNo;
+    //const isBatchNo = data?.IsBatchNo;    
+    const isBatchNo = true;
+    const isSerialNo = false;
    
     const type = this.checkProductType(isSerialNo, isBatchNo);
-    if (data?.Qty) {
-      // this.selecteItemQty = data.Qty;
-      // this.selectePOLineId = data?.POLineId;
-      // this.selectePOId = data?.POHeaderId;
-      // if (!this.selectePOId || !this.selectePOLineId)
-      //   throw this.toaster.error('PO Id or PO Line Id not found for selected row...');
+    if (data?.DeliveryQty) {
+      
       if (type != CommonEnum.None) {
         if (type != CommonEnum.BatchNo) {
-          for (let index = 0; index < data?.Qty; index++) {
-            //this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, this.selectePOId, this.selectePOLineId));
-          }
+          this.displayedPackingColumns = [
+            'srNo',
+            'Product',
+            'SerialNo',
+            'Qty'
+          ];
         }
         else {
-          //this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, this.selectePOId, this.selectePOLineId));
+          this.displayedPackingColumns = [
+            'srNo',   
+            'Product',
+            'BatchNo',                     
+            'Qty'
+          ];          
         }
-      }
+        if(type == CommonEnum.All){
+          this.displayedPackingColumns = [
+            'srNo',   
+            'Product',
+            'BatchNo', 
+            'SerialNo',                    
+            'Qty'
+          ];  
+        }
+        this.packingdataSource.data = data?.ASNProductDetails;
+      }     
     }
 
     this.dialog.open(templateRef, {
@@ -109,6 +125,10 @@ export class ViewAdvanceShippingNotificationComponent {
     else if (!isBatchNo && !isSerialNo)
       return CommonEnum.None;
     return CommonEnum.None;
+  }
+
+  closeDialog(){
+    this.dialog.closeAll();
   }
 
 }
