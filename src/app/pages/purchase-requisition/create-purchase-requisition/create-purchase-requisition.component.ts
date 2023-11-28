@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
@@ -36,6 +36,7 @@ import { Observable, finalize, map, startWith } from 'rxjs';
 })
 export class CreatePurchaseRequisitionComponent implements OnInit {
 
+
   PRHeaderForm = this.fb.group({
     DocType: [null, [Validators.required]],
     PRDate: [new Date(), [Validators.required]],
@@ -51,6 +52,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
+  docTypeControl = new FormControl();
 
   plantList!: Plants[];
   filteredPlants!: Observable<any>;
@@ -91,6 +93,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.PRHeaderForm.get('PRDate')?.disable();
     this.currentUserId = this.authService.userId();
     this.docTypeSerivce
@@ -99,12 +102,13 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         finalize(() => {
         })
       )
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res[ResultEnum.IsSuccess]) {
           this.docTypeList = res[ResultEnum.Model];
-          this.filteredDocType = this.PRHeaderForm.get('DocType')!.valueChanges.pipe(
+          this.filteredDocType = this.docTypeControl.valueChanges.pipe(
             startWith(''),
-            map(value => this.filterDocType(value || ''))
+            map((value) => this.filterDocType(value || ''))
+
           );
         }
       });
@@ -158,17 +162,24 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         }
       });
   }
+  filterDocType(value: string): DocTypes[] {
 
-  filterDocType(name: any) {
-    if (name?.Type) {
-      return this.docTypeList.filter(doctype =>
-        doctype?.Type?.toLowerCase().includes(name.Type.toLowerCase()));
-    }
-    else {
-      return this.docTypeList.filter(doctype =>
-        doctype?.Type?.toLowerCase().includes(name.toLowerCase()));
-    }
+    const filterValue = value.toLowerCase();
+    return this.docTypeList.filter(
+      (docType) =>
+        docType.Type && docType.Type.toLowerCase().includes(filterValue)
+    );
   }
+  // filterDocType(name: any) {
+  //   if (name?.Type) {
+  //     return this.docTypeList.filter(doctype =>
+  //       doctype?.Type?.toLowerCase().includes(name.Type.toLowerCase()));
+  //   }
+  //   else {
+  //     return this.docTypeList.filter(doctype =>
+  //       doctype?.Type?.toLowerCase().includes(name.toLowerCase()));
+  //   }
+  // }
 
   filterProducts(name: any) {
     if (name?.ProductCode) {
@@ -244,6 +255,9 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
       panelClass: 'custom-modalbox'
     });
   }
+  clearInput(event: Event) {
+    event.preventDefault();
+  }
 
 
   async openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
@@ -275,7 +289,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
       return false;
     return true;
   }
-  
+
   onKeyPressWithDot(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode != 46) {
@@ -286,6 +300,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   getPosts(event: any) {
+    debugger
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
@@ -369,7 +384,9 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
   }
 
+
   onClickCreatePR() {
+
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
       const PRHeaderData = this.PRHeaderForm.value;
