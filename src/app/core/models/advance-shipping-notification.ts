@@ -23,12 +23,13 @@ export interface AdvancedShipmentNotificationVM{
 }
 
 export interface AdvancedShipmentNotificationDetVM{
+  Id?: number,
   LineId?: number,
   POId: number,
   ASNHeaderId: number,
   PODetId: number,
   ProductCode: string,
-  Description: string,
+  ProductDescription: string,
   ProductGroup: string,
   UnitName?:string;
   StockType: string,
@@ -36,12 +37,15 @@ export interface AdvancedShipmentNotificationDetVM{
   StorageLocation: string,
   TotalWeight?: number;
   QtyWeight?: number;
+  TotalQty?: number;
   DeliveryQty?: number;
   DeliveryDate?: Date,
   OpenGRQty: number,
   Length?: number,
   Hight?: number,
   Width?: number,
+  IsBatchNo?: boolean,
+  IsSerialNo?: boolean,
   ASNProductDetails:AdvancedShipmentNotificationProductDet[];
 }
 

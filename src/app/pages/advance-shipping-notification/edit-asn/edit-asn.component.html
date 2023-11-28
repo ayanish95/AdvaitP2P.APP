@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Create Advanced Shipping Notification </h2>
+        <h2>Edit Advanced Shipping Notification </h2>
       </div>
     </div>
 
@@ -13,23 +13,21 @@
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> PO Number</h5>
+            <h5> ASN Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="PrnoAutocomplete"
-                   formControlName="PoNo"
+                   formControlName="ASNNumber"
+                   placeholder="Select ASN Number">
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> PO Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput formControlName="PoNo" readonly
                    placeholder="Select PO Number">
-            <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-                              (optionSelected)='getpono($event.option.value)'>
-              <mat-option *ngFor="let Pono of filteredprno | async"
-                          [value]="Pono?.Id">
-                <span>{{ Pono?.ERPPONumber }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNHeaderForm.get('PoNo')?.hasError('required')">
-              Please select PurchaseOrder Number...
-            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-3">
@@ -38,47 +36,27 @@
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
                    formControlName="DocType" readonly
                    placeholder="Doc Type">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNHeaderForm.get('DocType')?.hasError('required')">
-              Please select doc type...
-            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5>supplier Code<small>*</small></h5>
+            <h5>Supplier Code<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
                    formControlName="SupplierCode" readonly
-                   placeholder="supplier Code">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNHeaderForm.get('SupplierCode')?.hasError('required')">
-              Please select supplier code...
-            </mat-error>
+                   placeholder="Supplier Code">
           </mat-form-field>
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5>supplier Name</h5>
+            <h5>Supplier Name</h5>
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="SupplierName" readonly
-                   placeholder="supplier Name" readonly>
+                   placeholder="Supplier Name" readonly>
           </mat-form-field>
         </div>
         <div class="col-sm-3">
@@ -107,15 +85,15 @@
                    #deliveryDateModel
                    required
                    (focus)="shippingDatePicker.open()"
-                   [min]="minDate"
+                   [min]="minShippingDate"
                    formControlName="Shippingdate"
                    placeholder="Shipping Date">
-                   <mat-datepicker-toggle matSuffix
-                   [for]="shippingDatePicker"></mat-datepicker-toggle>
-                  <mat-datepicker format="dd-MM-yyyy" #shippingDatePicker></mat-datepicker>
+            <mat-datepicker-toggle matSuffix
+                                   [for]="shippingDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #shippingDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
-          <div class="col-sm-3">
+        <div class="col-sm-3">
           <label class="custom-label">
             <h5> Delivery Date</h5>
           </label>
@@ -125,7 +103,7 @@
                    #deliveryDateModel
                    required
                    (focus)="deliveryDatePicker.open()"
-                   [min]="minDate"
+                   [min]="minDeliveryDate"
                    formControlName="Deliverydate"
                    placeholder="Delivery Date">
             <mat-datepicker-toggle matSuffix
@@ -135,26 +113,26 @@
         </div>
       </div>
       <div class="mt-20">
-        <h4>PO List</h4>
+        <h4>ASN Product List</h4>
         <table mat-table [dataSource]="dataSource">
           <ng-container matColumnDef="srNo">
             <th mat-header-cell *matHeaderCellDef># </th>
             <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
           </ng-container>
           <ng-container matColumnDef="polineno">
-            <th mat-header-cell *matHeaderCellDef> PO Line No </th>
-            <td mat-cell *matCellDef="let element"> {{element?.PlantId}}
+            <th mat-header-cell *matHeaderCellDef> ASN Line No </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Id}}
             </td>
           </ng-container>
           <ng-container matColumnDef="ProductCode">
             <th mat-header-cell *matHeaderCellDef> ProductCode </th>
             <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
           </ng-container>
-          <ng-container matColumnDef="Sequanceno">
+          <!-- <ng-container matColumnDef="Sequanceno">
             <th mat-header-cell *matHeaderCellDef>Sequance No </th>
             <td mat-cell *matCellDef="let element"> {{element?.PlantId}}
             </td>
-          </ng-container>
+          </ng-container> -->
           <ng-container matColumnDef="Description">
             <th mat-header-cell *matHeaderCellDef> Description </th>
             <td mat-cell *matCellDef="let element"> {{element?.ProductDescription}} </td>
@@ -162,8 +140,12 @@
           <ng-container matColumnDef="Deliveryqty">
             <th mat-header-cell *matHeaderCellDef> Delivery Qty(ASN)</th>
             <td mat-cell *matCellDef="let element;let i = index">
-              <input matInput type="number" [value]="element.Qty" name='Qty'
-                     (input)="DetLineChange($event,i)" />
+              <input matInput type="number" [value]="element.DeliveryQty" name='Qty'
+                     [(ngModel)]="element.DeliveryQty" [ngModelOptions]="{standalone: true}"
+                     (input)="DetLineChange($event,i)" [max]="element.TotalQty" [min]="0" />
+              <div *ngIf="element.DeliveryQty > element.TotalQty">
+                Maximum qty can be {{element.TotalQty}}.
+              </div>
               <!-- <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td> -->
             </td>
           </ng-container>
@@ -179,12 +161,12 @@
           <ng-container matColumnDef="Plant">
             <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
             <td mat-cell *matCellDef="let element">
-              {{element?.PlantDescription}} </td>
+              {{element?.Plant}} </td>
           </ng-container>
           <ng-container matColumnDef="Location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
             <td mat-cell *matCellDef="let element">
-              {{element?.LocationDescription}} </td>
+              {{element?.StorageLocation}} </td>
           </ng-container>
           <ng-container matColumnDef="Edit">
             <th mat-header-cell *matHeaderCellDef> Add Batch/Serial No </th>
@@ -210,7 +192,7 @@
       </div>
       <div class="d-flex justify-content-end mt-20">
         <button [disabled]="" mat-raised-button
-                color="primary" (click)="openForAddAsn()"> Create ASN</button>
+                color="primary" (click)="openForAddAsn()"> Update ASN</button>
       </div>
     </form>
   </mat-card-content>
@@ -231,7 +213,7 @@
           <ng-container *ngFor="let data of batchAndSerialNoGroupForm().controls; let i=index">
             <ng-container [formGroupName]="i">
               <ng-container *ngIf="data.get('BatchNo')">
-                <div class="col-sm-6" >
+                <div class="col-sm-6">
                   <label *ngIf="i==0" class="custom-label">
                     <h5>Batch No<small>*</small></h5>
                   </label>
@@ -240,7 +222,7 @@
                   </mat-form-field>
                 </div>
                 <ng-container *ngIf="!data.get('SerialNo')">
-                  <div class="col-sm-4" >
+                  <div class="col-sm-4">
                     <label *ngIf="i==0" class="custom-label">
                       <h5>Qty<small>*</small></h5>
                     </label>
@@ -248,10 +230,13 @@
                       <input matInput formControlName="Qty" placeholder="Qty">
                     </mat-form-field>
                   </div>
-                  <div class="col-sm-2 d-flex align-items-center" >
-                    <button mat-icon-button color="primary" [disabled]="selecteItemQty==BatchAndSerialNoForm.controls['items'].value.length" (click)="addBatchNumberFormRow()" ><mat-icon>add</mat-icon></button>
-                    <button mat-icon-button color="warn" *ngIf="BatchAndSerialNoForm.controls['items'].value.length > 1"
-                      (click)="removeBatchNumberFormRow(i)" >
+                  <div class="col-sm-2 d-flex align-items-center">
+                    <button mat-icon-button color="primary"
+                            [disabled]="selecteItemQty==BatchAndSerialNoForm.controls['items'].value.length"
+                            (click)="addBatchNumberFormRow()"><mat-icon>add</mat-icon></button>
+                    <button mat-icon-button color="warn"
+                            *ngIf="BatchAndSerialNoForm.controls['items'].value.length > 1"
+                            (click)="removeBatchNumberFormRow(i)">
                       <mat-icon>delete</mat-icon></button>
                   </div>
                 </ng-container>
@@ -274,7 +259,8 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
-    <button mat-raised-button color="primary" mat-dialog-close (click)="onClickAddBatchSerialNo()">{{ selectedLineId ?
+    <button mat-raised-button color="primary" mat-dialog-close
+            (click)="onClickAddBatchSerialNo()">{{ selectedLineId ?
       'Update' :
       'Add'}}</button>
   </mat-dialog-actions>
