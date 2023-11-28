@@ -6,6 +6,8 @@ import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM } from '@core/m
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-view-goods-received-note',
@@ -29,7 +31,7 @@ export class ViewGoodsReceivedNoteComponent {
   PRDetails!: PurchaseRequisitionDetailsVM;
   dataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private PRService: PurchaseRequistionService, private toaster: ToastrService, private route: ActivatedRoute) {
+  constructor(private PRService: PurchaseRequistionService,private location: Location, private toaster: ToastrService, private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
@@ -56,6 +58,9 @@ export class ViewGoodsReceivedNoteComponent {
         else
           this.toaster.error(res[ResultEnum.Message]);
       });
+  }
+  onClickBack() {
+    this.location.back();
   }
 
 }

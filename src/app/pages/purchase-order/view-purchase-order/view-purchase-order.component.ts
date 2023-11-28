@@ -10,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { PurchaseOrderDetailsVM } from '@core/models/purchase-order';
 import { formatDate } from '@angular/common';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-view-purchase-order',
@@ -41,6 +43,7 @@ export class ViewPurchaseOrderComponent {
   constructor(private PRService: PurchaseRequistionService,
       private POService: PurchaseOrderService,
       private toaster: ToastrService,
+      private location: Location,
       private route: ActivatedRoute,
       private router: Router) {
 
@@ -237,6 +240,9 @@ export class ViewPurchaseOrderComponent {
   }
   subscribeOrderItems() {
     throw new Error('Method not implemented.');
+  }
+  onClickBack() {
+    this.location.back();
   }
 
 }

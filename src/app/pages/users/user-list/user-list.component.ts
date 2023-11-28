@@ -24,7 +24,7 @@ import { Observable, finalize, map, startWith } from 'rxjs';
 export class UserListComponent {
   list: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['srNo', 'userName', 'name', 'roleName', 'erpUserId', 'email', 'mobile', 'isActive', 'edit', 'delete'];
+  displayedColumns: string[] = ['srNo', 'userName', 'name', 'roleName', 'erpUserId', 'email', 'mobile', 'isActive', 'edit','View','delete'];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
   currentPage = 1;
@@ -262,6 +262,7 @@ export class UserListComponent {
   }
 
  async updateService(user:any){
+  debugger
     await this.userService.updateUser(user).subscribe({
       next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
@@ -281,6 +282,7 @@ export class UserListComponent {
   }
 
   IsActiveFlagUpdate(element:any,e:any){
+    debugger
     element.IsActive = e.srcElement.checked;
     this.updateService(element);
   }

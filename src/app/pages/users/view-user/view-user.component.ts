@@ -2,44 +2,46 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
-import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM } from '@core/models/purchase-requistion';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
+import { Suppliers } from '@core/models/suppliers';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { Location } from '@angular/common';
+import { UsersVM } from '@core/models/users';
+import { UserService } from '@core/services/user.service';
 
 @Component({
-  selector: 'app-view-quality-control',
-  templateUrl: './view-quality-control.component.html',
-  styleUrls: ['./view-quality-control.component.scss']
+  selector: 'app-view-user',
+  templateUrl: './view-user.component.html',
+  styleUrls: ['./view-user.component.scss']
 })
-export class ViewQualityControlComponent {
+export class ViewUserComponent {
   displayedColumns: string[] = [
     'srNo',
     'ProductCode',
     'ProductGroup',
     'Qty',
     'Unit',
-    'DeliveryDate',
     'Plant',
     'Location',
     // 'Close',
     // 'RFQ',
   ];
-  PRId!: number;
-  PRDetails!: PurchaseRequisitionDetailsVM;
+  userid!: number;
+  userList!: UsersVM;
+
   dataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private PRService: PurchaseRequistionService,private location: Location, private toaster: ToastrService, private route: ActivatedRoute) {
+  constructor(private location: Location, private toaster: ToastrService, private userService: UserService,
+    private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
-      this.PRId = params.id;
+      this.userid = params.id;
     });
   }
 
   ngOnInit(): void {
-    this.PRService
-      .getPRDetailsById(this.PRId)
+    this.userService
+      .getUserDetailById(this.userid)
       .pipe(
         finalize(() => {
         })
@@ -48,8 +50,7 @@ export class ViewQualityControlComponent {
         if (res[ResultEnum.IsSuccess]) {
           console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
-            this.PRDetails = res[ResultEnum.Model];
-            this.dataSource.data = this.PRDetails.PRLineItems;
+            this.userList = res[ResultEnum.Model];
           }
           else
             this.toaster.error(res[ResultEnum.Message]);
