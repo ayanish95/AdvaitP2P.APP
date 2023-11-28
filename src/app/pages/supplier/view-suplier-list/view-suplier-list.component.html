@@ -1,12 +1,13 @@
 <breadcrumb></breadcrumb>
-
-<div class="d-flex justify-content-end">
-  <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
-</div>
 <mat-card>
-    <mat-card-header>
+  <mat-card-header>
+    <div class="col-md-9">
       <mat-card-title>Suplier Basic Detail</mat-card-title>
-    </mat-card-header>
+    </div>
+    <div class="col-md-3 d-flex justify-content-end">
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+    </div>
+  </mat-card-header>
     <mat-card-content *ngIf="allSuppliierList">
       <div class="row">
         <div class="col-md-2">

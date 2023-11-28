@@ -9,6 +9,8 @@ import { ViewPurchaseRequisitionComponent } from './view-purchase-requisition/vi
 import { EditPurchaseRequisitionComponent } from './edit-purchase-requisition/edit-purchase-requisition.component';
 import { PendingForApprovalComponent } from './pending-for-approval/pending-for-approval.component';
 import { AllPurchaseRequisitionListComponent } from './all-purchase-requisition-list/all-purchase-requisition-list.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { AllPurchaseRequisitionListComponent } from './all-purchase-requisition-
   imports: [
     CommonModule,
     SharedModule,
-    PurchaseRequisitionRoutingModule
+    PurchaseRequisitionRoutingModule,
+    NgSelectModule,
+    NgxMatSelectSearchModule
   ]
 })
 export class PurchaseRequisitionModule { }

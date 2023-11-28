@@ -56,6 +56,7 @@
     "apexcharts": "^3.41.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.41",
+    "ngx-mat-select-search": "^7.0.5",
     "ngx-permissions": "^15.0.1",
     "ngx-progressbar": "^11.1.0",
     "ngx-toastr": "^17.0.2",
