@@ -1,0 +1,46 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+  <mat-card-header>
+    <div class="col-md-9">
+      <mat-card-title>Product Detail</mat-card-title>
+    </div>
+    <div class="col-md-3 d-flex justify-content-end">
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+    </div>
+  </mat-card-header>
+    <mat-card-content *ngIf="productDetails">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="mb-0">Product Name</h5>
+          <p class="mt-0">{{productDetails.ProductFullName}}</p>
+       </div>
+        <div class="col-md-2">
+          <h5 class="mb-0" style="color: rgb(30, 24, 24);">Product Group</h5>
+          <p class="mt-0">{{productDetails.ProductGroup}}</p>
+       </div>
+           <div class="col-md-2">
+            <h5 class="mb-0">Product Description</h5>
+            <p class="mt-0">{{productDetails.Description}}</p>
+         </div>
+        <div class="col-md-2">
+           <h5 class="mb-0">Product Code</h5>
+           <p class="mt-0">{{productDetails.ProductCode}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">Unit</h5>
+            <p class="mt-0">{{productDetails.PurchaseUnit}}</p>
+         </div>
+         <div class="col-md-2">
+          <h5 class="mb-0">Standard Price</h5>
+          <p class="mt-0">{{productDetails.StandardPrice}}</p>
+       </div>
+       <div class="col-md-2">
+        <h5 class="mb-0">HSN Code</h5>
+        <p class="mt-0">{{productDetails.HSNCode}}</p>
+     </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+
+

@@ -19,6 +19,8 @@ export interface Suppliers {
     Country?: string;
     Currency?: string;
     Language?: string;
+    IsRejected?:boolean;
+    RejectedDate?:Date;
     Phone?: string;
     Email?: string;
     BankCountry?:string;

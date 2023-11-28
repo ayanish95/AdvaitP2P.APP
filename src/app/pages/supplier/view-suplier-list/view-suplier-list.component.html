@@ -1,0 +1,104 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+  <mat-card-header>
+    <div class="col-md-9">
+      <mat-card-title>Suplier Basic Detail</mat-card-title>
+    </div>
+    <div class="col-md-3 d-flex justify-content-end">
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+    </div>
+  </mat-card-header>
+    <mat-card-content *ngIf="allSuppliierList">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="mb-0" style="color: rgb(30, 24, 24);">Fist Name</h5>
+          <p class="mt-0">{{allSuppliierList.FirstName}}</p>
+       </div>
+           <div class="col-md-2">
+            <h5 class="mb-0">Lest Name</h5>
+            <p class="mt-0">{{allSuppliierList.LastName}}</p>
+         </div>
+        <div class="col-md-2">
+           <h5 class="mb-0">Contact Number</h5>
+           <p class="mt-0">{{allSuppliierList.Phone}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">Email Id</h5>
+            <p class="mt-0">{{allSuppliierList.Email}}</p>
+         </div>
+         <div class="col-md-2">
+          <h5 class="mb-0">Suplier Code</h5>
+          <p class="mt-0">{{allSuppliierList.Id}}</p>
+       </div>
+       <div class="col-md-2">
+        <h5 class="mb-0">Suplier PAN NO</h5>
+        <p class="mt-0">{{allSuppliierList.PANNumber}}</p>
+     </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Suplier Address Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="allSuppliierList">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="mb-0">Country</h5>
+          <p class="mt-0">{{allSuppliierList.Country}}</p>
+       </div>
+           <div class="col-md-2">
+            <h5 class="mb-0">Street Address One</h5>
+            <p class="mt-0">{{allSuppliierList.Street1}}</p>
+         </div>
+        <div class="col-md-2">
+           <h5 class="mb-0">Street Address Two</h5>
+           <p class="mt-0">{{allSuppliierList.Street1}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">Postal Code</h5>
+            <p class="mt-0">{{allSuppliierList.PostalCode}}</p>
+         </div>
+         <div class="col-md-2">
+          <h5 class="mb-0">City</h5>
+          <p class="mt-0">{{allSuppliierList.City}}</p>
+       </div>
+       <div class="col-md-2">
+        <h5 class="mb-0">State</h5>
+        <p class="mt-0">{{allSuppliierList.State}}</p>
+     </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Suplier Bank Detail</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="allSuppliierList">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="mb-0">Bank Name</h5>
+          <p class="mt-0">{{allSuppliierList.BankName}}</p>
+       </div>
+        <div class="col-md-2">
+          <h5 class="mb-0">Account Number</h5>
+          <p class="mt-0">{{allSuppliierList.AccountNumber}}</p>
+       </div>
+           <div class="col-md-2">
+            <h5 class="mb-0">Account HolderName</h5>
+            <p class="mt-0">{{allSuppliierList.AccountHolderName}}</p>
+         </div>
+        <div class="col-md-2">
+           <h5 class="mb-0">Bank Country</h5>
+           <p class="mt-0">{{allSuppliierList.BankCountry}}</p>
+        </div>
+        <div class="col-md-2">
+            <h5 class="mb-0">IFSC Code</h5>
+            <p class="mt-0">{{allSuppliierList.IFSCCode}}</p>
+         </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+

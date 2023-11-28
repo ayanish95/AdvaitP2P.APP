@@ -58,6 +58,22 @@
                     <th mat-header-cell *matHeaderCellDef> Plant </th>
                     <td mat-cell *matCellDef="let element"> {{element?.Plant}} </td>
                 </ng-container>
+                <ng-container matColumnDef="IsBatchNo">
+                    <th mat-header-cell *matHeaderCellDef> Batch No </th>
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsBatchNo" (click)="IsBatchNoOrIsSerialNo('IsBatchNo',$event,element)"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="IsSerialNo">
+                    <th mat-header-cell *matHeaderCellDef> Serial No </th>
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsSerialNo" (click)="IsBatchNoOrIsSerialNo('IsSerialNo',$event,element)"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="View">
+                  <th mat-header-cell *matHeaderCellDef> View </th>
+                  <td mat-cell *matCellDef="let element">
+                   <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}" matTooltip="Click to View">   <mat-icon >remove_red_eye</mat-icon></button>
+                   </td>
+              </ng-container>
                 <ng-container matColumnDef="Edit">
                     <th mat-header-cell *matHeaderCellDef> Edit </th>
                     <td mat-cell *matCellDef="let element">
@@ -313,6 +329,18 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
+                <ng-container>
+                    <div class="col-sm-12">
+                        <mat-checkbox color="primary"
+                                      formControlName="IsBatchNo">Batch No</mat-checkbox>
+                    </div>
+                </ng-container>
+                 <ng-container>
+                    <div class="col-sm-12">
+                        <mat-checkbox color="primary"
+                                      formControlName="IsSerialNo">Serial No</mat-checkbox>
+                    </div>
+                </ng-container>
                 <ng-container *ngIf="isEdit">
                     <div class="col-sm-12">
                         <mat-checkbox color="primary"

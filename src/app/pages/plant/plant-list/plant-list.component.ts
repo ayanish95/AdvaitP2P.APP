@@ -35,6 +35,7 @@ export class PlantListComponent implements OnInit {
     'Country',
     'Pincode',
     'IsActive',
+    'View',
     'Edit',
     'Delete',
   ];
@@ -69,14 +70,14 @@ export class PlantListComponent implements OnInit {
     GSTNumber: [''],
     TaxNumber: [''],
     BusinessPlace: ['', [Validators.required]],
-    IsActive: [false],
+    IsActive: [true],
   });
   isSAPEnabled!: string;
   currentUserRole!: number;
   Role = Role;
   currentUserId!: number;
   rightsForApproval = false;
-  
+
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private countryService: CountryService, private stateService: StateService,
     private toaster: ToastrService,private authService: AuthService,) { }
 
@@ -91,7 +92,6 @@ export class PlantListComponent implements OnInit {
       startWith(''),
       map(value => this.filterCountry(value || ''))
     );
-
   }
 
   apiPlantList() {
@@ -370,5 +370,14 @@ export class PlantListComponent implements OnInit {
 
         this.dialog.closeAll();
       });
+  }
+  IsActiveFlagUpdate(element:any,e:any){
+    element.IsActive = e.srcElement.checked;
+    this.plantService.updatePlant(element)
+    .subscribe(response => {
+      console.log('Update successful', response);
+    }, error => {
+      console.error('Error updating', error);
+    });
   }
 }

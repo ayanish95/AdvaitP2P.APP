@@ -1,0 +1,278 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+  <mat-card-header>
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <h2>Edit Advanced Shipping Notification </h2>
+      </div>
+    </div>
+
+  </mat-card-header>
+  <mat-card-content>
+    <form #addasn [formGroup]="ASNHeaderForm" class="form-field-full">
+      <div class="row mt-5">
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> ASN Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="ASNNumber"
+                   placeholder="Select ASN Number">
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> PO Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput formControlName="PoNo" readonly
+                   placeholder="Select PO Number">
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>ASN Doc Type</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="DocType" readonly
+                   placeholder="Doc Type">
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Supplier Code<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="SupplierCode" readonly
+                   placeholder="Supplier Code">
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Supplier Name</h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="SupplierName" readonly
+                   placeholder="Supplier Name" readonly>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Document Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="documentPicker"
+                   required
+                   (focus)="documentPicker.open()"
+                   readonly
+                   formControlName="Documentdate"
+                   placeholder="Document Date" readonly>
+            <mat-datepicker-toggle matSuffix [for]="documentPicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #documentPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Shipping Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="shippingDatePicker"
+                   #deliveryDateModel
+                   required
+                   (focus)="shippingDatePicker.open()"
+                   [min]="minShippingDate"
+                   formControlName="Shippingdate"
+                   placeholder="Shipping Date">
+            <mat-datepicker-toggle matSuffix
+                                   [for]="shippingDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #shippingDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Delivery Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="deliveryDatePicker"
+                   #deliveryDateModel
+                   required
+                   (focus)="deliveryDatePicker.open()"
+                   [min]="minDeliveryDate"
+                   formControlName="Deliverydate"
+                   placeholder="Delivery Date">
+            <mat-datepicker-toggle matSuffix
+                                   [for]="deliveryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #deliveryDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="mt-20">
+        <h4>ASN Product List</h4>
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="srNo">
+            <th mat-header-cell *matHeaderCellDef># </th>
+            <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+          </ng-container>
+          <ng-container matColumnDef="polineno">
+            <th mat-header-cell *matHeaderCellDef> ASN Line No </th>
+            <td mat-cell *matCellDef="let element"> {{element?.Id}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="ProductCode">
+            <th mat-header-cell *matHeaderCellDef> ProductCode </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
+          </ng-container>
+          <!-- <ng-container matColumnDef="Sequanceno">
+            <th mat-header-cell *matHeaderCellDef>Sequance No </th>
+            <td mat-cell *matCellDef="let element"> {{element?.PlantId}}
+            </td>
+          </ng-container> -->
+          <ng-container matColumnDef="Description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductDescription}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Deliveryqty">
+            <th mat-header-cell *matHeaderCellDef> Delivery Qty(ASN)</th>
+            <td mat-cell *matCellDef="let element;let i = index">
+              <input matInput type="number" [value]="element.DeliveryQty" name='Qty'
+                     [(ngModel)]="element.DeliveryQty" [ngModelOptions]="{standalone: true}"
+                     (input)="DetLineChange($event,i)" [max]="element.TotalQty" [min]="0" />
+              <div *ngIf="element.DeliveryQty > element.TotalQty">
+                Maximum qty can be {{element.TotalQty}}.
+              </div>
+              <!-- <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td> -->
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="PutAwayqty">
+            <th mat-header-cell *matHeaderCellDef> Open GR Qty </th>
+            <td mat-cell *matCellDef="let element"> {{element?.OpenGRQty}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Unit">
+            <th mat-header-cell *matHeaderCellDef> Unit </th>
+            <td mat-cell *matCellDef="let element">
+              {{element?.UnitName}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Plant">
+            <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
+            <td mat-cell *matCellDef="let element">
+              {{element?.Plant}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Location">
+            <th mat-header-cell *matHeaderCellDef> Location </th>
+            <td mat-cell *matCellDef="let element">
+              {{element?.StorageLocation}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Edit">
+            <th mat-header-cell *matHeaderCellDef> Add Batch/Serial No </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="openModelForAddItem(addBatchOrSerialNo,element)"
+                      [disabled]="!element?.IsSerialNo && !element?.IsBatchNo">
+                <mat-icon>add</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Delete">
+            <th mat-header-cell *matHeaderCellDef> Remove </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">
+                <mat-icon>delete</mat-icon></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <app-no-record-found *ngIf="!dataSource?.data?.length"
+                             [columnCount]="displayedColumns.length"></app-no-record-found>
+      </div>
+      <div class="d-flex justify-content-end mt-20">
+        <button [disabled]="" mat-raised-button
+                color="primary" (click)="openForAddAsn()"> Update ASN</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+
+
+
+<ng-template #addBatchOrSerialNo style="width: 56vw;">
+  <h2 mat-dialog-title>{{ selectedLineId ? 'Update' : 'Add'}} Batch / Serial Number </h2>
+  <mat-dialog-content>
+    <form [formGroup]="BatchAndSerialNoForm">
+      <ng-container formArrayName="items">
+        <div class="row mt-5">
+          <div class="col-md-12 mb-10">
+            Upload Excel : <input type="file" accept=".xlsx,.xlsm,.xls,.xml" />
+          </div>
+          <ng-container *ngFor="let data of batchAndSerialNoGroupForm().controls; let i=index">
+            <ng-container [formGroupName]="i">
+              <ng-container *ngIf="data.get('BatchNo')">
+                <div class="col-sm-6">
+                  <label *ngIf="i==0" class="custom-label">
+                    <h5>Batch No<small>*</small></h5>
+                  </label>
+                  <mat-form-field appearance="outline" class="demo-full-width">
+                    <input matInput formControlName="BatchNo" placeholder="Batch No.">
+                  </mat-form-field>
+                </div>
+                <ng-container *ngIf="!data.get('SerialNo')">
+                  <div class="col-sm-4">
+                    <label *ngIf="i==0" class="custom-label">
+                      <h5>Qty<small>*</small></h5>
+                    </label>
+                    <mat-form-field appearance="outline" class="demo-full-width">
+                      <input matInput formControlName="Qty" placeholder="Qty">
+                    </mat-form-field>
+                  </div>
+                  <div class="col-sm-2 d-flex align-items-center">
+                    <button mat-icon-button color="primary"
+                            [disabled]="selecteItemQty==BatchAndSerialNoForm.controls['items'].value.length"
+                            (click)="addBatchNumberFormRow()"><mat-icon>add</mat-icon></button>
+                    <button mat-icon-button color="warn"
+                            *ngIf="BatchAndSerialNoForm.controls['items'].value.length > 1"
+                            (click)="removeBatchNumberFormRow(i)">
+                      <mat-icon>delete</mat-icon></button>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="data.get('SerialNo')">
+                <div class="col-sm-6" [ngClass]=" data.get('BatchNo') ? 'col-sm-6' : 'col-sm-12'">
+                  <label *ngIf="i==0" class="custom-label">
+                    <h5>Serial No<small>*</small></h5>
+                  </label>
+                  <mat-form-field appearance="outline" class="demo-full-width">
+                    <input matInput formControlName="SerialNo" placeholder="Serial No.">
+                  </mat-form-field>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </ng-container>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" mat-dialog-close
+            (click)="onClickAddBatchSerialNo()">{{ selectedLineId ?
+      'Update' :
+      'Add'}}</button>
+  </mat-dialog-actions>
+</ng-template>
+
+
+<ng-template #deleteAlert>
+  <h2 mat-dialog-title class="text-center">Delete Purchase Requisition Line Item</h2>
+  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to
+    delete this item?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
+  </div>
+</ng-template>

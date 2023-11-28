@@ -66,6 +66,9 @@ export class Method {
   static GetAllApprovedPurchaseOrderHeaderList = `/GetAllApprovedPurchaseOrderHeaderList`;
   static GetAllASNList = `/GetAllASNList`;
   static AddASN = `/CreateASN`;
-
+  static UpdateASN = `/UpdateASN`;
+  static DeleteASNById = `/DeleteASNById`;
+  static GetAllASNListForGR = `/GetAllASNListForGR`;
+  static GetAllASNDetailsById = `/GetASNById`;
 
 }

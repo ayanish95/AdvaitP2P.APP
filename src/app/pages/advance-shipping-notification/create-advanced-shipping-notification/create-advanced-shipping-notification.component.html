@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Advanced Shipping Notification </h2>
+        <h2>Create Advanced Shipping Notification </h2>
       </div>
     </div>
 
@@ -21,14 +21,14 @@
                    formControlName="PoNo"
                    placeholder="Select PO Number">
             <mat-autocomplete #PrnoAutocomplete="matAutocomplete"
-            (optionSelected)='getpono($event.option.value)'>
+                              (optionSelected)='getpono($event.option.value)'>
               <mat-option *ngFor="let Pono of filteredprno | async"
                           [value]="Pono?.Id">
                 <span>{{ Pono?.ERPPONumber }}</span>
               </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="ASNHeaderForm.get('PoNo')?.hasError('required')">
-              Please select  PurchaseOrder Number...
+              Please select PurchaseOrder Number...
             </mat-error>
           </mat-form-field>
         </div>
@@ -41,7 +41,7 @@
                    [matAutocomplete]="docAutocomplete"
                    formControlName="DocType" readonly
                    placeholder="Doc Type">
-            <mat-autocomplete #docAutocomplete="matAutocomplete" >
+            <mat-autocomplete #docAutocomplete="matAutocomplete">
               <mat-option *ngFor="let docType of filteredDocType | async"
                           [value]="docType?.Type">
                 <span>{{ docType?.Type }}</span>
@@ -61,12 +61,12 @@
                    [matAutocomplete]="docAutocomplete"
                    formControlName="SupplierCode" readonly
                    placeholder="supplier Code">
-                   <mat-autocomplete #docAutocomplete="matAutocomplete" >
-                    <mat-option *ngFor="let docType of filteredDocType | async"
-                                [value]="docType?.Type">
-                      <span>{{ docType?.Type }}</span>
-                    </mat-option>
-                  </mat-autocomplete>
+            <mat-autocomplete #docAutocomplete="matAutocomplete">
+              <mat-option *ngFor="let docType of filteredDocType | async"
+                          [value]="docType?.Type">
+                <span>{{ docType?.Type }}</span>
+              </mat-option>
+            </mat-autocomplete>
             <mat-error *ngIf="ASNHeaderForm.get('SupplierCode')?.hasError('required')">
               Please select supplier code...
             </mat-error>
@@ -78,7 +78,7 @@
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="SupplierName" readonly
-            placeholder="supplier Name" readonly>
+                   placeholder="supplier Name" readonly>
           </mat-form-field>
         </div>
         <div class="col-sm-3">
@@ -93,9 +93,26 @@
                    readonly
                    formControlName="Documentdate"
                    placeholder="Document Date" readonly>
-            <mat-datepicker-toggle matSuffix [for]="documentPicker"
-            ></mat-datepicker-toggle>
+            <mat-datepicker-toggle matSuffix [for]="documentPicker"></mat-datepicker-toggle>
             <mat-datepicker format="dd-MM-yyyy" #documentPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Shipping Date</h5>
+          </label>
+          <mat-form-field>
+            <input matInput
+                   [matDatepicker]="shippingDatePicker"
+                   #deliveryDateModel
+                   required
+                   (focus)="shippingDatePicker.open()"
+                   [min]="minDate"
+                   formControlName="Shippingdate"
+                   placeholder="Shipping Date">
+                   <mat-datepicker-toggle matSuffix
+                   [for]="shippingDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker format="dd-MM-yyyy" #shippingDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
           <div class="col-sm-3">
@@ -104,16 +121,16 @@
           </label>
           <mat-form-field>
             <input matInput
-                   [matDatepicker]="paymentPicker"
+                   [matDatepicker]="deliveryDatePicker"
                    #deliveryDateModel
                    required
-                   (focus)="paymentPicker.open()"
+                   (focus)="deliveryDatePicker.open()"
                    [min]="minDate"
                    formControlName="Deliverydate"
                    placeholder="Delivery Date">
-                   <mat-datepicker-toggle matSuffix
-                   [for]="paymentPicker"></mat-datepicker-toggle>
-                  <mat-datepicker format="dd-MM-yyyy" #paymentPicker></mat-datepicker>
+            <mat-datepicker-toggle matSuffix
+                                   [for]="deliveryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker format="dd-MM-yyyy" #deliveryDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
@@ -134,7 +151,7 @@
             <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
           </ng-container>
           <ng-container matColumnDef="Sequanceno">
-            <th mat-header-cell *matHeaderCellDef>Sequance No  </th>
+            <th mat-header-cell *matHeaderCellDef>Sequance No </th>
             <td mat-cell *matCellDef="let element"> {{element?.PlantId}}
             </td>
           </ng-container>
@@ -145,18 +162,19 @@
           <ng-container matColumnDef="Deliveryqty">
             <th mat-header-cell *matHeaderCellDef> Delivery Qty(ASN)</th>
             <td mat-cell *matCellDef="let element;let i = index">
-            <input matInput type="number" [value]="element.Qty" name='Qty' (input)="DetLineChange($event,i)" />
-            <!-- <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td> -->
+              <input matInput type="number" [value]="element.Qty" name='Qty'
+                     (input)="DetLineChange($event,i)" />
+              <!-- <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td> -->
             </td>
           </ng-container>
           <ng-container matColumnDef="PutAwayqty">
             <th mat-header-cell *matHeaderCellDef> Open GR Qty </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.OpenGRQty}} </td>
           </ng-container>
           <ng-container matColumnDef="Unit">
             <th mat-header-cell *matHeaderCellDef> Unit </th>
             <td mat-cell *matCellDef="let element">
-              {{element?.UnitId}} </td>
+              {{element?.UnitName}} </td>
           </ng-container>
           <ng-container matColumnDef="Plant">
             <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
@@ -169,19 +187,21 @@
               {{element?.LocationDescription}} </td>
           </ng-container>
           <ng-container matColumnDef="Edit">
-            <th mat-header-cell *matHeaderCellDef> Edit </th>
+            <th mat-header-cell *matHeaderCellDef> Add Batch/Serial No </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button (click)="openModelForAddItem(editProduct,element)">
-                    <mat-icon>edit</mat-icon>
-                </button>
+              <button mat-icon-button (click)="openModelForAddItem(addBatchOrSerialNo,element)"
+                      [disabled]="!element?.IsSerialNo && !element?.IsBatchNo">
+                <mat-icon>add</mat-icon>
+              </button>
             </td>
-        </ng-container>
+          </ng-container>
           <ng-container matColumnDef="Delete">
             <th mat-header-cell *matHeaderCellDef> Remove </th>
             <td mat-cell *matCellDef="let element">
-             <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">  <mat-icon >delete</mat-icon></button>
-             </td>
-        </ng-container>
+              <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">
+                <mat-icon>delete</mat-icon></button>
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
@@ -197,166 +217,76 @@
 </mat-card>
 
 
-<!-- Modal popup -->
-<ng-template #editProduct style="width: 56vw;">
-  <h2 mat-dialog-title>{{ selectedLineId ? 'Update' : 'Add'}} Product Details</h2>
+
+
+<ng-template #addBatchOrSerialNo style="width: 56vw;">
+  <h2 mat-dialog-title>{{ selectedLineId ? 'Update' : 'Add'}} Batch / Serial Number </h2>
   <mat-dialog-content>
-    <form [formGroup]="ASNLineForm">
-      <div class="row mt-5">
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Product Code<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="autocomplete"
-                   formControlName="Product"
-                   placeholder="Product Code">
-            <mat-autocomplete #autocomplete="matAutocomplete" [displayWith]="productDisplayFn"
-                              (optionSelected)='getPosts($event.option.value)'>
-              <mat-option *ngFor="let product of filteredProducts | async"
-                          [value]="product">
-                <span>{{ product.ProductCode }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNLineForm.get('Product')?.hasError('required')">
-              Please select product code...
-            </mat-error>
-          </mat-form-field>
+    <form [formGroup]="BatchAndSerialNoForm">
+      <ng-container formArrayName="items">
+        <div class="row mt-5">
+          <div class="col-md-12 mb-10">
+            Upload Excel : <input type="file" accept=".xlsx,.xlsm,.xls,.xml" />
+          </div>
+          <ng-container *ngFor="let data of batchAndSerialNoGroupForm().controls; let i=index">
+            <ng-container [formGroupName]="i">
+              <ng-container *ngIf="data.get('BatchNo')">
+                <div class="col-sm-6" >
+                  <label *ngIf="i==0" class="custom-label">
+                    <h5>Batch No<small>*</small></h5>
+                  </label>
+                  <mat-form-field appearance="outline" class="demo-full-width">
+                    <input matInput formControlName="BatchNo" placeholder="Batch No.">
+                  </mat-form-field>
+                </div>
+                <ng-container *ngIf="!data.get('SerialNo')">
+                  <div class="col-sm-4" >
+                    <label *ngIf="i==0" class="custom-label">
+                      <h5>Qty<small>*</small></h5>
+                    </label>
+                    <mat-form-field appearance="outline" class="demo-full-width">
+                      <input matInput formControlName="Qty" placeholder="Qty">
+                    </mat-form-field>
+                  </div>
+                  <div class="col-sm-2 d-flex align-items-center" >
+                    <button mat-icon-button color="primary" [disabled]="selecteItemQty==BatchAndSerialNoForm.controls['items'].value.length" (click)="addBatchNumberFormRow()" ><mat-icon>add</mat-icon></button>
+                    <button mat-icon-button color="warn" *ngIf="BatchAndSerialNoForm.controls['items'].value.length > 1"
+                      (click)="removeBatchNumberFormRow(i)" >
+                      <mat-icon>delete</mat-icon></button>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="data.get('SerialNo')">
+                <div class="col-sm-6" [ngClass]=" data.get('BatchNo') ? 'col-sm-6' : 'col-sm-12'">
+                  <label *ngIf="i==0" class="custom-label">
+                    <h5>Serial No<small>*</small></h5>
+                  </label>
+                  <mat-form-field appearance="outline" class="demo-full-width">
+                    <input matInput formControlName="SerialNo" placeholder="Serial No.">
+                  </mat-form-field>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Product Description</h5>
-          </label>
-          <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput type="text" formControlName="Description"
-            placeholder="Product Description" readonly>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Product Group</h5>
-          </label>
-          <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput type="text" formControlName="ProductGroup" readonly
-            placeholder="Product Group">
-
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Qty<small>*</small></h5>
-          </label>
-          <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput type="text" formControlName="Qty" (keypress)="onKeyPress($event)"
-            placeholder="Qty"
-                   required>
-                   <mat-error *ngIf="ASNLineForm.get('Qty')?.hasError('required')">
-                    Please enter Qty...
-                  </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Unit<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="unitAutocomplete"
-                   formControlName="Unit"
-                   placeholder="Unit">
-            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
-              <mat-option *ngFor="let unit of filteredUnits | async"
-                          [value]="unit">
-                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNLineForm.get('Unit')?.hasError('required')">
-              Please select unit...
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Delivery Date<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matDatepicker]="deliveryDate"
-                   #deliveryDateModel
-                   required
-                   (focus)="deliveryDate.open()"
-                   [min]="minDate"
-                   readonly
-                   formControlName="DeliveryDate"
-                   placeholder="Delivery Date">
-            <mat-datepicker-toggle matSuffix
-                                   [for]="deliveryDate"></mat-datepicker-toggle>
-            <mat-datepicker format="dd-MM-yyyy" #deliveryDate></mat-datepicker>
-            <mat-error *ngIf="ASNLineForm.get('DeliveryDate')?.hasError('required')">
-              Please select date...
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Plant / Warehouse<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="plantAutocomplete"
-                   formControlName="Plant"
-                   placeholder="Plant / Warehouse">
-            <mat-autocomplete #plantAutocomplete="matAutocomplete"
-                              (optionSelected)="onChangePlant($event.option.value.PlantCode)"
-                              [displayWith]="plantDisplayFn">
-              <mat-option *ngFor="let plant of filteredPlants | async"
-                          [value]="plant">
-                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNLineForm.get('Plant')?.hasError('required')">
-              Please select plant / warehouse...
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Storage Location<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="storageAutocomplete"
-                   formControlName="StorageLocation"
-                   placeholder="Storage Location">
-            <mat-autocomplete #storageAutocomplete="matAutocomplete"
-                              [displayWith]="storageLocationDisplayFn">
-              <mat-option *ngFor="let location of filteredlocation | async"
-                          [value]="location">
-                <span>{{ location.LocationCode }} - {{ location.LocationName }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="ASNLineForm.get('StorageLocation')?.hasError('required')">
-              Please select storage location...
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
+      </ng-container>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
-    <!-- <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ? 'Update' : 'Add'}}</button> -->
+    <button mat-raised-button color="primary" mat-dialog-close (click)="onClickAddBatchSerialNo()">{{ selectedLineId ?
+      'Update' :
+      'Add'}}</button>
   </mat-dialog-actions>
 </ng-template>
 
+
 <ng-template #deleteAlert>
   <h2 mat-dialog-title class="text-center">Delete Purchase Requisition Line Item</h2>
-  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to delete this item?</div>
+  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to
+    delete this item?</div>
   <div mat-dialog-actions class="d-flex justify-content-center">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
   </div>
 </ng-template>

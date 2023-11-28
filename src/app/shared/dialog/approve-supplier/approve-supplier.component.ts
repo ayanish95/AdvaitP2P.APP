@@ -27,7 +27,7 @@ export class ApproveSupplierComponent implements OnInit {
       postalcode: [{value:'',disabled:true}, [Validators.required]],
       city: [{value:'',disabled:true}, [Validators.required]],
       state: [{value:'',disabled:true}, [Validators.required]],
-      country: [{value:'',disabled:true}, [Validators.required]],
+      country: [{value:'',disabled:true}, [Validators.required]],      
     }
   );
   bankDetailsFrom = this.fb.nonNullable.group(
@@ -39,6 +39,7 @@ export class ApproveSupplierComponent implements OnInit {
       accountNumber: ['', [Validators.required]],
       accountHolderName: ['', [Validators.required]],
       remarks: [{value:'',disabled:true}],
+      comment: [''],
       // suppplierAccountGroup: ['', [Validators.required]],
       // compoanyCode: ['', [Validators.required]],
     }
@@ -78,7 +79,8 @@ export class ApproveSupplierComponent implements OnInit {
         bankName: this.trimFormValue(this.supplier.BankName),
         accountNumber: this.trimFormValue(this.supplier.AccountNumber),
         accountHolderName: this.trimFormValue(this.supplier.AccountHolderName),
-        remarks: this.trimFormValue(this.supplier.Remarks)
+        remarks: this.trimFormValue(this.supplier.Remarks),
+        comment: this.trimFormValue(this.supplier.Extra1)
       });
     }
   }
@@ -109,6 +111,7 @@ export class ApproveSupplierComponent implements OnInit {
     this.supplier.SwiftCode= bankDetails.swiftCode ? bankDetails.swiftCode : '';
     this.supplier.AccountNumber= bankDetails.accountNumber ? bankDetails.accountNumber : 0;
     this.supplier.AccountHolderName= bankDetails.accountHolderName ? bankDetails.accountHolderName : '';
+    this.supplier.Extra1= bankDetails.comment ? bankDetails.comment : '';
 
     this.dialogRef.close({ data: this.supplier });
   }

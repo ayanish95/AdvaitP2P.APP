@@ -16,6 +16,8 @@ export interface Products {
     Plant?:string;
     HSNCode?:string;
     GST?:number;
+    IsBatchNo?: boolean;
+    IsSerialNo?: boolean;
     IsActive?: boolean;
     CreatedBy?: string;
     CreatedOn?: Date;

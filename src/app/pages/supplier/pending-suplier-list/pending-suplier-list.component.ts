@@ -25,6 +25,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   @Input() searchText!: string;
   @Input() supplierList!: Suppliers[];
   propChanges: any;
+  rejectComments!:string;
 
   isLoading = true;
   displayedColumns: string[] = [
@@ -36,7 +37,8 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
     'Phone',
     'PendingFrom',
     'Edit',
-    'Reject'
+    'Reject',
+    'View',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -175,15 +177,18 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   }
 
   openDialogReject(templateRef: TemplateRef<any>, event: any) {
+    debugger;
+    this.rejectComments='';
     this.selectedSupplierId = event.Id;
     this.dialog.open(templateRef);
   }
 
   onClickReject() {
+    debugger;    
     if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
       throw this.toast.error('Something went wrong');
     this.supplierService
-      .rejectSupplier(this.selectedSupplierId)
+      .rejectSupplier(this.selectedSupplierId,this.rejectComments)
       .pipe(
         finalize(() => {
         })

@@ -1,5 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,20 +12,16 @@ import { Products } from '@core/models/products';
 import { StorageLocations } from '@core/models/storage-location';
 import { Units } from '@core/models/units';
 import { DocTypeService } from '@core/services/doc-type.service';
-import { PlantService } from '@core/services/plant.service';
-import { ProductService } from '@core/services/product.service';
-import { StorageLocationService } from '@core/services/storage-location.service';
-import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
-import { ASNDetailsLine } from '../asn';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
-import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
+import { ASNDetailsLine, AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
+import { CommonEnum } from '@core/enums/common-enum';
 
 
 @Component({
@@ -45,23 +41,19 @@ export class CreateAdvancedShippingNotificationComponent {
     PoNo: [null, [Validators.required]],
     DocType: [null, [Validators.required]],
     Documentdate: [new Date(), [Validators.required]],
+    SupplierId: [null, [Validators.required]],
     SupplierCode: [null, [Validators.required]],
     SupplierName: [null, [Validators.required]],
+    Shippingdate: [new Date(), [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
 
   });
 
-  ASNLineForm = this.fb.group({
-    Product: ['', [Validators.required]],
-    Description: [''],
-    ProductGroup: [''],
-    Qty: ['', [Validators.required]],
-    Unit: ['', [Validators.required]],
-    DeliveryDate: ['', [Validators.required]],
-    Plant: ['', [Validators.required]],
-    StorageLocation: ['', [Validators.required]],
+  BatchAndSerialNoForm = this.fb.group({
+    items: new FormArray([]),
   });
-  approvedPolist: PurchaseOrderHeader[]=[];
+
+  approvedPolist: PurchaseOrderHeader[] = [];
   filteredprno!: Observable<PurchaseOrderHeader[]>;
 
   suppliercodelist!: Suppliers[];
@@ -86,7 +78,7 @@ export class CreateAdvancedShippingNotificationComponent {
   ASNLineItems: ASNDetailsLine[] = [];
   dataSource = new MatTableDataSource<any>();
   index = 0;
-  PRId!: number;
+  POId!: number;
   displayedColumns: string[] = [
     'srNo',
     'polineno',
@@ -105,11 +97,15 @@ export class CreateAdvancedShippingNotificationComponent {
   minDate: Date = new Date();
   selectedLineId!: number;
   currentUserId!: number;
-  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,private advanceShippingNotificationService: AdvanceShippingNotificationService,
-    private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
+  selecteItemQty!: number;
+  selectePOLineId!: number;
+  selectePOId!: number;
+  batchAndSerialNoList: AdvancedShipmentNotificationProductDet[] = [];
+  constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private advanceShippingNotificationService: AdvanceShippingNotificationService,
+    private toaster: ToastrService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
     private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
     this.route.queryParams.subscribe((params: any) => {
-      this.PRId = params.id;
+      this.POId = params.id;
       // if (!this.PRId || this.PRId <= 0)
       //   this.router.navigateByUrl('/pages/purchase-requisition');
     });
@@ -120,10 +116,8 @@ export class CreateAdvancedShippingNotificationComponent {
     this.ASNHeaderForm.get('Documentdate')?.disable();
     this.currentUserId = this.authService.userId();
     this.apiDocType();
-    this.apiProductList();
-    this.apiPlantList();
-    this.apuUnitList();
-    this.apiStorageLocationList();
+    if (this.POId)
+      this.apiGetPoDetailsById(this.POId);
 
     this.supplierService
       .getSupplierList()
@@ -151,7 +145,6 @@ export class CreateAdvancedShippingNotificationComponent {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.approvedPolist = res[ResultEnum.Model];
-          console.log(this.approvedPolist);
           this.filteredprno = this.ASNHeaderForm.get('PoNo')!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPono(value || ''))
@@ -163,12 +156,10 @@ export class CreateAdvancedShippingNotificationComponent {
 
   filterPono(name: any) {
     if (name?.Id) {
-      return this.approvedPolist.filter(po=>po.ERPPONumber);
-
-
+      return this.approvedPolist.filter(po => po.ERPPONumber);
     }
     else {
-      return this.approvedPolist.filter(po=>po.ERPPONumber);
+      return this.approvedPolist.filter(po => po.ERPPONumber);
     }
   }
 
@@ -189,45 +180,16 @@ export class CreateAdvancedShippingNotificationComponent {
     return supplierCode ? supplierCode.SupplierCode! : ''; ``;
   }
 
-  getsupplier(event: any) {
-
-    const supplier = this.suppliercodelist.find(x => x.SupplierCode?.toLowerCase() == event?.SupplierCode?.toLowerCase());
-    if (supplier) {
-    }
-  }
-
-
   getpono(selectedPRNumber: number) {
-
-    this.purchaseOrderService.getPODetailsById(selectedPRNumber).subscribe(response => {
-      console.log(response);
-    // this.ASNHeaderForm.reset();
-    // this.ASNHeaderForm.updateValueAndValidity();
-
-      this.PoDetails = response[ResultEnum.Model];
-      if (this.PoDetails) {
-        this.ASNHeaderForm.patchValue({
-          PoNo: this.PoDetails.ERPPONumber as any,
-          DocType: this.PoDetails.DocType as any,
-          Documentdate: this.formatDate(this.PoDetails.PODate) as any,
-          SupplierCode: this.PoDetails.SupplierCode as any,
-          SupplierName: this.PoDetails.SupplierName as any,
-        });
-      }
-
-      // Update the prData array with the received data
-      this.dataSource.data = response.Model.POLineItems;
-      this.ASNLineItems = response.Model.POLineItems;
-    });
+    this.POId = selectedPRNumber;
+    this.apiGetPoDetailsById(this.POId);
   }
 
   apiGetPoDetailsById(poId: number) {
-
     // this.ASNHeaderForm.reset();
+    this.ASNLineItems=[];
+    this.dataSource.data = [];
     this.ASNHeaderForm.updateValueAndValidity();
-
-    this.ASNLineForm.reset();
-    this.ASNLineForm.updateValueAndValidity();
 
     this.purchaseOrderService
       .getPODetailsById(poId)
@@ -237,7 +199,6 @@ export class CreateAdvancedShippingNotificationComponent {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.PoDetails = res[ResultEnum.Model];
             if (this.PoDetails) {
@@ -245,6 +206,7 @@ export class CreateAdvancedShippingNotificationComponent {
                 PoNo: this.PoDetails.ERPPONumber as any,
                 DocType: this.PoDetails.DocType as any,
                 Documentdate: this.formatDate(this.PoDetails.PODate) as any,
+                SupplierId: this.PoDetails.SupplierId as any,
                 SupplierCode: this.PoDetails.SupplierCode as any,
                 SupplierName: this.PoDetails.SupplierName as any,
               });
@@ -255,24 +217,33 @@ export class CreateAdvancedShippingNotificationComponent {
                 ProductCode: item ? item?.ProductCode : '',
                 ProductDescription: item ? item?.ProductDescription : '',
                 LineId: 0,
-                POHeaderId: 0,
-                ProductId: 0,
-                ProductGroup: '',
-                Qty: item ? item?.POHeaderId : 0,
+                POHeaderId: item ? item?.POHeaderId : 0,
+                POLineId: item?.Id ? item?.Id : 0,
+                ProductId: item ? item?.ProductId : 0,
+                ProductGroup: item ? item?.ProductGroup : '',
+                POQty: item ? item?.Qty : 0,
+                Qty: item ? item?.Qty : 0,
                 DeliveryDate: item.DeliveryDate,
                 UnitId: item ? item?.UnitId : 0,
                 UnitName: item ? item?.UnitName : '',
-                UnitDescription: '',
+                UnitDescription: item ? item?.UnitDescription : '',
                 PlantId: item ? item?.POHeaderId : 0,
-                PlantCode: '',
+                PlantCode: item ? item?.PlantCode : '',
                 PlantDescription: item ? item?.PlantDescription : '',
-                StorageLocationId: 0,
-                LocationCode: '',
+                StorageLocationId: item ? item?.StorageLocationId : 0,
+                LocationCode: item ? item?.LocationCode : '',
                 LocationDescription: item ? item?.LocationDescription : '',
                 IsActive: false,
-                CreatedBy: 0,
+                IsReturnItem: item?.IsReturnItem,
+                IsGRGenerated: item?.IsGRGenerated,
+                IsASNGenerated: item?.IsASNGenerated,
+                IsInvoiceGenerated: item?.IsInvoiceGenerated,
+                IsQualityChecked: item?.IsQualityChecked,
+                IsSerialNo: item?.IsSerialNo,
+                IsBatchNo: item?.IsBatchNo,
+                CreatedBy: item ? item?.CreatedBy : 0,
                 CreatedOn: item.CreatedOn,
-                UpdatedBy: 0,
+                UpdatedBy: item ? item?.UpdatedBy : 0,
                 UpdatedOn: item.UpdatedOn,
                 IsDeleted: true,
                 DeletedOn: item.DeletedOn,
@@ -286,11 +257,11 @@ export class CreateAdvancedShippingNotificationComponent {
           }
 
           else
-            this.toast.error(res[ResultEnum.Message]);
+            this.toaster.error(res[ResultEnum.Message]);
         }
 
         else
-          this.toast.error(res[ResultEnum.Message]);
+          this.toaster.error(res[ResultEnum.Message]);
       });
   }
 
@@ -321,86 +292,6 @@ export class CreateAdvancedShippingNotificationComponent {
         }
       });
   }
-
-  async apiProductList() {
-    await this.productService
-      .getProductList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.productList = res[ResultEnum.Model];
-          this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
-          if (this.PRId)
-            this.apiGetPoDetailsById(this.PRId);
-          this.filteredProducts = this.ASNLineForm.get('Product')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterProducts(value || ''))
-          );
-        }
-      });
-  }
-
-  apiPlantList() {
-    this.plantService
-      .getPlantList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.ASNLineForm.get('Plant')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterPlant(value || ''))
-          );
-        }
-      });
-
-  }
-
-  apuUnitList() {
-    this.unitService
-      .getAllUnit()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.ASNLineForm.get('Unit')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterUnit(value || ''))
-          );
-        }
-      });
-  }
-
-  apiStorageLocationList() {
-    this.storageLocationService.getAllLocationList().pipe(
-      finalize(() => {
-      })
-    )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.locationList = res[ResultEnum.Model];
-
-          this.filteredlocation = this.ASNLineForm.get('StorageLocation')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterStorageLocation(value || ''))
-          );
-        }
-        else {
-          this.toast.error(res[ResultEnum.Message]);
-        }
-      });
-  }
-
-
   // all dropdown search filters
   filterDocType(name: any) {
     if (name?.Type) {
@@ -411,66 +302,9 @@ export class CreateAdvancedShippingNotificationComponent {
     }
   }
 
-  filterProducts(name: any) {
-    if (name?.ProductCode) {
-      return this.productList.filter(product => product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
-    }
-    else {
-      return this.productList.filter(product => product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-
-  filterUnit(name: any) {
-    if (name?.UnitName || name?.MeasurementUnitName)
-      return this.unitList.filter(unit => unit?.UOM?.toLowerCase().indexOf(name.UOM.toLowerCase()) === 0 ||
-        unit?.MeasurementUnitName?.toLowerCase().indexOf(name.MeasurementUnitName.toLowerCase()) === 0);
-
-    else
-      return this.unitList.filter(plant => plant?.UnitName?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        plant?.MeasurementUnitName?.toLowerCase().indexOf(name.toLowerCase()) === 0);
-  }
-
-  filterPlant(name: any) {
-    if (name?.PlantCode || name?.PlantName)
-      return this.plantList.filter(plant => plant?.PlantName?.toLowerCase().indexOf(name.PlantName.toLowerCase()) === 0 ||
-        plant?.PlantCode?.toLowerCase().indexOf(name.PlantCode.toLowerCase()) === 0);
-
-    else
-      return this.plantList.filter(plant => plant?.PlantName?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        plant?.PlantCode?.toLowerCase().indexOf(name.toLowerCase()) === 0);
-  }
-
-  filterStorageLocation(name: any) {
-    if (name?.LocationCode || name?.LocationName) {
-      return this.locationList.filter(location => location?.LocationCode?.toLowerCase().includes(name.LocationCode.toLowerCase()) ||
-        location?.LocationName?.toLowerCase().includes(name.LocationName.toLowerCase()));
-    }
-    else {
-      return this.locationList.filter(location => location?.LocationCode?.toLowerCase().includes(name.toLowerCase()) ||
-        location?.LocationName?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-
   docTypeDisplayFn(docType: DocTypes) {
     return docType ? docType.Type! : '';
   }
-
-  productDisplayFn(product: Products) {
-    return product ? product.ProductCode! : '';
-  }
-
-  unitDisplayFn(units: Units) {
-    return units ? units.UOM + ' - ' + units.MeasurementUnitName! : '';
-  }
-
-  plantDisplayFn(user: Plants) {
-    return user ? user.PlantCode + ' - ' + user.PlantName! : '';
-  }
-
-  storageLocationDisplayFn(location: StorageLocations) {
-    return location ? location.LocationCode + ' - ' + location.LocationName! : '';
-  }
-
 
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -479,72 +313,107 @@ export class CreateAdvancedShippingNotificationComponent {
     return true;
   }
 
-  getPosts(event: any) {
-    const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
-    if (product) {
-      this.ASNLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
-      this.ASNLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
-    }
-  }
-
-
-  onChangePlant(event: any, IsEdit = false, locationId?: number) {
-    this.locationList = [];
-    this.ASNLineForm.get('StorageLocation')?.setValue(null);
-    if (event) {
-      this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
-        finalize(() => {
-        })
-      )
-        .subscribe(res => {
-          if (res[ResultEnum.IsSuccess]) {
-            this.locationList = res[ResultEnum.Model];
-            if (IsEdit && this.locationList?.length > 0) {
-              this.ASNLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
-            }
-
-            this.filteredlocation = this.ASNLineForm.get('StorageLocation')!.valueChanges.pipe(
-              startWith(''),
-              map(value => this.filterStorageLocation(value || ''))
-            );
-          }
-          else {
-            this.toast.error(res[ResultEnum.Message]);
-          }
-        });
-
-    }
-    else
-      this.toast.error('Plant code not found');
-  }
-
   async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
-    this.ASNLineForm.reset();
-    this.ASNLineForm.updateValueAndValidity();
-    if (data) {
-      this.selectedLineId = data?.Id;
-      this.minDate = data.DeliveryDate;
-      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
-      this.ASNLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
-        Description: data?.Description,
-        ProductGroup: data?.ProductGroup,
-        Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
-        DeliveryDate: data.DeliveryDate,
-        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
-        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
+    this.selecteItemQty = 0;
+    const isSerialNo = data?.IsSerialNo;
+    const isBatchNo = data?.IsBatchNo;
+    while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
+      this.BatchAndSerialNoForm.controls.items.removeAt(0);
+    }
+    const type = this.checkProductType(isSerialNo, isBatchNo);
+    if (data?.Qty) {
+      this.selecteItemQty = data.Qty;
+      this.selectePOLineId = data?.POLineId;
+      this.selectePOId = data?.POHeaderId;
+      if (!this.selectePOId || !this.selectePOLineId)
+        throw this.toaster.error('PO Id or PO Line Id not found for selected row...');
+      if (type != CommonEnum.None) {
+        if (type != CommonEnum.BatchNo) {
+          for (let index = 0; index < data?.Qty; index++) {
+            this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, this.selectePOId, this.selectePOLineId));
+          }
+        }
+        else {
+          this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, this.selectePOId, this.selectePOLineId));
+        }
+      }
+    }
+
+    this.dialog.open(templateRef, {
+      width: type == CommonEnum.All ? '56vw' : '45vw',
+      panelClass: 'custom-modalbox'
+    });
+  }
+
+  createFormForBatchAndSerialNo(type: any, PoId: number, lineId: number) {
+    if (type == CommonEnum.All) {
+      return this.fb.group({
+        PoId: [PoId],
+        POLineId: [lineId],
+        BatchNo: [],
+        SerialNo: [],
       });
     }
-    this.dialog.open(templateRef, {
-      width: '56vw',
-      panelClass: 'custom-modalbox'
+    else if (type == CommonEnum.BatchNo) {
+      return this.fb.group({
+        PoId: [PoId],
+        POLineId: [lineId],
+        BatchNo: [],
+        Qty: []
+      });
+    }
+    else if (type == CommonEnum.SerialNo) {
+      return this.fb.group({
+        PoId: [PoId],
+        POLineId: [lineId],
+        SerialNo: []
+      });
+    }
+    else return null;
+  }
+
+  addBatchNumberFormRow() {
+    this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(CommonEnum.BatchNo, this.selectePOId, this.selectePOLineId));
+  }
+
+  removeBatchNumberFormRow(i: any) {
+    const remove = this.BatchAndSerialNoForm.get('items') as FormArray;
+    remove.removeAt(i);
+  }
+
+  checkProductType(isSerialNo: any, isBatchNo: any) {
+    if (isBatchNo && !isSerialNo)
+      return CommonEnum.BatchNo;
+    else if (!isBatchNo && isSerialNo)
+      return CommonEnum.SerialNo;
+    else if (isBatchNo && isSerialNo)
+      return CommonEnum.All;
+    else if (!isBatchNo && !isSerialNo)
+      return CommonEnum.None;
+    return CommonEnum.None;
+  }
+
+  batchAndSerialNoGroupForm(): FormArray {
+    return this.BatchAndSerialNoForm.get('items') as FormArray;
+  }
+
+  onClickAddBatchSerialNo() {
+    const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
+    batchSerialNo?.forEach((data: any) => {
+      this.batchAndSerialNoList.push({
+        Id: 0,
+        PoId: data?.PoId,
+        PoDetId: data?.POLineId,
+        BatchNo: data?.BatchNo ? data?.BatchNo : '',
+        Qty: data?.Qty ? data?.Qty : null,
+        SerialNo: data?.SerialNo ? data?.SerialNo : '',
+      });
     });
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
     if (this.ASNLineItems?.length == 1)
-      throw this.toast.error('ASN must have one line item, you can not delete....');
+      throw this.toaster.error('ASN must have one line item, you can not delete....');
     if (data?.LineId > 0) {
       this.dialog.open(templateRef);
       this.selectedLineId = data?.Id;
@@ -573,13 +442,13 @@ export class CreateAdvancedShippingNotificationComponent {
           this.purchaseOrderService.deletePOLineByLineId(element.LineId ? element.LineId : 0).subscribe({
             next: (res: any) => {
               if (res[ResultEnum.IsSuccess]) {
-                this.toast.success(res.Message);
+                this.toaster.success(res.Message);
               }
               else {
-                this.toast.error(res.Message);
+                this.toaster.error(res.Message);
               }
             },
-            error: (e) => { this.toast.error(e.Message); },
+            error: (e) => { this.toaster.error(e.Message); },
             complete() {
             },
           });
@@ -595,49 +464,72 @@ export class CreateAdvancedShippingNotificationComponent {
     this.selectedLineId = 0;
   }
 
-  DetLineChange(paramevent: any,paramIndex:number)
-  {
-    debugger;
-    const _letNumber=Number(paramevent.target.value);
+  DetLineChange(paramevent: any, paramIndex: number) {
+    const _letNumber = Number(paramevent.target.value);
 
+    //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
+    this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty - _letNumber;
     this.ASNLineItems[paramIndex].Qty = _letNumber;
 
-    //this.dataSource.data[paramIndex].Qty = _letNumber;
     this.dataSource.data = this.ASNLineItems;
   }
-  openForAddAsn(){
-    debugger;
-    if (this.ASNHeaderForm)
-    console.log(this.ASNHeaderForm);
-    this.advanceShippingNotificationService;
-      if (this.ASNHeaderForm.valid) {
-        const PRHeaderData = this.ASNHeaderForm.value as any;
-        const ASNAdd: AdvancedShipmentNotificationVM = {
-          ERPPONumber: PRHeaderData.ERPPONumber?.Id as any,
-          DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-          SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-          SupplierName: PRHeaderData.SupplierName as any,
-          ASNDate: PRHeaderData.ASNDate ? PRHeaderData.ASNDate : new Date(),
-          DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
-          AsnDetVM: []
-        };
+  openForAddAsn() {
+    // if(this.batchAndSerialNoList?.length == 0)
 
-    this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
-      next: (res: any) => {
-        if (res[ResultEnum.IsSuccess]) {
-          console.log(res);
-
-        }
-        else {
-          // this.toaster.error(res.Message);
-        }
-      },
-      error: (e) => {  },
-      complete() {
-
-      },
+    const lineDet: AdvancedShipmentNotificationDetVM[] = [];
+    this.ASNLineItems.forEach(element => {
+      const asnLineDetails = this.batchAndSerialNoList.filter(x=>x.PoDetId == element.POLineId);
+      lineDet.push({
+        ASNHeaderId: 0,
+        POId: element.POHeaderId,
+        PODetId: element.POLineId,
+        ProductCode: element.ProductCode,
+        ProductDescription: element.ProductDescription,
+        ProductGroup: element.ProductGroup,
+        StockType: element.StockType ? element.StockType : '',
+        Plant: element.PlantCode,
+        StorageLocation: element.LocationCode,
+        OpenGRQty: element.OpenGRQty ? element.OpenGRQty : 0,
+        DeliveryQty: element.Qty ? element.Qty : 0,
+        DeliveryDate: element.DeliveryDate,
+        ASNProductDetails: asnLineDetails
+      });
     });
-  }}
+
+    this.advanceShippingNotificationService;
+    if (this.ASNHeaderForm.valid) {
+      const PRHeaderData = this.ASNHeaderForm.value as any;
+      const ASNAdd: AdvancedShipmentNotificationVM = {
+        POId: this.POId,
+        ERPPONumber: PRHeaderData.PoNo as any,
+        DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
+        SupplierId: PRHeaderData?.SupplierId as any,
+        DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
+        ShippingDate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
+        ASNDetails: lineDet,
+       
+      };
+
+      this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res.Message);
+            this.ASNHeaderForm.reset();
+            this.BatchAndSerialNoForm.reset();
+            this.router.navigateByUrl('/pages/advance-shipping-notification');
+          }
+          else {
+             this.toaster.error(res.Message);
+          }
+        },
+        error: (e) => { },
+        complete() {
+
+        },
+      });
+    }
+  }
+
 
 
 }

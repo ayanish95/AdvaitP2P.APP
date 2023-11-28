@@ -33,6 +33,12 @@
         <th mat-header-cell *matHeaderCellDef> Approval Pending By </th>
         <td mat-cell *matCellDef="let element"> {{element?.ApprovalPendingFrom}} </td>
     </ng-container>
+    <ng-container matColumnDef="View">
+      <th mat-header-cell *matHeaderCellDef> View </th>
+      <td mat-cell *matCellDef="let element">
+       <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}" matTooltip="Click to View">   <mat-icon >remove_red_eye</mat-icon></button>
+       </td>
+  </ng-container>
     <ng-container matColumnDef="Edit">
         <th mat-header-cell *matHeaderCellDef> Approve </th>
         <td mat-cell *matCellDef="let element">
@@ -64,8 +70,14 @@
 <ng-template #rejectAlert>
     <h2 mat-dialog-title class="text-center">Reject Supplier</h2>
     <div mat-dialog-content>Are you sure want to reject this supplier?</div>
+    <div mat-dialog-content>
+        <mat-form-field appearance="outline">
+            <mat-label>Remark</mat-label> 
+            <input   [(ngModel)]="rejectComments" matInput placeholder="Comments">
+        </mat-form-field>
+    </div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="warn" (click)="onClickReject()">Delete</button>
+        <button mat-raised-button color="warn" (click)="onClickReject()">Reject</button>
     </div>
 </ng-template>

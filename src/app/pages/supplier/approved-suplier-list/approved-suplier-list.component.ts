@@ -18,7 +18,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
   @Input() searchText!:string;
   @Input() supplierList!:Suppliers[];
   propChanges: any;
-  
+
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -30,6 +30,8 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
     'City',
     'Country',
     'Phone',
+    'isActive',
+    'View',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -40,7 +42,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
-  
+
   constructor(private supplierService: SupplierService,private toast:ToastrService){
 
   }
@@ -85,5 +87,16 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
+  }
+
+  updateSupplierr(element: any,e:any) {
+    debugger
+    element.IsActive = e.srcElement.checked;
+    this.supplierService.updateSupplier(element)
+      .subscribe(response => {
+        console.log('Update successful', response);
+      }, error => {
+        console.error('Error updating', error);
+      });
   }
 }
