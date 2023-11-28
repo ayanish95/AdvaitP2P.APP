@@ -6,6 +6,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { AsnListComponent } from './asn-list/asn-list.component';
 import { AllAsnListComponent } from './all-asn-list/all-asn-list.component';
 import { ViewAdvanceShippingNotificationComponent } from './view-advance-shipping-notification/view-advance-shipping-notification.component';
+import { EditAsnComponent } from './edit-asn/edit-asn.component';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { ViewAdvanceShippingNotificationComponent } from './view-advance-shippin
     CreateAdvancedShippingNotificationComponent,
     AsnListComponent,
     AllAsnListComponent,
-    ViewAdvanceShippingNotificationComponent
+    ViewAdvanceShippingNotificationComponent,
+    EditAsnComponent
   ],
   imports: [
     CommonModule,

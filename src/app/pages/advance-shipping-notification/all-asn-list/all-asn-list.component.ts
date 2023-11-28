@@ -35,6 +35,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     'PRDate',
     // 'Delete',
     'View',
+    'Edit',
   ];
   displayedColumns: string[] = [
     'srNo',
@@ -91,7 +92,6 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    debugger;
     this.propChanges = changes;
     if (this.propChanges?.allASNList && this.Type=='ASN') {
       this.allPOList=[];
