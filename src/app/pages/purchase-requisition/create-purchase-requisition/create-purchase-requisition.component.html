@@ -199,45 +199,12 @@
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Unit<small>*</small></h5>
-          </label>
-          <!-- <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput [matAutocomplete]="unitAutocomplete" formControlName="Unit" placeholder="Unit" >
-            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
-              <mat-option *ngFor="let unit of filteredUnits | async" [value]="unit">
-                {{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
-              Please select unit...
-            </mat-error>
-          </mat-form-field> -->
+          </label>          
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="Unit" readonly
             placeholder="Product unit">
           </mat-form-field>
-        </div>
-        <!-- <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Unit<small>*</small></h5>
-          </label>
-          <mat-form-field appearance="outline" class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="unitAutocomplete"
-                   formControlName="Unit"
-                   placeholder="Unit"
-                  >
-            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
-              <mat-option *ngFor="let unit of filteredUnits | async"
-                          [value]="unit">
-                          {{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}
-                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
-              Please select unit...
-            </mat-error>
-          </mat-form-field>
-        </div> -->
+        </div>        
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Delivery Date<small>*</small></h5>

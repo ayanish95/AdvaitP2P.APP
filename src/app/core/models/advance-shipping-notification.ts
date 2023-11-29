@@ -102,6 +102,10 @@ export interface ASNDetailsLine{
   DeletedOn: Date,
   Extra1: string,
   Extra2: string,
+  Width : number,
+  Height : number,
+  Length : number,
+  QtyWeight : number
 }
 
 export class AdvancedShipmentNotificationProductDet{
