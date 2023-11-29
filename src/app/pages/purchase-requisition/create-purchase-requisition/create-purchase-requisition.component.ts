@@ -299,8 +299,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     return true;
   }
 
-  getPosts(event: any) {
-    debugger
+  getPosts(event: any) {    
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);

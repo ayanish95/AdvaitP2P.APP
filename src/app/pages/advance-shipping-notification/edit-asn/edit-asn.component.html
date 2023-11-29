@@ -202,7 +202,7 @@
 
 
 <ng-template #addBatchOrSerialNo style="width: 56vw;">
-  <h2 mat-dialog-title>{{ selectedLineId ? 'Update' : 'Add'}} Batch / Serial Number </h2>
+  <h2 mat-dialog-title>Update Batch / Serial Number </h2>
   <mat-dialog-content>
     <form [formGroup]="BatchAndSerialNoForm">
       <ng-container formArrayName="items">
@@ -260,9 +260,7 @@
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
     <button mat-raised-button color="primary" mat-dialog-close
-            (click)="onClickAddBatchSerialNo()">{{ selectedLineId ?
-      'Update' :
-      'Add'}}</button>
+            (click)="onClickAddBatchSerialNo()">Update</button>
   </mat-dialog-actions>
 </ng-template>
 
