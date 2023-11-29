@@ -1,9 +1,14 @@
 <breadcrumb></breadcrumb>
 
 <mat-card>
-    <mat-card-header>
+  <mat-card-header>
+    <div class="col-md-9">
       <mat-card-title>Advance Shipping Detail</mat-card-title>
-    </mat-card-header>
+    </div>
+    <div class="col-md-3 d-flex justify-content-end">
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+    </div>
+  </mat-card-header>
     <mat-card-content *ngIf="ASNDetails">
       <div class="row">
         <div class="col-md-2">
@@ -89,7 +94,7 @@
           <th mat-header-cell *matHeaderCellDef> View Packing</th>
           <td mat-cell *matCellDef="let element">
             <button mat-icon-button (click)="openModelForViewItem(viewBatchOrSerialNo,element)"
-                [disabled]="!element?.IsSerialNo && !element?.IsBatchNo" 
+                [disabled]="!element?.IsSerialNo && !element?.IsBatchNo"
                 matTooltip="Click to View"> <mat-icon>remove_red_eye</mat-icon></button>
           </td>
         </ng-container>
@@ -104,7 +109,7 @@
   </mat-card>
 
 
-  <ng-template #viewBatchOrSerialNo style="width: 56vw;">        
+  <ng-template #viewBatchOrSerialNo style="width: 56vw;">
       <!-- <button mat-icon-button style="float:right;" (click)="closeDialog()">
         <mat-icon class="close-icon" color="warn">close</mat-icon>
       </button> -->
@@ -120,7 +125,7 @@
         <ng-container matColumnDef="Product">
           <th mat-header-cell *matHeaderCellDef> Product Code - Description </th>
           <td mat-cell *matCellDef="let element"> {{element?.ProductCode}} - {{element?.ProductDescription}}</td>
-        </ng-container>        
+        </ng-container>
         <ng-container matColumnDef="BatchNo">
           <th mat-header-cell *matHeaderCellDef> Batch No </th>
           <td mat-cell *matCellDef="let element"> {{element?.BatchNo}} </td>

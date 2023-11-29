@@ -243,8 +243,13 @@
       </div>
     </div>
       <div class="d-flex justify-content-end mt-20">
+        <button mat-raised-button (click)="onClickBack()" style="margin: 10px;color: brown;" > Back</button>
+
         <button [disabled]="" mat-raised-button
-                color="primary" (click)="openForAddAsn()"> Create ASN</button>
+                color="primary" style="margin: 10px;" (click)="openForAddAsn()"> Create ASN</button>
+
+      </div>
+      <div class="d-flex justify-content-start mt-20">
       </div>
     </form>
   </mat-card-content>

@@ -8,6 +8,8 @@ import { AdvanceShippingNotificationService } from '@core/services/advance-shipm
 import { AdvancedShipmentNotificationVM } from './../../../core/models/advance-shipping-notification';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonEnum } from '@core/enums/common-enum';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-view-advance-shipping-notification',
@@ -34,14 +36,14 @@ export class ViewAdvanceShippingNotificationComponent {
   //   'srNo',
   //   'BatchNo',
   //   'SerialNo',
-  //   'Qty'    
+  //   'Qty'
   // ];
   ASNId!: number;
   ASNDetails!: AdvancedShipmentNotificationVM;
   dataSource = new MatTableDataSource<any>();
   packingdataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private ASNService: AdvanceShippingNotificationService, private toaster: ToastrService, private route: ActivatedRoute,private dialog: MatDialog) {
+  constructor(private ASNService: AdvanceShippingNotificationService,private location: Location,private toaster: ToastrService, private route: ActivatedRoute,private dialog: MatDialog) {
 
     this.route.queryParams.subscribe((params: any) => {
       this.ASNId = params.id;
@@ -70,15 +72,15 @@ export class ViewAdvanceShippingNotificationComponent {
       });
   }
 
-  async openModelForViewItem(templateRef: TemplateRef<any>,data?: any) {        
+  async openModelForViewItem(templateRef: TemplateRef<any>,data?: any) {
     //const isSerialNo = data?.IsSerialNo;
-    //const isBatchNo = data?.IsBatchNo;    
+    //const isBatchNo = data?.IsBatchNo;
     const isBatchNo = true;
     const isSerialNo = false;
-   
+
     const type = this.checkProductType(isSerialNo, isBatchNo);
     if (data?.DeliveryQty) {
-      
+
       if (type != CommonEnum.None) {
         if (type != CommonEnum.BatchNo) {
           this.displayedPackingColumns = [
@@ -90,23 +92,23 @@ export class ViewAdvanceShippingNotificationComponent {
         }
         else {
           this.displayedPackingColumns = [
-            'srNo',   
+            'srNo',
             'Product',
-            'BatchNo',                     
+            'BatchNo',
             'Qty'
-          ];          
+          ];
         }
         if(type == CommonEnum.All){
           this.displayedPackingColumns = [
-            'srNo',   
+            'srNo',
             'Product',
-            'BatchNo', 
-            'SerialNo',                    
+            'BatchNo',
+            'SerialNo',
             'Qty'
-          ];  
+          ];
         }
         this.packingdataSource.data = data?.ASNProductDetails;
-      }     
+      }
     }
 
     this.dialog.open(templateRef, {
@@ -129,6 +131,9 @@ export class ViewAdvanceShippingNotificationComponent {
 
   closeDialog(){
     this.dialog.closeAll();
+  }
+  onClickBack() {
+    this.location.back();
   }
 
 }

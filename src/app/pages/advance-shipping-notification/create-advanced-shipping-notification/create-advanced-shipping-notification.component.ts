@@ -22,6 +22,8 @@ import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { ASNDetailsLine, AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
 import { CommonEnum } from '@core/enums/common-enum';
+import { Location } from '@angular/common';
+
 
 
 @Component({
@@ -107,7 +109,7 @@ export class CreateAdvancedShippingNotificationComponent {
   batchAndSerialNoList: AdvancedShipmentNotificationProductDet[] = [];
   constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private advanceShippingNotificationService: AdvanceShippingNotificationService,
     private toaster: ToastrService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
-    private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
+    private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService,private location: Location) {
     this.route.queryParams.subscribe((params: any) => {
       this.POId = params.id;
       // if (!this.PRId || this.PRId <= 0)
@@ -553,7 +555,7 @@ export class CreateAdvancedShippingNotificationComponent {
         DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
         ShippingDate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
         ASNDetails: lineDet,
-       
+
       };
 
       this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
@@ -574,6 +576,9 @@ export class CreateAdvancedShippingNotificationComponent {
         },
       });
     }
+  }
+  onClickBack() {
+    this.location.back();
   }
 
 

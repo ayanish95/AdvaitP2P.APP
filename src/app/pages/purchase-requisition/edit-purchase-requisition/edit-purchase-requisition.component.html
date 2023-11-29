@@ -69,15 +69,15 @@
           </ng-container>
           <ng-container matColumnDef="ProductCode">
             <th mat-header-cell *matHeaderCellDef> ProductCode </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductCode}}</td>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
           </ng-container>
           <ng-container matColumnDef="Description">
             <th mat-header-cell *matHeaderCellDef> Description </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Product?.Description}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.Description}} </td>
           </ng-container>
           <ng-container matColumnDef="ProductGroup">
             <th mat-header-cell *matHeaderCellDef> ProductGroup </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductGroup}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductGroup}} </td>
           </ng-container>
           <ng-container matColumnDef="Qty">
             <th mat-header-cell *matHeaderCellDef> Qty </th>
@@ -113,7 +113,7 @@
         </ng-container>
           <ng-container matColumnDef="Delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
-            <td mat-cell *matCellDef="let element"> 
+            <td mat-cell *matCellDef="let element">
              <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">  <mat-icon >delete</mat-icon></button>
              </td>
         </ng-container>

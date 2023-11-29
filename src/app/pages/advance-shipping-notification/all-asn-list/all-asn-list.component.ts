@@ -29,12 +29,13 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     'srNo',
     'ASNNo',
     'ASNDate',
-    'PONumber',    
+    'PONumber',
     'PODocType',
     'PODate',
     // 'Delete',
     'View',
     'Edit',
+    'AddASN'
   ];
   displayedColumns: string[] = [
     'srNo',
@@ -66,7 +67,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   constructor(private purchaseRequistionService: PurchaseRequistionService, private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    
+
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
