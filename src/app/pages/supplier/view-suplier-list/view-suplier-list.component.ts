@@ -46,13 +46,12 @@ export class ViewSuplierListComponent {
         finalize(() => {
         })
       )
-      .subscribe(res => {
-        debugger
+      .subscribe(res => {        
         if (res[ResultEnum.IsSuccess]) {
           console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.allSuppliierList = res[ResultEnum.Model];
-            console.log(this.allSuppliierList)
+            console.log(this.allSuppliierList);
             // this.dataSource.data = this.allSuppliierList.State;
           }
           else

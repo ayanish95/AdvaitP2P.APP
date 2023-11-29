@@ -70,6 +70,12 @@
 <ng-template #rejectAlert>
     <h2 mat-dialog-title class="text-center">Reject Supplier</h2>
     <div mat-dialog-content>Are you sure want to reject this supplier?</div>
+    <div mat-dialog-content>
+        <mat-form-field appearance="outline">
+            <mat-label>Remark</mat-label> 
+            <input   [(ngModel)]="rejectComments" matInput placeholder="Comments">
+        </mat-form-field>
+    </div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
         <button mat-raised-button color="warn" (click)="onClickReject()">Reject</button>

@@ -194,8 +194,8 @@
     "purchaseOrg": "Purchase Org",
     "companyCode": "Company Code",
     "remarks":"Remarks",
-    "taxNo":"Tax Number"
-
+    "taxNo":"Tax Number",
+    "comment":"Comment"
   },
   "profile": "Profile",
   "edit_profile": "Edit profile",
