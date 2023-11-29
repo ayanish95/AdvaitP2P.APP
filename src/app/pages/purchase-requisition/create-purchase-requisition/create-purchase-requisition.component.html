@@ -11,37 +11,15 @@
   <mat-card-content>
     <form [formGroup]="PRHeaderForm" class="form-field-full">
       <div class="row mt-5">
-        <!-- <div class="col-sm-3">
-          <label class="custom-label">
-            <h5> Doc Type</h5>
-          </label>
-          <div>
-            <ng-select [items]="filteredDocType | async" bindLabel="Type" [(ngModel)]="docTypeList"
-            placeholder="Select Doc Type" class="custom-dropdown">
-            <ng-template ng-label-tmp let-item="item" class="custom-selected">
-              {{ item?.Type }}
-            </ng-template>
-            <ng-template ng-option-tmp let-item="item">
-              {{ item?.Type }}
-            </ng-template>
-          </ng-select>
-          <div class="cutom-error"
-                                 *ngIf="PRHeaderForm.get('productGroup')?.hasError('required')" class="error-message">
-                                 Please select doc type...
-                                <span>{{'validations.required' | translate}}</span>
-                            </div>
-          </div>
-        </div> -->
-
         <div class="col-sm-3">
           <label class="custom-label">
             <h5> Doc Type</h5>
           </label>
           <mat-form-field>
-            <mat-select [formControl]="docTypeControl" formControlName="DocType" placeholder="DocType" #singleSelect>
+            <mat-select formControlName="DocType" placeholder="DocType" #singleSelect>
               <mat-option>
                 <ngx-mat-select-search [formControl]="docTypeControl" noEntriesFoundLabel
-                ="No Record Found..."></ngx-mat-select-search>
+                ="No Record Found..." placeholderLabel="Search..."></ngx-mat-select-search>
               </mat-option>
               <mat-option *ngFor="let DocType of filteredDocType | async" [value]="DocType.Type">
                 {{DocType.Type}}
@@ -52,38 +30,6 @@
             </mat-error>
           </mat-form-field>
         </div>
-          <!-- <mat-form-field>
-            <mat-select  formControlName="DocType" placeholder="DocType" #singleSelect>
-              <mat-option>
-                <ngx-mat-select-search formControlName="docTypeList"></ngx-mat-select-search>
-              </mat-option>
-              <mat-option *ngFor="let docType of filteredDocType | async"
-              [value]="docType?.Type">
-                {{docType.Type}}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
-              Please select doc type...
-            </mat-error>
-          </mat-form-field> -->
-
-          <!-- <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="docAutocomplete"
-                   formControlName="DocType"
-                   placeholder="Doc Type"
-                   >
-            <mat-autocomplete #docAutocomplete="matAutocomplete" >
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
-              Please select doc type...
-            </mat-error>
-          </mat-form-field> -->
-
         <div class="col-sm-3">
           <label class="custom-label">
             <h5> PR Date</h5>
@@ -142,8 +88,8 @@
           </ng-container>
           <ng-container matColumnDef="Unit">
             <th mat-header-cell *matHeaderCellDef> Unit </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Unit?.UnitName}} -
-              {{element?.Unit?.MeasurementUnitName}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.Unit}}
+             </td>
           </ng-container>
           <ng-container matColumnDef="DeliveryDate">
             <th mat-header-cell *matHeaderCellDef> DeliveryDate </th>
@@ -209,7 +155,7 @@
                               (optionSelected)='getPosts($event.option.value)'>
               <mat-option *ngFor="let product of filteredProducts | async"
                           [value]="product">
-                <span>{{ product.ProductCode }}</span>
+                <span>{{ product.ProductCode }} - {{ product.Description }}</span>
               </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="PRLineForm.get('Product')?.hasError('required')">
@@ -254,7 +200,7 @@
           <label class="custom-label">
             <h5>Unit<small>*</small></h5>
           </label>
-          <mat-form-field appearance="outline" class="demo-full-width">
+          <!-- <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput [matAutocomplete]="unitAutocomplete" formControlName="Unit" placeholder="Unit" >
             <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
               <mat-option *ngFor="let unit of filteredUnits | async" [value]="unit">
@@ -264,6 +210,10 @@
             <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
               Please select unit...
             </mat-error>
+          </mat-form-field> -->
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="Unit" readonly
+            placeholder="Product unit">
           </mat-form-field>
         </div>
         <!-- <div class="col-sm-6">

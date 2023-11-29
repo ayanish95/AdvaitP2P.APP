@@ -287,6 +287,7 @@ export class EditAsnComponent {
 
   onClickAddBatchSerialNo() {
     debugger
+    this.batchAndSerialNoList = [];
     const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
     batchSerialNo?.forEach((data: any) => {
       this.batchAndSerialNoList.push({
