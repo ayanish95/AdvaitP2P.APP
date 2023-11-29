@@ -275,7 +275,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
-        Unit: data.Unit,        
+        Unit: data.Unit.UOM,        
         DeliveryDate: data.DeliveryDate,
         Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
         StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
@@ -343,11 +343,10 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   onClickAddProduct() {
-    debugger
-
-    let temp = this.unitList?.find(x => x.UOM == PRline.Unit) as any;
+    debugger    
     //Unit: this.unitList?.find(x => x.UOM == data?.Product?.BaseUnit) as any,
     const PRline = this.PRLineForm.value;
+    let temp = this.unitList?.find(x => x.UOM == PRline.Unit) as any;
     if (this.selectedLineId > 0) {
       this.PRLineItem.forEach(item => {
         if (item?.Id == this.selectedLineId) {
@@ -355,8 +354,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
             item.Description = PRline.Description ? PRline.Description : '',
             item.Qty = PRline?.Qty as unknown as number,
-            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            //item.Unit =PRline.Unit as unknown as Units,
+            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,            
             item.Unit = this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
             item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
@@ -372,8 +370,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
         Description: PRline.Description ? PRline.Description : '',
         Qty: PRline?.Qty as unknown as number,
-        DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        //Unit:PRline.Unit as unknown as Units,
+        DeliveryDate: PRline?.DeliveryDate as unknown as Date,        
         Unit: this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
         Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
