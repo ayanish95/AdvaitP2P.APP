@@ -7,57 +7,6 @@
       "icon": "dashboard"
     },
     {
-      "route": "pages/user",
-      "name": "user",
-      "type": "link",
-      "icon": "people",
-      "permissions": {
-        "only": [
-          "Admin"
-        ]
-      }
-    },
-    {
-      "route": "pages/supplier",
-      "name": "supplier",
-      "type": "link",
-      "icon": "person",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin",
-          "ProcurementTeam"
-
-        ]
-      }
-    },
-    {
-      "route": "pages/product",
-      "name": "product",
-      "type": "link",
-      "icon": "layers",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin"
-
-        ]
-      }
-    },
-    {
-      "route": "pages/plant",
-      "name": "plant",
-      "type": "link",
-      "icon": "location_city",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin"
-
-        ]
-      }
-    },
-    {
       "route": "pages/purchase-requisition",
       "name": "purchaseRequisition",
       "type": "link",
@@ -131,6 +80,20 @@
 
     },
     {
+      "route": "pages/quality-control",
+      "name": "QualityControl",
+      "type": "link",
+      "icon": "queue",
+      "permissions": {
+        "only": [
+          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
       "route": "pages/return-goods-received-note",
       "name": "ReturnGRN",
       "type": "link",
@@ -145,15 +108,37 @@
 
     },
     {
-      "route": "pages/quality-control",
-      "name": "QualityControl",
-      "type": "link",
-      "icon": "queue",
+      "route": "pages",
+      "name": "masteruser",
+      "type": "sub",
+      "icon": "settings",
+      "children": [
+        {
+          "route": "user",
+          "name": "user",
+          "type": "link"
+        },
+        {
+          "route": "plant",
+          "name": "plant",
+          "type": "link"
+        },
+        {
+          "route": "product",
+          "name": "product",
+          "type": "link"
+        },
+        {
+          "route": "supplier",
+          "name": "supplier",
+          "type": "link"
+        }
+
+
+      ],
       "permissions": {
         "only": [
-          "UserTeam",
           "Admin"
-
         ]
       }
 

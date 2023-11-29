@@ -47,7 +47,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     Description: [''],
     ProductGroup: [''],
     Qty: ['', [Validators.required]],
-    Unit: ['', [Validators.required]],
+    Unit: ['',[Validators.required]],
     DeliveryDate: ['', [Validators.required]],
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
@@ -182,13 +182,15 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   // }
 
   filterProducts(name: any) {
-    if (name?.ProductCode) {
+    if (name?.ProductCode || name?.Description) {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.Description.toLowerCase()));
     }
     else {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.toLowerCase()));
     }
   }
 
@@ -232,7 +234,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   productDisplayFn(product: Products) {
-    return product ? product.ProductCode! : '';
+    return product ? product.ProductCode + ' - ' + product.Description : '';
   }
 
   unitDisplayFn(units: Units) {
@@ -261,6 +263,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
 
   async openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
+    debugger
     this.PRLineForm.reset();
     this.PRLineForm.updateValueAndValidity();
     if (data) {
@@ -271,7 +274,8 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        Unit: data.Unit,
+        // Unit: this.unitList?.find(x => x.Id == data?.Unit?.Id) as any,
         DeliveryDate: data.DeliveryDate,
         Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
         StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
@@ -305,6 +309,8 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
+      this.PRLineForm.get('Unit')?.setValue(product?.BaseUnit ? product?.BaseUnit : '');
+
     }
   }
 
@@ -338,6 +344,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   onClickAddProduct() {
+    debugger
     const PRline = this.PRLineForm.value;
     if (this.selectedLineId > 0) {
       this.PRLineItem.forEach(item => {
@@ -347,11 +354,12 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             item.Description = PRline.Description ? PRline.Description : '',
             item.Qty = PRline?.Qty as unknown as number,
             item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            item.Unit = PRline.Unit as unknown as Units,
+            item.Unit =PRline.Unit as unknown as Units,
             item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
             item.LineId = item.LineId,
             item.Id = item.Id;
+            console.log(this.PRLineItem)
         }
       });
     }
@@ -362,7 +370,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         Description: PRline.Description ? PRline.Description : '',
         Qty: PRline?.Qty as unknown as number,
         DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        Unit: PRline.Unit as unknown as Units,
+        Unit:PRline.Unit as unknown as Units,
         Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
         Id: this.PRLineItem.length + 1
@@ -386,6 +394,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
 
   onClickCreatePR() {
+    debugger
 
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {

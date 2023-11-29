@@ -26,6 +26,10 @@ export interface ASNDetailsLine{
   IGST?:number;
   SGST?:number;
   CGST?:number;
+  QtyWeight?:number;
+  Length?:number;
+  Height?:number;
+  Width?:number;
   TaxAmount?:number;
   TotalAmount?:number;
   StockType?:string;

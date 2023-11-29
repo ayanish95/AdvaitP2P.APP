@@ -85,6 +85,10 @@ export class CreateAdvancedShippingNotificationComponent {
     'ProductCode',
     'Description',
     'Deliveryqty',
+    'Weight',
+    'Length',
+    'Width',
+    'Height',
     'PutAwayqty',
     'Unit',
     'Plant',
@@ -327,7 +331,7 @@ export class CreateAdvancedShippingNotificationComponent {
 
   async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
     console.log('data',data);
-    
+
     while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
       this.BatchAndSerialNoForm.controls.items.removeAt(0)
     }
@@ -407,6 +411,42 @@ export class CreateAdvancedShippingNotificationComponent {
     const _letNumber = Number(paramevent.target.value);
 
     this.ASNLineItems[paramIndex].Qty = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeQtyWeight(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].QtyWeight = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeLength(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Length = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeWidth(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Width = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeHeight(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Height = _letNumber;
 
     //this.dataSource.data[paramIndex].Qty = _letNumber;
     this.dataSource.data = this.ASNLineItems;
