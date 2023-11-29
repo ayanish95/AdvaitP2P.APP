@@ -252,7 +252,11 @@ export class CreateAdvancedShippingNotificationComponent {
                 IsDeleted: true,
                 DeletedOn: item.DeletedOn,
                 Extra1: '',
-                Extra2: ''
+                Extra2: '',
+                QtyWeight : 0,
+                Length : 0,
+                Width : 0,
+                Height :0
               });
             });
 
