@@ -23,6 +23,17 @@
                 matTooltip="Click to View"> <mat-icon>remove_red_eye</mat-icon></button>
       </td>
     </ng-container>
+    <ng-container matColumnDef="AddASN">
+      <th mat-header-cell *matHeaderCellDef> Create ASN </th>
+      <td mat-cell *matCellDef="let element"
+          [routerLink]="['../advance-shipping-notification/add-asn']"
+          [queryParams]="{id: element.Id}">
+        <button mat-icon-button color="primary" matTooltip="Click to Create ASN">
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>

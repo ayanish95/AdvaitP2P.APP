@@ -111,12 +111,14 @@
       "route": "pages",
       "name": "masteruser",
       "type": "sub",
-      "icon": "settings",
+      "icon": "assignment_ind",
       "children": [
         {
           "route": "user",
+          "icon": "perm_identity",
           "name": "user",
           "type": "link"
+
         },
         {
           "route": "plant",

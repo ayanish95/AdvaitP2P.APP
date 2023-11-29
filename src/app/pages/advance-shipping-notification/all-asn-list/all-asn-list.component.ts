@@ -35,6 +35,7 @@ export class AllAsnListComponent implements OnInit,OnChanges {
     'PRDate',
    // 'Delete',
     'View',
+    'AddASN',
   ];
 
   dataSource = new MatTableDataSource<any>();

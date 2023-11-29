@@ -114,10 +114,10 @@ export class EditPurchaseRequisitionComponent implements OnInit {
           if (res[ResultEnum.Model]) {
             this.PRDetails = res[ResultEnum.Model];
             if (this.PRDetails) {
-              if(this.PRDetails?.IsApprovedByAll || this.PRDetails?.IsRejected){
-                 this.toast.error('You can not update this PR');
-                 this.router.navigateByUrl('/pages/purchase-requisition');
-              }
+              // if(this.PRDetails?.IsApprovedByAll || this.PRDetails?.IsRejected){
+              //    this.toast.error('You can not update this PR');
+              //    this.router.navigateByUrl('/pages/purchase-requisition');
+              // }
               this.PRHeaderForm.patchValue({
                 DocType: this.PRDetails.PRDocType as any,
                 PRDate: this.formatDate(this.PRDetails.PRDate) as any
