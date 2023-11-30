@@ -152,6 +152,8 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
 
   onSelectChangeASNNumber(id: any) {
     this.GRNHeaderForm.reset();
+    this.GRNHeaderForm.get('ASNNumber')?.setValue(id);
+    this.GRNHeaderForm.get('Documentdate')?.setValue(new Date());
     this.dataSource.data = [];
     this.ASNDetails = {} as AdvancedShipmentNotificationVM;
     this.GRNLineItems = [];
