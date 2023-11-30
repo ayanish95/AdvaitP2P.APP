@@ -34,8 +34,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     'PODate',
     // 'Delete',
     'View',
-    'Edit',
-    'AddASN'
+    'Edit'
   ];
   displayedColumns: string[] = [
     'srNo',

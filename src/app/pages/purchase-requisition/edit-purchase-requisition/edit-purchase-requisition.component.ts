@@ -39,7 +39,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     Description: [''],
     ProductGroup: [''],
     Qty: ['', [Validators.required]],
-    Unit: ['', [Validators.required]],
+    Unit: ['',[Validators.required]],
     DeliveryDate: ['', [Validators.required]],
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
@@ -125,6 +125,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
             }
             this.PRDetails.PRLineItems?.forEach((item, index) => {
               this.PRLineItem.push({
+                // Product: item.PlantCode,
                 Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
                 ProductGroup: item.ProductGroup,
                 Description: item.ProductDescription,
@@ -345,6 +346,8 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
+      this.PRLineForm.get('Unit')?.setValue(product?.BaseUnit ? product?.BaseUnit : '');
+
     }
   }
 
@@ -386,11 +389,12 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       this.minDate = data.DeliveryDate;
       await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
       this.PRLineForm.patchValue({
+        // Product: data?.ProductCode,
         Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        Unit: data.Unit.UOM,
         DeliveryDate: data.DeliveryDate,
         Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
         StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
@@ -413,7 +417,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
             item.Description = PRline.Description ? PRline.Description : '',
             item.Qty = PRline?.Qty as unknown as number,
             item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            item.Unit = PRline.Unit as unknown as Units,
+            item.Unit = this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
             item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
             item.LineId = item.LineId,
@@ -428,7 +432,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         Description: PRline.Description ? PRline.Description : '',
         Qty: PRline?.Qty as unknown as number,
         DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        Unit: PRline.Unit as unknown as Units,
+        Unit: this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
         Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
         Id: this.PRLineItem.length + 1,
