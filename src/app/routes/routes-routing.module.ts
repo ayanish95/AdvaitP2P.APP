@@ -50,11 +50,7 @@ const routes: Routes = [
         loadChildren: () => import('../pages/purchase-requisition/purchase-requisition.module').then(m => m.PurchaseRequisitionModule),
       },
       {
-        path: 'pages/approval-config',
-        loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
-      },
-      {
-        path: 'pages/approval-config',
+        path: 'config/approval-config',
         loadChildren: () => import('../pages/setting/setting.module').then(m => m.SettingModule),
       },
       {

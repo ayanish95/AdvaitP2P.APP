@@ -2,9 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GoodsReceivedNoteRoutingModule } from './goods-received-note-routing.module';
 import { ListGoodsReceivedNoteComponent } from './list-goods-received-note/list-goods-received-note.component';
-import { SharedModule } from '@shared/shared.module';
+import { SharedModule } from '@shared';
 import { CreateGoodsReceivedNoteComponent } from './create-goods-received-note/create-goods-received-note.component';
 import { ViewGoodsReceivedNoteComponent } from './view-goods-received-note/view-goods-received-note.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { ViewGoodsReceivedNoteComponent } from './view-goods-received-note/view-
   imports: [
     CommonModule,
     GoodsReceivedNoteRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxMatSelectSearchModule
   ]
 })
 export class GoodsReceivedNoteModule { }
