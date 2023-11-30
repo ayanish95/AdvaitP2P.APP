@@ -70,5 +70,6 @@ export class Method {
   static DeleteASNById = `/DeleteASNById`;
   static GetAllASNListForGR = `/GetAllASNListForGR`;
   static GetAllASNDetailsById = `/GetASNById`;
+  static CreateGR = `/CreateGR`;
 
 }

@@ -9,7 +9,7 @@
 
   </mat-card-header>
   <mat-card-content>
-    <form [formGroup]="GRHeaderForm" class="form-field-full">
+    <form [formGroup]="GRNHeaderForm" class="form-field-full">
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
@@ -26,7 +26,7 @@
                 {{asnDetail.ASNNo}}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="GRHeaderForm.get('ASNNumber')?.hasError('required')">
+            <mat-error *ngIf="GRNHeaderForm.get('ASNNumber')?.hasError('required')">
               Please select ASN Number...
             </mat-error>
           </mat-form-field>
@@ -48,6 +48,39 @@
           <mat-form-field class="demo-full-width">
             <input matInput
                    formControlName="PONumber" readonly
+                   placeholder="Select PO Number">
+
+          </mat-form-field>
+        </div> 
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>ASN Delivery Date</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="ASNDeliveryDate" readonly
+                   placeholder="ASN Delivery Date">
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Supplier</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Supplier" readonly
+                   placeholder="Select PO Number">
+
+          </mat-form-field>
+        </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Company Code</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="CompanyCode" readonly
                    placeholder="Select PO Number">
 
           </mat-form-field>
@@ -78,7 +111,7 @@
                 {{stockType.Value}}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="GRHeaderForm.get('DocType')?.hasError('required')">
+            <mat-error *ngIf="GRNHeaderForm.get('DocType')?.hasError('required')">
               Please select doc type...
             </mat-error>
           </mat-form-field>
@@ -131,7 +164,7 @@
           <ng-container matColumnDef="GRQty">
             <th mat-header-cell *matHeaderCellDef> GR Qty </th>
             <td mat-cell *matCellDef="let element;let i = index"> 
-              <input matInput type="number" [value]="element.DeliveryQty" name='DeliveryQty' 
+              <input matInput type="number" [value]="element.GRDeliveryQty" name='GRDeliveryQty' 
                      (input)="onLineChangeOpenGRQty($event,i)" />
             </td>
           </ng-container>
@@ -155,7 +188,7 @@
           <ng-container matColumnDef="ViewPacking">
             <th mat-header-cell *matHeaderCellDef> View Packing </th>
             <td mat-cell *matCellDef="let element">
-              <button mat-icon-button matTooltip="Click to View">   <mat-icon >remove_red_eye</mat-icon></button>
+              <button [disabled]="!element?.IsBatchNo && !element?.IsSerialNo"  mat-icon-button matTooltip="Click to View" (click)="openModelForViewItem(viewBatchOrSerialNo,element)">   <mat-icon >remove_red_eye</mat-icon></button>
             </td>
         </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -165,7 +198,7 @@
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">
-        <button [disabled]="" mat-raised-button
+        <button [disabled]="" mat-raised-button (click)="onClickCreatePR()"
                 color="primary"> Create GR</button>
       </div>
     </form>
@@ -173,9 +206,6 @@
 </mat-card>
 
 <ng-template #viewBatchOrSerialNo style="width: 56vw;">        
-  <!-- <button mat-icon-button style="float:right;" (click)="closeDialog()">
-    <mat-icon class="close-icon" color="warn">close</mat-icon>
-  </button> -->
   <button style="float:right; color:red; background-color: transparent;" mat-button (click)="closeDialog()">X</button>
 <h2 mat-dialog-title>View Batch / Serial Number </h2>
 <!-- <button type="button" #closebutton class="close" data-dismiss="modal">&times;</button> -->

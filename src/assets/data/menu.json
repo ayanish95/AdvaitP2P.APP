@@ -159,7 +159,7 @@
 
     },
     {
-      "route": "pages",
+      "route": "config",
       "name": "configuration",
       "type": "sub",
       "icon": "settings",
