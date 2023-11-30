@@ -52,6 +52,7 @@
         </div>
         <div class="col-sm-12 d-flex align-items-center mt-15">
           <button mat-button mat-raised-button color="primary"
+                  *ngIf="!this.PRDetails?.IsApprovedByAll && !this.PRDetails?.IsRejected"
                   (click)="openModelForAddItem(editProduct)">
             <mat-icon>add</mat-icon>
             Add Item

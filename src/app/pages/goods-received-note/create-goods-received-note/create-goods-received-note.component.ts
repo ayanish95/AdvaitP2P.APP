@@ -1,49 +1,47 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
-import { DocTypes } from '@core/models/doc-type';
-import { Plants } from '@core/models/plants';
-import { Products } from '@core/models/products';
-import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM, PurchaseRequisitionLine } from '@core/models/purchase-requistion';
-import { StorageLocations } from '@core/models/storage-location';
-import { Units } from '@core/models/units';
-import { DocTypeService } from '@core/services/doc-type.service';
-import { PlantService } from '@core/services/plant.service';
-import { ProductService } from '@core/services/product.service';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
-import { StorageLocationService } from '@core/services/storage-location.service';
-import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, finalize, map, startWith } from 'rxjs';
-import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
-import { Suppliers } from '@core/models/suppliers';
-import { SupplierService } from '@core/services/supplier.service';
-import { Console } from 'console';
-import { SortDataSource } from 'app/routes/material/table/table.component';
+import { Observable, map, startWith } from 'rxjs';
+import { MAT_SELECT_CONFIG } from '@angular/material/select';
+import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
+import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
+import { StockTypeEnum } from '@core/enums/stokc-stype-enum';
+import { GoodsReceivedNoteDetVM, GoodsReceivedNoteHeaderVM, GoodsReceivedNoteProductDet } from '@core/models/goods-received-note';
+import { SelectionModel } from '@angular/cdk/collections';
+import { CommonEnum } from '@core/enums/common-enum';
+import { ReturnGoodsReceptionNotificationService } from '@core/services/return-goods-reception-notification.service';
 @Component({
   selector: 'app-create-goods-received-note',
   templateUrl: './create-goods-received-note.component.html',
-  styleUrls: ['./create-goods-received-note.component.scss']
+  styleUrls: ['./create-goods-received-note.component.scss'],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    {
+      provide: MAT_SELECT_CONFIG,
+      useValue: { overlayPanelClass: 'customClass' }
+    }
+  ]
 })
-export class CreateGoodsReceivedNoteComponent {
-  PRHeaderForm = this.fb.group({
-    pono: [null, [Validators.required]],
-    asnno: [null, [Validators.required]],
-    DocType: [null, [Validators.required]],
+export class CreateGoodsReceivedNoteComponent implements OnInit {
+  GRNHeaderForm = this.fb.group({
+    ASNNumber: ['', [Validators.required]],
+    PONumber: ['', [Validators.required]],
+    DocType: ['', [Validators.required]],
     Documentdate: [new Date(), [Validators.required]],
-    Transaction: [null, [Validators.required]],
-    REFNO:[''],
-    postingdate: [new Date],
-
+    ASNDeliveryDate: [null, [Validators.required]],
+    StockType: ['', [Validators.required]],
+    Transaction: ['', [Validators.required]],
+    Supplier: [''],
+    CompanyCode: [''],
   });
 
-  PRLineForm = this.fb.group({
+  GRNLineForm = this.fb.group({
     Product: ['', [Validators.required]],
     Description: [''],
     ProductGroup: [''],
@@ -53,192 +51,167 @@ export class CreateGoodsReceivedNoteComponent {
     Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
-  prlist!:PurchaseRequisitionHeader[];
-  filteredprno!: Observable<PurchaseRequisitionHeader[]>;
 
-  suppliercodelist!:Suppliers[];
-filtersupplierCode!:Observable<Suppliers[]>;
+  asnList!: AdvancedShipmentNotificationVM[];
+  filteredASNo!: Observable<AdvancedShipmentNotificationVM[]>;
 
-  plantList!: Plants[];
-  filteredPlants!: Observable<any>;
-
-  unitList!: Units[];
-  filteredUnits!: Observable<any>;
-
-  docTypeList!: DocTypes[];
-  filteredDocType!: Observable<DocTypes[]>;
-  productList!: Products[];
-  filteredProducts!: Observable<Products[]>;
-  locationList!: StorageLocations[];
-  filteredlocation!: Observable<StorageLocations[]>;
-
-  PRLineItem: PurchaseRequisitionLine[] = [];
   dataSource = new MatTableDataSource<any>();
+  packingdataSource = new MatTableDataSource<any>();
   index = 0;
-  PRId!: number;
   displayedColumns: string[] = [
+    'IsSelected',
     'srNo',
     'ProductCode',
     'Description',
-    'grqty',
-    'Orderedqty',
+    'GRQty',
+    'OpenGRQty',
     'Unit',
-    'Po',
-    'polineno',
     'Plant',
     'Location',
-    'Suppliercode',
-    'Edit',
-
+    'ViewPacking',
   ];
+  displayedPackingColumns: string[] = [
+    'IsSelected',
+    'srNo',
+    'Product',
+    'BatchNo',
+    'SerialNo',
+    'Qty'
+  ];
+
+  stockTypeList = [
+    { "Id": StockTypeEnum.QualityCheck, "Value": StockTypeEnum.QualityCheck },
+    { "Id": StockTypeEnum.UnrestrictedStock, "Value": StockTypeEnum.UnrestrictedStock },
+    { "Id": StockTypeEnum.RestrictedStock, "Value": StockTypeEnum.RestrictedStock },
+  ];
+
   minDate: Date = new Date();
-  PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
-  currentUserId!:number;
-  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
-    private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router, private route: ActivatedRoute,private authService:AuthService,private supplierService: SupplierService) {
-    this.route.queryParams.subscribe((params: any) => {
-      this.PRId = params.id;
-      // if (!this.PRId || this.PRId <= 0)
-      //   this.router.navigateByUrl('/pages/purchase-requisition');
-    });
+  currentUserId!: number;
+  ASNDetails!: AdvancedShipmentNotificationVM;
+  GRNLineItems: GoodsReceivedNoteDetVM[] = [];
+  filteredStockType!: Observable<any[]>;
+  stockTypeControl = new FormControl();
+  asnNumberControl = new FormControl();
+  selection = new SelectionModel<GoodsReceivedNoteDetVM>(true, []);
+  selectionSerialAndBatchNo = new SelectionModel<GoodsReceivedNoteProductDet>(true, []);
+  constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private toaster: ToastrService, private GRNService: ReturnGoodsReceptionNotificationService,
+    private asnService: AdvanceShippingNotificationService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
 
   ngOnInit() {
     this.currentUserId = this.authService.userId();
-    this.apiDocType();
-    this.apiProductList();
-    this.apiPlantList();
-    this.apuUnitList();
-    this.apiStorageLocationList();
-    this.supplierService
-    .getSupplierList()
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.suppliercodelist = res[ResultEnum.Model];
-        this.suppliercodelist.map(x => x.ShortName = x.SupplierCode + (x.FirstName ? ' - ' + x.FirstName : ''));
-        this.filtersupplierCode = this.PRHeaderForm.get('supplier')!.valueChanges.pipe(
-          startWith(''),
-          map(value => this.filterSupplier(value || ''))
-        );
-      }
-    });
-    this.prService
-    .getAllPRHeaderList()
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.prlist = res[ResultEnum.Model];
+    this.apiGetASNNumberForGR();
 
-        this.filteredprno = this.PRHeaderForm.get('pono')!.valueChanges.pipe(
-          startWith(''),
-          map(value => this.filterPono(value || ''))
-        );
-      }
-    });
-
-
-  }
-  filterPono(name: any) {
-    if (name?.PRNumber) {
-      return this.prlist.filter(pr =>
-        pr?.Id);
-
-    }
-    else {
-      return this.prlist.filter(pr =>
-        pr?.Id);
-    }
-  }
-  filterSupplier(name: any) {
-    if (name?.supplierCode) {
-      return this.suppliercodelist.filter(Supplier =>
-        Supplier?.SupplierCode);
-    }
-    else {
-      return this.suppliercodelist.filter(Supplier =>
-        Supplier?.SupplierCode);
-    }
-  }
-  supplierDisplayFn(supplier: Suppliers) {
-    return supplier ? supplier.SupplierCode! : '';
-  }
-  suppliercodee(supplierCode: Suppliers) {
-    return supplierCode ? supplierCode.SupplierCode! : '';``;
-  }
-  getsupplier(event: any) {
-
-    const supplier = this.suppliercodelist.find(x => x.SupplierCode?.toLowerCase() == event?.SupplierCode?.toLowerCase());
-    if (supplier) {
-
-
-    }
-  }
-  getpono(selectedPRNumber: number) {
-
-    this.prService.getPRDetailsById(selectedPRNumber).subscribe(response => {
-      // console.log(response);
-
-      // Update the prData array with the received data
-      this.dataSource = response.Model.PRLineItems;
-    });
+    this.filteredStockType = this.stockTypeControl!.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterStockType(value || ''))
+    );
   }
 
-  // all api initial
-  apiGetPRDetailsById(prId: number) {
-    this.prService
-      .getPRDetailsById(prId)
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+  apiGetASNNumberForGR() {
+    this.asnService.GetAllASNListForGRCreation().subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
-          if (res[ResultEnum.Model]) {
-            this.PRDetails = res[ResultEnum.Model];
-            if (this.PRDetails) {
-              this.PRHeaderForm.patchValue({
-                pono:this.PRDetails.Id as any,
-                DocType: this.PRDetails.PRDocType as any,
-                Documentdate: this.formatDate(this.PRDetails.PRDate) as any
-              });
-            }
-            this.PRDetails.PRLineItems?.forEach((item, index) => {
-              this.PRLineItem.push({
-                Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
-                ProductGroup: item.ProductGroup,
-                Description: item.ProductDescription,
-                Qty: item?.Qty,
-                DeliveryDate: item?.DeliveryDate,
-                Unit: this.unitList?.find(x => x.Id == item.UnitId),
-                Plant: this.plantList?.find(x => x.Id == item.PlantId),
-                StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
-                LineId: item?.Id,
-                Id: index + 1
-              });
-            });
+          this.asnList = res[ResultEnum.Model];
 
-            this.dataSource.data = this.PRLineItem;
-            // this.dataSource.data = this.PRDetails.PRLineItems;
-          }
-          else
-            this.toast.error(res[ResultEnum.Message]);
+          this.filteredASNo = this.asnNumberControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterASNNumber(value || ''))
+          );
         }
-        else
-          this.toast.error(res[ResultEnum.Message]);
+        else {
+          this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() {
+      },
+    });
+  }
+
+  filterASNNumber(name: any) {
+    if (name?.ASNNo) {
+      return this.asnList.filter(pr =>
+        pr?.ASNNo?.toLowerCase().includes(name.ASNNo.toLowerCase()));
+
+    }
+    else {
+      return this.asnList.filter(pr =>
+        pr?.ASNNo?.toLowerCase().includes(name.toLowerCase()));
+    }
+  }
+
+  filterStockType(name: any) {
+    return this.stockTypeList.filter(pr =>
+      pr?.Value?.toLowerCase().includes(name.toLowerCase()));
+  }
+
+
+
+  onSelectChangeASNNumber(id: any) {
+    this.ASNDetails = {} as AdvancedShipmentNotificationVM;
+    this.GRNLineItems = [];
+    this.asnService
+      .GetASNDetailsById(id).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.ASNDetails = res[ResultEnum.Model];
+            if (this.ASNDetails) {
+              this.GRNHeaderForm.patchValue({
+                ASNDeliveryDate: this.formatDate(this.ASNDetails?.DeliveryDate ) as any ,
+                DocType: this.ASNDetails?.DocType ? this.ASNDetails?.DocType : null,
+                PONumber: this.ASNDetails?.ERPPONumber ? this.ASNDetails.ERPPONumber : null,
+                CompanyCode: this.ASNDetails?.CompanyCode ? this.ASNDetails.CompanyCode : null,
+                Supplier: (this.ASNDetails?.SupplierCode ? this.ASNDetails.SupplierCode : null) +' - ' + (this.ASNDetails?.SupplierName ? this.ASNDetails.SupplierName : null),
+                Transaction: 'Inbound Delivery',
+                StockType: StockTypeEnum.QualityCheck
+              });
+              this.ASNDetails.ASNDetails?.forEach((item, index) => {
+                this.GRNLineItems.push({
+                  Id: 0,
+                  ASNDetId: item ? item?.Id : 0,
+                  ProductCode: item ? item?.ProductCode : '',
+                  ProductDescription: item ? item?.ProductDescription : '',
+                  POId: item ? item?.POId : 0,
+                  PODetId: item?.Id ? item?.PODetId : 0,
+                  // ProductId: item ? item?.ProductId : 0,
+                  ProductGroup: item ? item?.ProductGroup : '',
+                  GRDeliveryQty: item ? item?.DeliveryQty : 0,
+                  OpenGRQty: item ? item?.OpenGRQty : 0,
+                  TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) + item?.OpenGRQty,
+                  DeliveryDate: item.DeliveryDate,
+                  UnitName: item ? item?.UnitName : '',
+                  Plant: item ? item?.Plant : '',
+                  StorageLocation: item ? item?.StorageLocation : '',
+                  ASNHeaderId: item ? item?.ASNHeaderId : 0,
+                  StockType: item ? item?.StockType : '',
+                  IsBatchNo: item ? item?.IsBatchNo : false,
+                  IsSerialNo: item ? item?.IsSerialNo : false,
+                  GRNProductDetails: item ? item?.ASNProductDetails : [],
+                  IsSelected: false
+                });
+                item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row))
+              });
+              this.GRNLineItems.filter(x => x.GRNProductDetails.filter(y => y.IsSelected = true));
+              this.dataSource.data = this.GRNLineItems;
+
+            }
+            else {
+              this.toaster.error(res.Message);
+            }
+          }
+          else {
+            this.toaster.error(res.Message);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); },
+        complete() {
+
+        },
       });
   }
-
   private formatDate(date: any) {
     const d = new Date(date);
     let month = '' + (d.getMonth() + 1);
@@ -249,181 +222,6 @@ filtersupplierCode!:Observable<Suppliers[]>;
     return [year, month, day].join('-');
   }
 
-  apiDocType() {
-    this.docTypeSerivce
-      .getAllDocType()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.docTypeList = res[ResultEnum.Model];
-          this.filteredDocType = this.PRHeaderForm.get('DocType')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterDocType(value || ''))
-          );
-        }
-      });
-  }
-
-  async apiProductList() {
-    await this.productService
-      .getProductList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.productList = res[ResultEnum.Model];
-          this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
-          if (this.PRId)
-            this.apiGetPRDetailsById(this.PRId);
-          this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterProducts(value || ''))
-          );
-        }
-      });
-  }
-  apiPlantList() {
-    this.plantService
-      .getPlantList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.PRLineForm.get('Plant')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterPlant(value || ''))
-          );
-        }
-      });
-
-  }
-
-
-  apuUnitList() {
-    this.unitService
-      .getAllUnit()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.PRLineForm.get('Unit')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterUnit(value || ''))
-          );
-        }
-      });
-  }
-
-  apiStorageLocationList() {
-    this.storageLocationService.getAllLocationList().pipe(
-      finalize(() => {
-      })
-    )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.locationList = res[ResultEnum.Model];
-
-          this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterStorageLocation(value || ''))
-          );
-        }
-        else {
-          this.toast.error(res[ResultEnum.Message]);
-        }
-      });
-  }
-
-  // all dropdown search filters
-  filterDocType(name: any) {
-    if (name?.Type) {
-      return this.docTypeList.filter(doctype =>
-        doctype?.Type?.toLowerCase().includes(name.Type.toLowerCase()));
-    }
-    else {
-      return this.docTypeList.filter(doctype =>
-        doctype?.Type?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-
-  filterProducts(name: any) {
-    if (name?.ProductCode) {
-      return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
-    }
-    else {
-      return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-
-  filterUnit(name: any) {
-    if (name?.UnitName || name?.MeasurementUnitName)
-      return this.unitList.filter(unit =>
-        unit?.UOM?.toLowerCase().indexOf(name.UOM.toLowerCase()) === 0 ||
-        unit?.MeasurementUnitName?.toLowerCase().indexOf(name.MeasurementUnitName.toLowerCase()) === 0);
-    else
-      return this.unitList.filter(plant =>
-        plant?.UnitName?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        plant?.MeasurementUnitName?.toLowerCase().indexOf(name.toLowerCase()) === 0);
-  }
-
-  filterPlant(name: any) {
-    if (name?.PlantCode || name?.PlantName)
-      return this.plantList.filter(plant =>
-        plant?.PlantName?.toLowerCase().indexOf(name.PlantName.toLowerCase()) === 0 ||
-        plant?.PlantCode?.toLowerCase().indexOf(name.PlantCode.toLowerCase()) === 0);
-    else
-      return this.plantList.filter(plant =>
-        plant?.PlantName?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        plant?.PlantCode?.toLowerCase().indexOf(name.toLowerCase()) === 0);
-  }
-
-  filterStorageLocation(name: any) {
-    if (name?.LocationCode || name?.LocationName) {
-      return this.locationList.filter(location =>
-        location?.LocationCode?.toLowerCase().includes(name.LocationCode.toLowerCase()) ||
-        location?.LocationName?.toLowerCase().includes(name.LocationName.toLowerCase()));
-    }
-    else {
-      return this.locationList.filter(location =>
-        location?.LocationCode?.toLowerCase().includes(name.toLowerCase()) ||
-        location?.LocationName?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-
-  docTypeDisplayFn(docType: DocTypes) {
-    return docType ? docType.Type! : '';
-  }
-
-  productDisplayFn(product: Products) {
-    return product ? product.ProductCode! : '';
-  }
-
-  unitDisplayFn(units: Units) {
-    return units ? units.UOM + ' - ' + units.MeasurementUnitName! : '';
-  }
-
-  plantDisplayFn(user: Plants) {
-    return user ? user.PlantCode + ' - ' + user.PlantName! : '';
-  }
-
-  storageLocationDisplayFn(location: StorageLocations) {
-    return location ? location.LocationCode + ' - ' + location.LocationName! : '';
-  }
-
-
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -431,190 +229,172 @@ filtersupplierCode!:Observable<Suppliers[]>;
     return true;
   }
 
-  getPosts(event: any) {
-    const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
-    if (product) {
-      this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
-      this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
-    }
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelectedSerialAndBatchNumber() {
+    const numSelected = this.selectionSerialAndBatchNo.selected.length;
+    const numRows = this.packingdataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggleSerialAndBatchNumber() {
+    this.isAllSelectedSerialAndBatchNumber() ?
+      this.selectionSerialAndBatchNo.clear() :
+      this.packingdataSource.data.forEach(row => this.selectionSerialAndBatchNo.select(row));
+  }
+
+  onLineChangeOpenGRQty(paramevent: any, paramIndex: number) {
+    const _letNumber = Number(paramevent.target.value);
+    let totalQty = this.GRNLineItems[paramIndex]?.TotalQty! ? this.GRNLineItems[paramIndex]?.TotalQty! : 0;
+    //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
+    this.GRNLineItems[paramIndex].OpenGRQty = totalQty - _letNumber;
+    this.GRNLineItems[paramIndex].GRDeliveryQty = _letNumber;
+
+    this.dataSource.data = this.GRNLineItems;
   }
 
 
-  onChangePlant(event: any, IsEdit = false, locationId?: number) {
-    this.locationList = [];
-    this.PRLineForm.get('StorageLocation')?.setValue(null);
-    if (event) {
-      this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
-        finalize(() => {
-        })
-      )
-        .subscribe(res => {
-          if (res[ResultEnum.IsSuccess]) {
-            this.locationList = res[ResultEnum.Model];
-            if (IsEdit && this.locationList?.length > 0) {
-              this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
-            }
+  openModelForViewItem(templateRef: TemplateRef<any>, data?: any) {
+    // this.selectionSerialAndBatchNo.clear() ;
+    const isSerialNo = data?.IsSerialNo;
+    const isBatchNo = data?.IsBatchNo;
+    // const isBatchNo = true;
+    // const isSerialNo = false;
 
-            this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
-              startWith(''),
-              map(value => this.filterStorageLocation(value || ''))
-            );
-          }
-          else {
-            this.toast.error(res[ResultEnum.Message]);
-          }
-        });
+    const type = this.checkProductType(isSerialNo, isBatchNo);
+    if (data?.DeliveryQty) {
 
-    } else
-      this.toast.error('Plant code not found');
-  }
-
-  async openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
-    this.PRLineForm.reset();
-    this.PRLineForm.updateValueAndValidity();
-    if (data) {
-      this.selectedLineId = data?.Id;
-      this.minDate = data.DeliveryDate;
-      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
-      this.PRLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
-        Description: data?.Description,
-        ProductGroup: data?.ProductGroup,
-        Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
-        DeliveryDate: data.DeliveryDate,
-        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
-        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
-      });
+      if (type != CommonEnum.None) {
+        if (type != CommonEnum.BatchNo) {
+          this.displayedPackingColumns = [
+            'IsSelected',
+            'srNo',
+            'Product',
+            'SerialNo',
+            'Qty'
+          ];
+        }
+        else {
+          this.displayedPackingColumns = [
+            'IsSelected',
+            'srNo',
+            'Product',
+            'BatchNo',
+            'Qty'
+          ];
+        }
+        if (type == CommonEnum.All) {
+          this.displayedPackingColumns = [
+            'IsSelected',
+            'srNo',
+            'Product',
+            'BatchNo',
+            'SerialNo',
+            'Qty'
+          ];
+        }
+        this.packingdataSource.data = data?.GRNProductDetails;
+        // this.packingdataSource.data.forEach(row => this.selectionSerialAndBatchNo.select(row));
+      }
     }
+
     this.dialog.open(templateRef, {
-      width: '56vw',
+      width: type == CommonEnum.All ? '56vw' : '45vw',
       panelClass: 'custom-modalbox'
     });
   }
 
-
-  onClickAddProduct() {
-    const PRline = this.PRLineForm.value;
-    if (this.selectedLineId > 0) {
-      this.PRLineItem.forEach(item => {
-        if (item?.Id == this.selectedLineId) {
-          item.Product = PRline.Product as unknown as Products,
-            item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
-            item.Description = PRline.Description ? PRline.Description : '',
-            item.Qty = PRline?.Qty as unknown as number,
-            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            item.Unit = PRline.Unit as unknown as Units,
-            item.Plant = PRline.Plant as unknown as Plants,
-            item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
-            item.LineId = item.LineId,
-            item.Id = item.Id;
-        }
-      });
-    }
-    else {
-      this.PRLineItem.push({
-        Product: PRline.Product as unknown as Products,
-        ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
-        Description: PRline.Description ? PRline.Description : '',
-        Qty: PRline?.Qty as unknown as number,
-        DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        Unit: PRline.Unit as unknown as Units,
-        Plant: PRline.Plant as unknown as Plants,
-        StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
-        Id: this.PRLineItem.length + 1,
-        LineId: 0
-      });
-    }
-    this.selectedLineId = 0;
-    this.dataSource.data = this.PRLineItem;
+  checkProductType(isSerialNo: any, isBatchNo: any) {
+    if (isBatchNo && !isSerialNo)
+      return CommonEnum.BatchNo;
+    else if (!isBatchNo && isSerialNo)
+      return CommonEnum.SerialNo;
+    else if (isBatchNo && isSerialNo)
+      return CommonEnum.All;
+    else if (!isBatchNo && !isSerialNo)
+      return CommonEnum.None;
+    return CommonEnum.None;
   }
 
-
-  openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
-    if (this.PRLineItem?.length == 1)
-      throw this.toast.error('PR must have one line item, you can not delete....');
-    if (data?.LineId > 0) {
-      this.dialog.open(templateRef);
-      this.selectedLineId = data?.Id;
-    }
-    else{
-      const id = data?.Id;
-      this.PRLineItem.forEach((element, index) => {
-        element.Id = index + 1;
-        if (element.Id == id) {
-          this.PRLineItem.splice(index, 1);
-        }
-      });
-      this.PRLineItem.forEach((element, index) => {
-        element.Id = index + 1;
-      });
-      this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
-    }
-  }
-
-  onClickDeleteItem() {
-    const id = this.selectedLineId;
-    this.PRLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-      if (element.Id == id) {
-        if (element?.LineId) {
-          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0,this.currentUserId).subscribe({
-            next: (res: any) => {
-              if (res[ResultEnum.IsSuccess]) {
-                this.toast.success(res.Message);
-              }
-              else {
-                this.toast.error(res.Message);
-              }
-            },
-            error: (e) => { this.toast.error(e.Message); },
-            complete() {
-
-            },
-          });
-        }
-        this.dialog.closeAll();
-        this.PRLineItem.splice(index, 1);
-      }
-    });
-    this.PRLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-    });
-    this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
-    this.selectedLineId = 0;
+  closeDialog() {
+    this.dialog.closeAll();
   }
 
   onClickCreatePR() {
-    this.PRHeaderForm.touched;
-    if (this.PRHeaderForm.valid) {
-      const PRHeaderData = this.PRHeaderForm.value;
-      const PRDetails: PurchaseRequisitionDataVM = {
-        Id: this.PRId,
-        ERPPRNumber: this.PRDetails.ERPPRNumber,
-        PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-        PRDate: PRHeaderData.Documentdate ? PRHeaderData.Documentdate : new Date(),
-        PRLineItem: this.PRLineItem
+
+    if (!this.selection.selected?.length)
+      throw this.toaster.error('Please select at least one item...');
+    if (!this.selectionSerialAndBatchNo.selected?.length)
+      throw this.toaster.error('Please select at least one serial number or batch number from view packing...');
+
+    let selectedLine = this.selection.selected;
+    let selectedLineProduct = this.selectionSerialAndBatchNo.selected;
+    this.GRNHeaderForm.touched;
+    if (this.GRNHeaderForm.valid) {
+      this.GRNLineItems.forEach(lineItem => {
+        if (selectedLine.filter(y => y.ASNDetId == lineItem.ASNDetId)?.length > 0) {
+          lineItem.IsSelected = true;
+        }
+        else
+          lineItem.IsSelected = false;
+
+        lineItem.GRNProductDetails.forEach(productItem => {
+          if (selectedLineProduct.filter(y => y.Id == productItem.Id)?.length > 0) {
+            productItem.IsSelected = true;
+          }
+          else {
+            productItem.IsSelected = false;
+          }
+        });
+      });
+      
+      const GRNHeaderData = this.GRNHeaderForm.value;
+      const GRNData: GoodsReceivedNoteHeaderVM = {
+        POId: this.ASNDetails.POId,
+        ASNId: this.ASNDetails.ASNId,
+        ASNNo: this.ASNDetails.ASNNo,
+        ERPPONumber: this.ASNDetails.ERPPONumber ? this.ASNDetails.ERPPONumber : '',
+        DocType: GRNHeaderData.DocType ? GRNHeaderData.DocType : '',
+        Transaction: GRNHeaderData.Transaction ? GRNHeaderData.Transaction : '',
+        StockType: GRNHeaderData.StockType ? GRNHeaderData.StockType : '',
+        GRDeliveryDate: GRNHeaderData.Documentdate ? GRNHeaderData.Documentdate : new Date(),
+        GRNDetails: this.GRNLineItems
       };
 
-      this.prService.updatePR(PRDetails,this.currentUserId).subscribe({
+
+      this.GRNService.CreateGRN(GRNData).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
-            this.toast.success(res.Message);
-            this.PRHeaderForm.reset();
-            this.PRLineForm.reset();
+            this.toaster.success(res.Message);
+            this.GRNHeaderForm.reset();
+            this.GRNLineForm.reset();
             this.router.navigateByUrl('/pages/purchase-requisition');
           }
           else {
-            this.toast.error(res.Message);
+            this.toaster.error(res.Message);
           }
         },
-        error: (e) => { this.toast.error(e.Message); },
+        error: (e) => { this.toaster.error(e.Message); },
         complete() {
 
         },
       });
     }
+
   }
 
 }

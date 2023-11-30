@@ -78,10 +78,11 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   minDate: Date = new Date();
   PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
-  currentUserId!:number;
+  IsNewselectedLine!: number;
+  currentUserId!: number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router, private route: ActivatedRoute,private authService:AuthService) {
+    private router: Router, private route: ActivatedRoute, private authService: AuthService) {
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
       if (!this.PRId || this.PRId <= 0)
@@ -448,12 +449,48 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     console.log('data', data);
     if (this.PRLineItem?.length == 1)
       throw this.toast.error('PR must have one line item, you can not delete....');
+
     if (data?.LineId > 0) {
-      this.dialog.open(templateRef);
       this.selectedLineId = data?.Id;
     }
-    else{
-      const id = data?.Id;
+    else {
+      this.IsNewselectedLine = data?.Id;
+    }
+    this.dialog.open(templateRef);
+  }
+
+  onClickDeleteItem() {
+    if (this.selectedLineId) {
+      const id = this.selectedLineId;
+      this.PRLineItem.forEach((element, index) => {
+        element.Id = index + 1;
+        if (element.Id == id) {
+          if (element?.LineId) {
+            this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0, this.currentUserId).subscribe({
+              next: (res: any) => {
+                if (res[ResultEnum.IsSuccess]) {
+                  this.toast.success(res.Message);
+                }
+                else {
+                  this.toast.error(res.Message);
+                }
+              },
+              error: (e) => { this.toast.error(e.Message); },
+              complete() {
+
+              },
+            });
+          }
+          this.dialog.closeAll();
+          this.PRLineItem.splice(index, 1);
+        }
+      });
+      this.PRLineItem.forEach((element, index) => {
+        element.Id = index + 1;
+      });
+    }
+    else if (!this.selectedLineId && this.selectedLineId == 0) {
+      const id = this.IsNewselectedLine;
       this.PRLineItem.forEach((element, index) => {
         element.Id = index + 1;
         if (element.Id == id) {
@@ -463,40 +500,10 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       this.PRLineItem.forEach((element, index) => {
         element.Id = index + 1;
       });
-      this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
     }
-  }
-
-  onClickDeleteItem() {
-    const id = this.selectedLineId;
-    this.PRLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-      if (element.Id == id) {
-        if (element?.LineId) {
-          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0,this.currentUserId).subscribe({
-            next: (res: any) => {
-              if (res[ResultEnum.IsSuccess]) {
-                this.toast.success(res.Message);
-              }
-              else {
-                this.toast.error(res.Message);
-              }
-            },
-            error: (e) => { this.toast.error(e.Message); },
-            complete() {
-
-            },
-          });
-        }
-        this.dialog.closeAll();
-        this.PRLineItem.splice(index, 1);
-      }
-    });
-    this.PRLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-    });
     this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
     this.selectedLineId = 0;
+    this.IsNewselectedLine = 0;
   }
 
   onClickCreatePR() {
@@ -512,7 +519,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.updatePR(PRDetails,this.currentUserId).subscribe({
+      this.prService.updatePR(PRDetails, this.currentUserId).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);
