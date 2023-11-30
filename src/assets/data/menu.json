@@ -108,14 +108,14 @@
 
     },
     {
-      "route": "pages",
+      "route": "masters",
       "name": "masteruser",
       "type": "sub",
       "icon": "assignment_ind",
       "children": [
         {
           "route": "user",
-          "icon": "perm_identity",
+          "icon": "assignment_ind",
           "name": "user",
           "type": "link"
 
