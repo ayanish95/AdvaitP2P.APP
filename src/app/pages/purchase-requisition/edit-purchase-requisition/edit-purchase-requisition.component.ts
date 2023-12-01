@@ -133,6 +133,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
                 // Product: item.PlantCode,
                 Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
                 ProductGroup: item.ProductGroup,
+                ProductCode: item.ProductCode,
                 Description: item.ProductDescription,
                 Qty: item?.Qty,
                 DeliveryDate: item?.DeliveryDate,
@@ -508,6 +509,11 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
     this.selectedLineId = 0;
     this.IsNewselectedLine = 0;
+  }
+
+  onClickCloseDialog(){
+    this.selectedLineId = 0;
+    this.dialog.closeAll();
   }
 
   onClickCreatePR() {

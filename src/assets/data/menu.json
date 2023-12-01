@@ -38,24 +38,10 @@
 
     },
     {
-      "route": "pages/quotation",
-      "name": "quotation",
-      "type": "link",
-      "icon": "queue",
-      "permissions": {
-        "only": [
-          "UserTeam",
-          "Admin"
-
-        ]
-      }
-
-    },
-    {
       "route": "pages/advance-shipping-notification",
       "name": "ASN",
       "type": "link",
-      "icon": "queue",
+      "icon": "add_alert",
       "permissions": {
         "only": [
           "UserTeam",
@@ -69,7 +55,7 @@
       "route": "pages/goods-received-note",
       "name": "GRN",
       "type": "link",
-      "icon": "queue",
+      "icon": "local_shipping",
       "permissions": {
         "only": [
           "UserTeam",
@@ -83,7 +69,7 @@
       "route": "pages/quality-control",
       "name": "QualityControl",
       "type": "link",
-      "icon": "queue",
+      "icon": "done_all",
       "permissions": {
         "only": [
           "UserTeam",

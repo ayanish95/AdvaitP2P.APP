@@ -42,6 +42,7 @@ export interface PurchaseRequisitionLine{
     Id:number;
     LineId?:number;
     Product?:Products;
+    ProductCode?:string;
     Description?:string;
     ProductGroup?:string;
     DeliveryDate?:Date;
@@ -69,9 +70,9 @@ export interface PurchaseRequisitionDetailsVM{
 export interface PurchaseRequisitionDetailsLine{
     Id?: number,
     PRHeaderId: number,
-    ProductId: number,
-    ProductCode: string,
-    ProductDescription: string,
+    ProductId?: number,
+    ProductCode?: string,
+    ProductDescription?: string,
     ProductGroup: string,
     Qty: number,
     DeliveryDate: Date,

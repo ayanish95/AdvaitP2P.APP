@@ -84,7 +84,18 @@
             <h5> PR Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
+            <mat-select formControlName="PRno" placeholder="PR Number" #singleSelect (selectionChange)="getprno($event.value?.Id)">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="PRNoControl" noEntriesFoundLabel
+                ="No Record Found..." placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let prno of filteredprno | async"
+                          [value]="prno">
+                <span>{{ prno?.ERPPRNumber }}</span>
+              </mat-option>
+            </mat-select>
+
+            <!-- <input matInput
                    [matAutocomplete]="PrnoAutocomplete"
                    formControlName="PRno"
                    placeholder="PR Number">
@@ -95,7 +106,7 @@
                           [value]="prno">
                 <span>{{ prno?.ERPPRNumber }}</span>
               </mat-option>
-            </mat-autocomplete>
+            </mat-autocomplete> -->
             <mat-error *ngIf="POHeaderForm.get('PRno')?.hasError('required')">
               Please select PR number...
             </mat-error>
@@ -116,11 +127,12 @@
             <h5> RFQ Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
+            <!-- [matAutocomplete]="docAutocomplete" -->
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
+                  
                    formControlName="RFQNumber"
-                   placeholder="RFQ Number">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
+                   placeholder="RFQ Number" readonly>
+            <!-- <mat-autocomplete #docAutocomplete="matAutocomplete">
               <mat-option *ngFor="let docType of filteredDocType | async"
                           [value]="docType?.Type">
                 <span>{{ docType?.Type }}</span>
@@ -128,7 +140,7 @@
             </mat-autocomplete>
             <mat-error *ngIf="POHeaderForm.get('RFQNumber')?.hasError('required')">
               Please select RFQ Number...
-            </mat-error>
+            </mat-error> -->
           </mat-form-field>
         </div>
 

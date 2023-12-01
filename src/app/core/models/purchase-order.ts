@@ -30,7 +30,7 @@ export interface PurchaseOrderHeader{
     IsRejected?: boolean;
     RejectedBy?: number;
     RejectedDate?: Date;
-    PRPendingBy?: string;
+    POPendingBy?: string;
     IsApprovalStart?: boolean;
     TotalNetPrice?: number;
     TotalTaxAmount?: number;
