@@ -8,6 +8,7 @@ import { Plants } from '@core/models/plants';
 import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { PlantService } from '@core/services/plant.service';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
+import { ReturnGoodsReceptionNotificationService } from '@core/services/return-goods-reception-notification.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 @Component({
@@ -37,7 +38,7 @@ export class ListGoodsReceivedNoteComponent {
   filter: Filter = new Filter();
   index = 0;
 
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService,private dialog: MatDialog) {}
+  constructor(private GRNService: ReturnGoodsReceptionNotificationService,private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService,private dialog: MatDialog) {}
 
   ngOnInit() {
     this.purchaseRequistionService

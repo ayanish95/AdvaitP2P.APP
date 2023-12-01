@@ -71,5 +71,9 @@ export class Method {
   static GetAllASNListForGR = `/GetAllASNListForGR`;
   static GetAllASNDetailsById = `/GetASNById`;
   static CreateGR = `/CreateGR`;
+  static GetAllGRList = `/GetAllGRList`;
+  static GrnListById = `/GetAllGRList`;
+
+
 
 }

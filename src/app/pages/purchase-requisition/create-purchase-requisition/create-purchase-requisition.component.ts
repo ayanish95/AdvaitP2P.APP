@@ -21,6 +21,7 @@ import { StorageLocationService } from '@core/services/storage-location.service'
 import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-create-purchase-requisition',
@@ -85,17 +86,15 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   ];
   currentDate: Date = new Date();
   selectedLineId!: number;
-  currentUserId!:number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router,private authService:AuthService) {
+    private router: Router,private authService:AuthService,private location: Location) {
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
 
   ngOnInit(): void {
 
     this.PRHeaderForm.get('PRDate')?.disable();
-    this.currentUserId = this.authService.userId();
     this.docTypeSerivce
       .getAllDocType()
       .pipe(
@@ -275,7 +274,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
-        Unit: data.Unit.UOM,        
+        Unit: data.Unit.UOM,
         DeliveryDate: data.DeliveryDate,
         Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
         StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
@@ -303,7 +302,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     return true;
   }
 
-  getPosts(event: any) {    
+  getPosts(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
@@ -343,7 +342,6 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   onClickAddProduct() {
-    debugger    
     //Unit: this.unitList?.find(x => x.UOM == data?.Product?.BaseUnit) as any,
     const PRline = this.PRLineForm.value;
     let temp = this.unitList?.find(x => x.UOM == PRline.Unit) as any;
@@ -354,7 +352,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
             item.Description = PRline.Description ? PRline.Description : '',
             item.Qty = PRline?.Qty as unknown as number,
-            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,            
+            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
             item.Unit = this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
             item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
@@ -370,7 +368,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
         Description: PRline.Description ? PRline.Description : '',
         Qty: PRline?.Qty as unknown as number,
-        DeliveryDate: PRline?.DeliveryDate as unknown as Date,        
+        DeliveryDate: PRline?.DeliveryDate as unknown as Date,
         Unit: this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
         Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
@@ -395,8 +393,6 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
 
   onClickCreatePR() {
-    debugger
-
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
       const PRHeaderData = this.PRHeaderForm.value;
@@ -408,7 +404,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.createPR(PRDetails,this.currentUserId).subscribe({
+      this.prService.createPR(PRDetails).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);
@@ -426,5 +422,8 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         },
       });
     }
+  }
+  onClickBack() {
+    this.location.back();
   }
 }
