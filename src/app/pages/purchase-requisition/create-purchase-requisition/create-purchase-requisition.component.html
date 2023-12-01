@@ -127,8 +127,9 @@
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">
+        <button mat-raised-button (click)="onClickBack()" style="margin: 10px;color: brown;" > Back</button>
         <button [disabled]="!dataSource.data.length || PRHeaderForm.invalid" mat-raised-button
-                color="primary" (click)="onClickCreatePR()" > Create PR</button>
+                color="primary" style="margin: 10px;" (click)="onClickCreatePR()" > Create PR</button>
       </div>
     </form>
   </mat-card-content>
@@ -199,12 +200,12 @@
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Unit<small>*</small></h5>
-          </label>          
+          </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="Unit" readonly
             placeholder="Product unit">
           </mat-form-field>
-        </div>        
+        </div>
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Delivery Date<small>*</small></h5>
