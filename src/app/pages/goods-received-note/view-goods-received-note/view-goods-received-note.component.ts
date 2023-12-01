@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
-import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM } from '@core/models/purchase-requistion';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { Location } from '@angular/common';
+import { GoodsReceptionNotificationService } from '@core/services/goods-reception-notification.service';
+import { GoodsReceivedNoteHeaderVM } from '@core/models/goods-received-note';
 
 
 @Component({
@@ -28,10 +28,10 @@ export class ViewGoodsReceivedNoteComponent {
     // 'RFQ',
   ];
   PRId!: number;
-  PRDetails!: PurchaseRequisitionDetailsVM;
+  GRNDetails!:GoodsReceivedNoteHeaderVM;
   dataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private PRService: PurchaseRequistionService,private location: Location, private toaster: ToastrService, private route: ActivatedRoute) {
+  constructor(private grnService: GoodsReceptionNotificationService,private location: Location, private toaster: ToastrService, private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
@@ -39,18 +39,17 @@ export class ViewGoodsReceivedNoteComponent {
   }
 
   ngOnInit(): void {
-    this.PRService
-      .getPRDetailsById(this.PRId)
+    this.grnService
+      .GetAllGRListForQC(this.PRId)
       .pipe(
         finalize(() => {
         })
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
-            this.PRDetails = res[ResultEnum.Model];
-            this.dataSource.data = this.PRDetails.PRLineItems;
+            this.GRNDetails = res[ResultEnum.Model];
+            this.dataSource.data = this.GRNDetails.GRNDetails;
           }
           else
             this.toaster.error(res[ResultEnum.Message]);

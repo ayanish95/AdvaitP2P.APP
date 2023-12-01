@@ -11,7 +11,4 @@ export class ReturnGoodsReceptionNotificationService {
 
       constructor(private httpclient: HttpClientService) { }
 
-      CreateGRN(GRNVM: any) {
-        return this.httpclient.authPost(`${Api.GoodsReceiptNotification + Method.CreateGR}`,GRNVM);
-      }
 }
