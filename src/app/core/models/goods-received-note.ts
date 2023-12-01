@@ -1,5 +1,6 @@
 export interface GoodsReceivedNoteHeaderVM{
     Id?:number;
+    GRNo?:string;
     ASNNo?:string;
     ASNId?:number;
     ERPPONumber?:string;

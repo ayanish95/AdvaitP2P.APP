@@ -16,12 +16,13 @@ export class ReturnGoodsReceptionNotificationService {
       CreateGRN(GRNVM: any) {
         return this.httpclient.authPost(`${Api.GoodsReceiptNotification + Method.CreateGR}`,GRNVM);
       }
-      GetallGrList(): Observable<any> {
+
+      GetallGRNList(): Observable<any> {
         return this.httpclient.authGet(`${Api.GoodsReceiptNotification + Method.GetAllGRList}`);
       }
 
-  getGrnDetailsById(GrnId:number): Observable<any> {
-    return this.httpclient.authGet(`${Api.Plant + Method.GrnListById}/${GrnId}`);
-  }
+      getGRNDetailsById(GrnId:number): Observable<any> {
+        return this.httpclient.authGet(`${Api.Plant + Method.GetGRNDetailsById}/${GrnId}`);
+      }
 
 }
