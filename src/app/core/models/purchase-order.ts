@@ -6,6 +6,7 @@ import { Units } from './units';
 export interface PurchaseOrderHeader{
     Id?:number;
     ERPPONumber:string;
+    ERPPRNumber?:string;
     DocType:string;
     SupplierId?:number;
     SupplierCode?:string;
