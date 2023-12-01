@@ -16,6 +16,7 @@ import { GoodsReceivedNoteDetVM, GoodsReceivedNoteHeaderVM, GoodsReceivedNotePro
 import { SelectionModel } from '@angular/cdk/collections';
 import { CommonEnum } from '@core/enums/common-enum';
 import { ReturnGoodsReceptionNotificationService } from '@core/services/return-goods-reception-notification.service';
+import { GoodsReceptionNotificationService } from '@core/services/goods-reception-notification.service';
 @Component({
   selector: 'app-create-goods-received-note',
   templateUrl: './create-goods-received-note.component.html',
@@ -95,7 +96,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
   asnNumberControl = new FormControl();
   selection = new SelectionModel<GoodsReceivedNoteDetVM>(true, []);
   selectionSerialAndBatchNo = new SelectionModel<GoodsReceivedNoteProductDet>(true, []);
-  constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private toaster: ToastrService, private GRNService: ReturnGoodsReceptionNotificationService,
+  constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private toaster: ToastrService, private GRNService: GoodsReceptionNotificationService,
     private asnService: AdvanceShippingNotificationService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
@@ -151,6 +152,10 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
 
 
   onSelectChangeASNNumber(id: any) {
+    this.GRNHeaderForm.reset();
+    this.GRNHeaderForm.get('ASNNumber')?.setValue(id);
+    this.GRNHeaderForm.get('Documentdate')?.setValue(new Date());
+    this.dataSource.data = [];
     this.ASNDetails = {} as AdvancedShipmentNotificationVM;
     this.GRNLineItems = [];
     this.asnService
@@ -307,10 +312,11 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
             'Qty'
           ];
         }
-        this.packingdataSource.data = data?.GRNProductDetails;
+        
         // this.packingdataSource.data.forEach(row => this.selectionSerialAndBatchNo.select(row));
       }
     }
+    this.packingdataSource.data = data?.GRNProductDetails;
 
     this.dialog.open(templateRef, {
       width: type == CommonEnum.All ? '56vw' : '45vw',

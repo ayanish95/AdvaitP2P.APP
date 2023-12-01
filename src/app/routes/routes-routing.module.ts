@@ -30,19 +30,19 @@ const routes: Routes = [
         loadChildren: () => import('../pages/pages.module').then(m => m.PagesModule),
       },
       {
-        path: 'pages/user',
+        path: 'masters/user',
         loadChildren: () => import('../pages/users/users.module').then(m => m.UsersModule),
       },
       {
-        path: 'pages/supplier',
+        path: 'masters/supplier',
         loadChildren: () => import('../pages/supplier/supplier.module').then(m => m.SupplierModule),
       },
       {
-        path: 'pages/product',
+        path: 'masters/product',
         loadChildren: () => import('../pages/product/product.module').then(m => m.ProductModule),
       },
       {
-        path: 'pages/plant',
+        path: 'masters/plant',
         loadChildren: () => import('../pages/plant/plant.module').then(m => m.PlantModule),
       },
       {
