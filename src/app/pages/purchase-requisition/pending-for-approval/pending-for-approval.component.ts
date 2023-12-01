@@ -41,7 +41,6 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
   selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
-  currentUserId!: number;
   dataSource = new MatTableDataSource<any>();
   currentPage = 1;
   pageSize = 10;
@@ -62,7 +61,6 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
       this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
     this.currentUserRole = this.authService.roles();
-    this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
     if (this.currentUserRole !== Role.Admin)
       this.displayedColumns = this.displayedColumns.filter(x =>x != 'Delete');
@@ -110,7 +108,7 @@ export class PendingForApprovalComponent implements OnInit, OnChanges {
     if (this.selectedPRId == 0 || this.selectedPRId == undefined)
       throw this.toaster.error('Something went wrong');
     this.prService
-      .deletePR(this.selectedPRId, this.currentUserId)
+      .deletePR(this.selectedPRId)
       .pipe(
         finalize(() => {
         })

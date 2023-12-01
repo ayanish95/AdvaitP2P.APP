@@ -95,7 +95,6 @@ filtersupplierCode!:Observable<Suppliers[]>;
   minDate: Date = new Date();
   PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
-  currentUserId!:number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
     private router: Router, private route: ActivatedRoute,private authService:AuthService,private supplierService: SupplierService) {
@@ -108,7 +107,6 @@ filtersupplierCode!:Observable<Suppliers[]>;
   }
 
   ngOnInit() {
-    this.currentUserId = this.authService.userId();
     this.apiDocType();
     this.apiProductList();
     this.apiPlantList();
@@ -560,7 +558,7 @@ filtersupplierCode!:Observable<Suppliers[]>;
       element.Id = index + 1;
       if (element.Id == id) {
         if (element?.LineId) {
-          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0,this.currentUserId).subscribe({
+          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0).subscribe({
             next: (res: any) => {
               if (res[ResultEnum.IsSuccess]) {
                 this.toast.success(res.Message);
@@ -598,7 +596,7 @@ filtersupplierCode!:Observable<Suppliers[]>;
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.updatePR(PRDetails,this.currentUserId).subscribe({
+      this.prService.updatePR(PRDetails).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);

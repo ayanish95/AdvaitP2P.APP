@@ -21,6 +21,7 @@ import { StorageLocationService } from '@core/services/storage-location.service'
 import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-edit-purchase-requisition',
@@ -32,6 +33,9 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   PRHeaderForm = this.fb.group({
     DocType: [null, [Validators.required]],
     PRDate: [new Date(), [Validators.required]],
+    ERPpr: [null, [Validators.required]],
+
+
   });
 
   PRLineForm = this.fb.group({
@@ -82,7 +86,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   currentUserId!: number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router, private route: ActivatedRoute, private authService: AuthService) {
+    private router: Router, private route: ActivatedRoute, private authService: AuthService,private location: Location) {
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
       if (!this.PRId || this.PRId <= 0)
@@ -92,7 +96,6 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentUserId = this.authService.userId();
     this.apiDocType();
     this.apiProductList();
     this.apiPlantList();
@@ -121,7 +124,8 @@ export class EditPurchaseRequisitionComponent implements OnInit {
               // }
               this.PRHeaderForm.patchValue({
                 DocType: this.PRDetails.PRDocType as any,
-                PRDate: this.formatDate(this.PRDetails.PRDate) as any
+                PRDate: this.formatDate(this.PRDetails.PRDate) as any,
+                ERPpr: this.PRDetails.ERPPRNumber as any,
               });
             }
             this.PRDetails.PRLineItems?.forEach((item, index) => {
@@ -466,7 +470,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         element.Id = index + 1;
         if (element.Id == id) {
           if (element?.LineId) {
-            this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0, this.currentUserId).subscribe({
+            this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0).subscribe({
               next: (res: any) => {
                 if (res[ResultEnum.IsSuccess]) {
                   this.toast.success(res.Message);
@@ -519,7 +523,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.updatePR(PRDetails, this.currentUserId).subscribe({
+      this.prService.updatePR(PRDetails).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);
@@ -537,6 +541,9 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         },
       });
     }
+  }
+  onClickBack() {
+    this.location.back();
   }
 }
 
