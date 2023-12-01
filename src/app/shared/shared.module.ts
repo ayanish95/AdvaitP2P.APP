@@ -26,6 +26,7 @@ import { ToObservablePipe } from './pipes/to-observable.pipe';
 import { LoadingComponent } from './components/loading/loading.component';
 import { ApproveSupplierComponent } from './dialog/approve-supplier/approve-supplier.component';
 import { NoRecordFoundComponent } from './components/no-record-found/no-record-found.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 const MODULES: any[] = [
   CommonModule,
@@ -43,6 +44,7 @@ const MODULES: any[] = [
   NgxPermissionsModule,
   ToastrModule,
   TranslateModule,
+  NgxMatSelectSearchModule
 ];
 const COMPONENTS: any[] = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent,LoadingComponent,ApproveSupplierComponent,NoRecordFoundComponent];
 const COMPONENTS_DYNAMIC: any[] = [];
