@@ -50,6 +50,20 @@
                         </mat-error> -->
           </mat-form-field>
         </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>PR Number</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="ERPpr"
+                   placeholder="ERP PR Number" readonly>
+            <mat-error *ngIf="PRHeaderForm.get('ERPpr')?.hasError('required')">
+              Please enter ERP PR Number...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <div class="col-sm-12 d-flex align-items-center mt-15">
           <button mat-button mat-raised-button color="primary"
                   *ngIf="!this.PRDetails?.IsApprovedByAll && !this.PRDetails?.IsRejected"
@@ -125,8 +139,10 @@
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">
-        <button [disabled]="!dataSource.data.length || PRHeaderForm.invalid" mat-raised-button
-                color="primary" (click)="onClickCreatePR()" > Update PR</button>
+                <button mat-raised-button (click)="onClickBack()" style="margin: 10px;color: brown;" > Back</button>
+                <button [disabled]="!dataSource.data.length || PRHeaderForm.invalid" mat-raised-button
+                color="primary"  style="margin: 10px;" (click)="onClickCreatePR()" > Update PR</button>
+
       </div>
     </form>
   </mat-card-content>

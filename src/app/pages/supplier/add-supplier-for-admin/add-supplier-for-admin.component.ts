@@ -1,7 +1,7 @@
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -25,6 +25,10 @@ import { Observable, finalize, startWith, map } from 'rxjs';
   styleUrls: ['./add-supplier-for-admin.component.scss']
 })
 export class AddSupplierForAdminComponent implements OnInit {
+
+  basicInfoFromCountryControl = new FormControl();
+  basicInfoFromStateControl = new FormControl();
+
   basicInfoFrom = this.fb.nonNullable.group(
     {
       firstName: ['', [Validators.required]],
@@ -131,7 +135,7 @@ export class AddSupplierForAdminComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.countryList = res[ResultEnum.Model];
           this.countryList.map(x => x.CountryWithCode = x.CountryCode + (x.Name ? ' - ' + x.Name : ''));
-          this.filteredCountry = this.basicInfoFrom.get('country')!.valueChanges.pipe(
+          this.filteredCountry = this.basicInfoFromCountryControl.valueChanges.pipe(
             startWith(''),
             map(value => this.filterCountry(value || ''))
           );
@@ -145,7 +149,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.stateList = res[ResultEnum.Model];
-          this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
+          this.filteredStates = this.basicInfoFromStateControl.valueChanges.pipe(
             startWith(''),
             map(value => this.filterStates(value || ''))
           );
@@ -158,7 +162,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.stateList = res[ResultEnum.Model];
-          this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
+          this.filteredStates = this.basicInfoFromStateControl.valueChanges.pipe(
             startWith(''),
             map(value => this.filterStates(value || ''))
           );

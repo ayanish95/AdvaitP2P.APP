@@ -74,5 +74,6 @@ export class Method {
   static GetAllGRList = `/GetAllGRList`;
   static GetAllGRListForQC = `/GetAllGRListForQC`;
   static DeleteGRById = `/DeleteGRById`;
+  static GetGRNDetailsById = `/GetGRNDetailsById`;
 
 }

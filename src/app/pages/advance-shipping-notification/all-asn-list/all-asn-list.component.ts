@@ -59,7 +59,6 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
-  currentUserId!: number;
   rightsForApproval = false;
   propChanges: any;
 
@@ -68,7 +67,6 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   ngOnInit() {
 
     this.currentUserRole = this.authService.roles();
-    this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
 
     if (this.allPOList?.length > 0 && this.Type=='PO') {
@@ -139,7 +137,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     if (this.selectedPRId == 0 || this.selectedPRId == undefined)
       throw this.toaster.error('Something went wrong');
     this.purchaseRequistionService
-      .deletePR(this.selectedPRId, this.currentUserId)
+      .deletePR(this.selectedPRId)
       .pipe(
         finalize(() => {
         })
