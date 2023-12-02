@@ -344,8 +344,8 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
 
     if (!this.selection.selected?.length)
       throw this.toaster.error('Please select at least one item...');
-    if (!this.selectionSerialAndBatchNo.selected?.length)
-      throw this.toaster.error('Please select at least one serial number or batch number from view packing...');
+    // if (!this.selectionSerialAndBatchNo.selected?.length)
+    //   throw this.toaster.error('Please select at least one serial number or batch number from view packing...');
 
     let selectedLine = this.selection.selected;
     let selectedLineProduct = this.selectionSerialAndBatchNo.selected;
@@ -388,7 +388,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
             this.toaster.success(res.Message);
             this.GRNHeaderForm.reset();
             this.GRNLineForm.reset();
-            this.router.navigateByUrl('/pages/purchase-requisition');
+            this.router.navigateByUrl('/pages/goods-received-note');
           }
           else {
             this.toaster.error(res.Message);

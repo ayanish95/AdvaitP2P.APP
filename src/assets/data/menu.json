@@ -38,27 +38,13 @@
 
     },
     {
-      "route": "pages/quotation",
-      "name": "quotation",
-      "type": "link",
-      "icon": "queue",
-      "permissions": {
-        "only": [
-          "UserTeam",
-          "Admin"
-
-        ]
-      }
-
-    },
-    {
       "route": "pages/advance-shipping-notification",
       "name": "ASN",
       "type": "link",
-      "icon": "queue",
+      "icon": "add_alert",
       "permissions": {
         "only": [
-          "UserTeam",
+          "Supplier",
           "Admin"
 
         ]
@@ -69,10 +55,9 @@
       "route": "pages/goods-received-note",
       "name": "GRN",
       "type": "link",
-      "icon": "queue",
+      "icon": "local_shipping",
       "permissions": {
         "only": [
-          "UserTeam",
           "Admin"
 
         ]
@@ -83,10 +68,9 @@
       "route": "pages/quality-control",
       "name": "QualityControl",
       "type": "link",
-      "icon": "queue",
+      "icon": "done_all",
       "permissions": {
         "only": [
-          "UserTeam",
           "Admin"
 
         ]
@@ -100,7 +84,7 @@
       "icon": "queue",
       "permissions": {
         "only": [
-          "UserTeam",
+          "WarehouseTeam",
           "Admin"
 
         ]
@@ -117,30 +101,58 @@
           "route": "user",
           "icon": "assignment_ind",
           "name": "user",
-          "type": "link"
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
 
         },
         {
           "route": "plant",
           "name": "plant",
-          "type": "link"
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
         },
         {
           "route": "product",
           "name": "product",
-          "type": "link"
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
         },
         {
           "route": "supplier",
           "name": "supplier",
-          "type": "link"
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin",
+              "ProcurementTeam",
+              "CommercialTeam",
+              "FinanceTeam",
+              "MasterUser"
+            ]
+          }
         }
 
 
       ],
       "permissions": {
         "only": [
-          "Admin"
+          "Admin",
+          "ProcurementTeam",
+          "CommercialTeam",
+          "FinanceTeam",
+          "MasterUser"
         ]
       }
 
@@ -467,7 +479,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam","ProcurementTeam"]
+        "except": ["Supplier","Admin","UserTeam","ProcurementTeam","WarehouseTeam"]
       }
     },
     {
@@ -498,7 +510,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam","ProcurementTeam"]
+        "except": ["Supplier","Admin","UserTeam","ProcurementTeam","WarehouseTeam"]
 
       }
     },
@@ -520,7 +532,7 @@
         }
       ],
       "permissions": {
-        "only": "Admin"
+        "only": "Admin1"
       }
     },
     {

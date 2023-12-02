@@ -6,6 +6,7 @@ import { Units } from './units';
 export interface PurchaseOrderHeader{
     Id?:number;
     ERPPONumber:string;
+    ERPPRNumber?:string;
     DocType:string;
     SupplierId?:number;
     SupplierCode?:string;
@@ -29,7 +30,7 @@ export interface PurchaseOrderHeader{
     IsRejected?: boolean;
     RejectedBy?: number;
     RejectedDate?: Date;
-    PRPendingBy?: string;
+    POPendingBy?: string;
     IsApprovalStart?: boolean;
     TotalNetPrice?: number;
     TotalTaxAmount?: number;

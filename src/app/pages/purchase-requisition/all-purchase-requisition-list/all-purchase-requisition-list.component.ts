@@ -40,7 +40,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
   dataSource1: any;
   currentPage = 1;
   pageSize = 10;
-  @ViewChild('paginator')
+  @ViewChild(MatPaginator)
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
@@ -58,14 +58,15 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
     if (this.isSAPEnabled == 'false')
       this.displayedColumns = this.displayedColumns.filter(x => x != 'SAPStatus');
 
-      if (this.allPRHeaderList?.length > 0) {
+      // if (this.allPRHeaderList?.length > 0) {
         this.dataSource.data = this.allPRHeaderList;
         this.dataSource.paginator = this.paginator;
         this.filter = new Filter();
+        this.filter.PageSize = 10;
         this.filter.OrderBy = OrderBy.DESC;
         this.filter.OrderByColumn = 'id';
-        this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
-      }
+        this.filter.TotalRecords = this.allPRHeaderList?.length;
+      // }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -75,15 +76,17 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
       this.allPRHeaderList = currentValue;
       this.dataSource.data = this.allPRHeaderList;
       this.dataSource.paginator = this.paginator;
-      this.filter = new Filter();
-      this.filter.OrderBy = OrderBy.DESC;
-      this.filter.OrderByColumn = 'id';
-      this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
+     
     }
     if (this.propChanges?.ApprovalStrategyList) {
       const currentValue = this.propChanges.ApprovalStrategyList?.currentValue;
       this.ApprovalStrategyList = currentValue;
     }
+    this.filter = new Filter();
+    this.filter.PageSize = 10;
+    this.filter.OrderBy = OrderBy.DESC;
+    this.filter.OrderByColumn = 'id';
+    this.filter.TotalRecords = this.allPRHeaderList?.length;
   }
 
   // api for get all list who have rights for approve supplier and based on that show approve and reject button
