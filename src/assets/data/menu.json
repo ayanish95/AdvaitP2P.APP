@@ -17,7 +17,8 @@
           "Admin",
           "ProcurementTeam",
           "CommercialTeam",
-          "FinanceTeam"
+          "FinanceTeam",
+          "WarehouseTeam"
 
         ]
       }
@@ -31,6 +32,7 @@
         "only": [
           "UserTeam",
           "ProcurementTeam",
+          "FinanceTeam",
           "Admin"
 
         ]
@@ -479,7 +481,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam","ProcurementTeam","WarehouseTeam"]
+        "except": ["Supplier","Admin","UserTeam","FinanceTeam","ProcurementTeam","WarehouseTeam"]
       }
     },
     {
@@ -510,7 +512,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam","ProcurementTeam","WarehouseTeam"]
+        "except": ["Supplier","Admin","UserTeam","FinanceTeam","ProcurementTeam","WarehouseTeam"]
 
       }
     },
