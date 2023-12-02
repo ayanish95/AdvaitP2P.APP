@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { Validators, FormBuilder, AbstractControl, FormControl } from '@angular/forms';
 import { ResultEnum } from '@core/enums/result-enum';
 import { ProductGroup, Products } from '@core/models/products';
 import { Suppliers } from '@core/models/suppliers';
@@ -25,6 +25,9 @@ import { Country } from '@core/models/country';
   styleUrls: ['./supplier-register.component.scss']
 })
 export class SupplierRegisterComponent implements OnInit {
+
+  basicInfoFromStateControl = new FormControl();
+
   basicInfoFrom = this.fb.nonNullable.group(
     {
       firstName: ['', [Validators.required]],
@@ -121,7 +124,7 @@ export class SupplierRegisterComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.stateList = res[ResultEnum.Model];
-          this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
+          this.filteredStates = this.basicInfoFromStateControl.valueChanges.pipe(
             startWith(''),
             map(value => this.filterStates(value || ''))
           );
@@ -221,6 +224,8 @@ export class SupplierRegisterComponent implements OnInit {
     this.bankDetailsFrom.controls.ifscCode.updateValueAndValidity();
     this.bankDetailsFrom.markAsPristine();
     this.addressForm.markAsPristine();
+    // this.addressForm.get('state')?.untouched;
+    // this.addressForm.controls.state.updateValueAndValidity();
 
   }
 
@@ -265,7 +270,7 @@ export class SupplierRegisterComponent implements OnInit {
       const stepLabel = event.selectedStep.label;
       const gstNumber = this.basicInfoFrom.get('gstNumber')?.value;
       const coutnryCode = this.basicInfoFrom.get('country')?.value;
-      if (stepLabel == 'Address') {
+      if (stepLabel == 'Address') {        
         this.addressForm.markAsUntouched();
         if (gstNumber) {
           this.supplierService.getSupplierByGSTNumber(gstNumber).pipe(
@@ -286,7 +291,7 @@ export class SupplierRegisterComponent implements OnInit {
           .subscribe(res => {
             if (res[ResultEnum.IsSuccess]) {
               this.stateList = res[ResultEnum.Model];
-              this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
+              this.filteredStates = this.basicInfoFromStateControl.valueChanges.pipe(
                 startWith(''),
                 map(value => this.filterStates(value || ''))
               );
