@@ -38,11 +38,11 @@ export class PurchaseOrderService {
   }
 
   approvePOById(Id:number): Observable<any> {
-    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.ApprovePRById}/${Id}`);
+    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.ApprovePOById}/${Id}`);
   }
   
   rejectPOById(Id:number): Observable<any> {
-    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.RejectPRById}/${Id}`);
+    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.RejectPOById}/${Id}`);
   }
 
   getAllApprovedPOHeaderListByUserId(): Observable<any> {

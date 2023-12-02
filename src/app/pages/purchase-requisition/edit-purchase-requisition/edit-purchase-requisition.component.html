@@ -165,7 +165,7 @@
                    [matAutocomplete]="autocomplete"
                    formControlName="Product"
                    placeholder="Product Code"
-                   readonly="selectedLineId > 0 ? true : false">
+                  >
             <mat-autocomplete #autocomplete="matAutocomplete" [displayWith]="productDisplayFn"
                               (optionSelected)='getPosts($event.option.value)'>
               <mat-option *ngFor="let product of filteredProducts | async"

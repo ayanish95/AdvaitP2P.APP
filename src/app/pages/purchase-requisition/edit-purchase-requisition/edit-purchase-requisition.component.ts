@@ -82,6 +82,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   minDate: Date = new Date();
   PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
+  isEdit=false;
   IsNewselectedLine!: number;
   currentUserId!: number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
@@ -391,6 +392,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     this.PRLineForm.reset();
     this.PRLineForm.updateValueAndValidity();
     if (data) {
+      this.isEdit=true;
       this.selectedLineId = data?.Id;
       this.minDate = data.DeliveryDate;
       await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
@@ -445,6 +447,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         LineId: 0
       });
     }
+    this.isEdit=false;
     this.selectedLineId = 0;
     this.dataSource.data = this.PRLineItem;
   }
