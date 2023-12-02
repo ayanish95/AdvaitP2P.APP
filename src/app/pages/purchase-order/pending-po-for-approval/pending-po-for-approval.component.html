@@ -10,7 +10,7 @@
         </ng-container>
         <ng-container matColumnDef="PODate">
           <th mat-header-cell *matHeaderCellDef> PO Date </th>
-          <td mat-cell *matCellDef="let element"> {{element?.PODate | date : 'dd-MM-yyyy hh:mm a' }} </td>
+          <td mat-cell *matCellDef="let element"> {{element?.PODate | date : 'dd-MM-yyyy' }} </td>
       </ng-container>
          <ng-container matColumnDef="DocType">
             <th mat-header-cell *matHeaderCellDef> Doc. Type </th>
@@ -18,7 +18,7 @@
         </ng-container> 
          <ng-container matColumnDef="PRNumber">
             <th mat-header-cell *matHeaderCellDef> PR Number </th>
-            <td mat-cell *matCellDef="let element"> {{element?.PRHeaderId}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}} </td>
         </ng-container> 
         <ng-container matColumnDef="Supplier">
             <th mat-header-cell *matHeaderCellDef> Supplier</th>

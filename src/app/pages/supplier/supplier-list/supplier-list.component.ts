@@ -66,6 +66,7 @@ export class SupplierListComponent implements OnInit {
     .subscribe(res => {
       if (res[ResultEnum.IsSuccess]) {
         this.pendingSuppliierList = res[ResultEnum.Model];
+        this.pendingSuppliierList = this.pendingSuppliierList.filter(x => x.IsRejected == false);
       }
       else {
         this.toast.error(res[ResultEnum.Message]);

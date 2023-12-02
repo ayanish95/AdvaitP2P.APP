@@ -47,7 +47,7 @@ export class ViewGoodsReceivedNoteComponent {
 
   ngOnInit(): void {
     this.grnService
-      .GetAllGRListForQC(this.PRId)
+      .GetGRNDetailsById(this.PRId)
       .pipe(
         finalize(() => {
         })

@@ -158,14 +158,14 @@
       <div class="row mt-5">
         <div class="col-sm-6">
           <label class="custom-label">
-            <h5>Product Code<small>*</small></h5>
+            <h5>Product Code {{selectedLineId}}<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
                    [matAutocomplete]="autocomplete"
                    formControlName="Product"
                    placeholder="Product Code"
-                   readonly>
+                  >
             <mat-autocomplete #autocomplete="matAutocomplete" [displayWith]="productDisplayFn"
                               (optionSelected)='getPosts($event.option.value)'>
               <mat-option *ngFor="let product of filteredProducts | async"
@@ -290,7 +290,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button (click)="onClickCloseDialog()">Close</button>
     <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
             (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ? 'Update' : 'Add'}}</button>
   </mat-dialog-actions>

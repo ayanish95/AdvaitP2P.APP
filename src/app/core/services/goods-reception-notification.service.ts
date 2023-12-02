@@ -21,6 +21,9 @@ export class GoodsReceptionNotificationService {
       GetAllGRListForQC(Id:number) {
             return this.httpclient.authGet(`${Api.GoodsReceiptNotification + Method.GetAllGRListForQC}/${Id}`);
       }
+      GetGRNDetailsById(Id:number) {
+        return this.httpclient.authGet(`${Api.GoodsReceiptNotification + Method.GetGRNDetailsById}/${Id}`);
+  }
       DeleteGRById(Id:number) {
             return this.httpclient.authGet(`${Api.GoodsReceiptNotification + Method.DeleteGRById}/${Id}`);
       }

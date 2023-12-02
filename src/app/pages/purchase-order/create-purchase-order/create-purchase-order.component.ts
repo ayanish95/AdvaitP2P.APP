@@ -1,8 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
@@ -11,9 +10,7 @@ import { Suppliers } from '@core/models/suppliers';
 import { PurchaseRequisitionDetailsVM, PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { Plants } from '@core/models/plants';
 import { Products } from '@core/models/products';
-import {
-  PurchaseRequisitionDataVM, PurchaseRequisitionLine, PurchaseRequisitionDetailsLine
-} from '@core/models/purchase-requistion';
+import { PurchaseRequisitionDetailsLine } from '@core/models/purchase-requistion';
 import { StorageLocations } from '@core/models/storage-location';
 import { Units } from '@core/models/units';
 import { DocTypeService } from '@core/services/doc-type.service';
@@ -130,6 +127,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
   selectedLineId!: number;
   minDate!: Date;
   companyCode!:string;
+  PRNoControl = new FormControl();
 
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService, private stateService: StateService,
     private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private supplierService: SupplierService, private prService: PurchaseRequistionService,
@@ -216,7 +214,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.prlist = res[ResultEnum.Model];
 
-          this.filteredprno = this.POHeaderForm.get('PRno')!.valueChanges.pipe(
+          this.filteredprno = this.PRNoControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPrno(value || ''))
           );
@@ -345,7 +343,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
       }
       else {
         if (name) {
-          return this.prlist.filter(pr => pr?.Id == name);
+          return this.prlist.filter(pr => pr?.ERPPRNumber?.toLowerCase().includes(name.toLowerCase()));
         }
         else
           return this.prlist;
@@ -536,8 +534,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
         this.dataSource.data = this.POLineItem;
       }
       else{
-       
-        this.POHeaderForm.reset();
+        this.POHeaderForm.get('DocType')?.setValue(null);
+        this.POHeaderForm.get('CompanyCode')?.setValue(null);
+        // this.POHeaderForm.reset();
         this.PRDetails = res[ResultEnum.Model];
         this.toaster.error(res[ResultEnum.Message]);
       }
