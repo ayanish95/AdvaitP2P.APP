@@ -162,10 +162,10 @@ export class CreateAdvancedShippingNotificationComponent {
 
   filterPono(name: any) {
     if (name?.Id) {
-      return this.approvedPolist.filter(po => po.ERPPONumber);
+      return this.approvedPolist?.filter(po => po.ERPPONumber);
     }
     else {
-      return this.approvedPolist.filter(po => po.ERPPONumber);
+      return this.approvedPolist?.filter(po => po.ERPPONumber);
     }
   }
 

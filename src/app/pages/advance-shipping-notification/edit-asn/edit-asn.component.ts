@@ -403,7 +403,8 @@ export class EditAsnComponent {
     if (this.ASNHeaderForm.valid) {
       const PRHeaderData = this.ASNHeaderForm.value as any;
       const ASNAdd: AdvancedShipmentNotificationVM = {
-        POId: this.POId,
+        Id: this.ASNDetails.Id,
+        POId: this.ASNDetails.POId,
         ERPPONumber: PRHeaderData.PoNo as any,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData?.SupplierId as any,
@@ -413,7 +414,7 @@ export class EditAsnComponent {
 
       };
 
-      this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
+      this.advanceShippingNotificationService.UpdateASNDetails(ASNAdd).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toaster.success(res.Message);

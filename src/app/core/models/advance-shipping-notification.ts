@@ -1,5 +1,6 @@
 
 export interface AdvancedShipmentNotificationVM{
+  Id?:number;
   ASNId?:number;
   ERPPONumber:string;
   DocType:string;
