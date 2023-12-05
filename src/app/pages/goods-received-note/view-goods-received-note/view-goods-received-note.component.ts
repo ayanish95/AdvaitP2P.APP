@@ -57,7 +57,6 @@ export class ViewGoodsReceivedNoteComponent {
           if (res[ResultEnum.Model]) {
             this.GRNDetails = res[ResultEnum.Model];
             this.dataSource.data = this.GRNDetails.GRNDetails;
-            console.log(this.GRNDetails)
           }
           else
             this.toaster.error(res[ResultEnum.Message]);
@@ -105,7 +104,6 @@ export class ViewGoodsReceivedNoteComponent {
           ];
         }
         this.packingdataSource.data = data?.GRNProductDetails;
-        console.log(data.GRNProductDetails)
       }
     }
 

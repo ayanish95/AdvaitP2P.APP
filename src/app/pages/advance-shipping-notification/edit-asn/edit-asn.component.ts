@@ -141,7 +141,7 @@ export class EditAsnComponent {
                 Deliverydate: this.formatDate(this.ASNDetails?.DeliveryDate) as any,
               });
               
-              let  shippingDate=new Date(this.ASNDetails?.ShippingDate ? this.ASNDetails?.ShippingDate : new Date());
+              const  shippingDate=new Date(this.ASNDetails?.ShippingDate ? this.ASNDetails?.ShippingDate : new Date());
               if (this.currentDate.getTime() > shippingDate.getTime())
                 this.minShippingDate = new Date(shippingDate);
                 if (this.currentDate.getTime() > new Date(this.ASNDetails?.DeliveryDate ? this.ASNDetails?.DeliveryDate : new Date()).getTime())
@@ -203,7 +203,6 @@ export class EditAsnComponent {
   }
 
   openModelForAddItem(templateRef: TemplateRef<any>, data?: any) {
-    debugger
     this.selecteItemQty = 0;
     const isSerialNo = data?.IsSerialNo;
     const isBatchNo = data?.IsBatchNo;
@@ -286,7 +285,7 @@ export class EditAsnComponent {
   }
 
   onClickAddBatchSerialNo() {
-    debugger
+    debugger;
     this.batchAndSerialNoList = [];
     const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
     batchSerialNo?.forEach((data: any) => {
@@ -308,12 +307,12 @@ export class EditAsnComponent {
             y.BatchNo = this.batchAndSerialNoList[0].BatchNo;
             y.SerialNo = this.batchAndSerialNoList[0].SerialNo;
           }
-        })    
-    })    
+        });    
+    });    
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
-    debugger
+    debugger;
     if (this.ASNLineItems?.length == 1)
       throw this.toaster.error('ASN must have one line item, you can not delete....');
     if (data?.LineId > 0) {
@@ -370,7 +369,7 @@ export class EditAsnComponent {
     const _letNumber = Number(paramevent.target.value);
 
     //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
-    let totalQty=  this.ASNLineItems[paramIndex]?.TotalQty! ? this.ASNLineItems[paramIndex]?.TotalQty! : 0;
+    const totalQty=  this.ASNLineItems[paramIndex]?.TotalQty! ? this.ASNLineItems[paramIndex]?.TotalQty! : 0;
     this.ASNLineItems[paramIndex].OpenGRQty = totalQty - _letNumber;
     this.ASNLineItems[paramIndex].DeliveryQty = _letNumber;
 

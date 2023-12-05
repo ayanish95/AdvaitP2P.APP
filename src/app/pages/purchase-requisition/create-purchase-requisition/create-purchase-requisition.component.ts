@@ -266,7 +266,6 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
 
   async openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
-    debugger
     this.PRLineForm.reset();
     this.PRLineForm.updateValueAndValidity();
     if (data) {
@@ -363,9 +362,8 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
   onClickAddProduct() {
     //Unit: this.unitList?.find(x => x.UOM == data?.Product?.BaseUnit) as any,
-    debugger;
     const PRline = this.PRLineForm.value;
-    let temp = this.unitList?.find(x => x.UOM == PRline.Unit) as any;
+    const temp = this.unitList?.find(x => x.UOM == PRline.Unit) as any;
     if (this.selectedLineId > 0) {
       this.PRLineItem.forEach(item => {
         if (item?.Id == this.selectedLineId) {

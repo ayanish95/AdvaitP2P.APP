@@ -81,9 +81,9 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
   ];
 
   stockTypeList = [
-    { "Id": StockTypeEnum.QualityCheck, "Value": StockTypeEnum.QualityCheck },
-    { "Id": StockTypeEnum.UnrestrictedStock, "Value": StockTypeEnum.UnrestrictedStock },
-    { "Id": StockTypeEnum.RestrictedStock, "Value": StockTypeEnum.RestrictedStock },
+    { Id: StockTypeEnum.QualityCheck, Value: StockTypeEnum.QualityCheck },
+    { Id: StockTypeEnum.UnrestrictedStock, Value: StockTypeEnum.UnrestrictedStock },
+    { Id: StockTypeEnum.RestrictedStock, Value: StockTypeEnum.RestrictedStock },
   ];
 
   minDate: Date = new Date();
@@ -197,7 +197,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
                   GRNProductDetails: item ? item?.ASNProductDetails : [],
                   IsSelected: false
                 });
-                item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row))
+                item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row));
               });
               this.GRNLineItems.filter(x => x.GRNProductDetails.filter(y => y.IsSelected = true));
               this.dataSource.data = this.GRNLineItems;
@@ -264,7 +264,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
 
   onLineChangeOpenGRQty(paramevent: any, paramIndex: number) {
     const _letNumber = Number(paramevent.target.value);
-    let totalQty = this.GRNLineItems[paramIndex]?.TotalQty! ? this.GRNLineItems[paramIndex]?.TotalQty! : 0;
+    const totalQty = this.GRNLineItems[paramIndex]?.TotalQty! ? this.GRNLineItems[paramIndex]?.TotalQty! : 0;
     //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
     this.GRNLineItems[paramIndex].OpenGRQty = totalQty - _letNumber;
     this.GRNLineItems[paramIndex].GRDeliveryQty = _letNumber;
@@ -347,8 +347,8 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
     // if (!this.selectionSerialAndBatchNo.selected?.length)
     //   throw this.toaster.error('Please select at least one serial number or batch number from view packing...');
 
-    let selectedLine = this.selection.selected;
-    let selectedLineProduct = this.selectionSerialAndBatchNo.selected;
+    const selectedLine = this.selection.selected;
+    const selectedLineProduct = this.selectionSerialAndBatchNo.selected;
     this.GRNHeaderForm.touched;
     if (this.GRNHeaderForm.valid) {
       this.GRNLineItems.forEach(lineItem => {

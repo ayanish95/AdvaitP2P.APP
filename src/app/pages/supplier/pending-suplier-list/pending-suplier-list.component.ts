@@ -184,7 +184,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
 
   onClickReject() {
     if (!this.rejectComments)
-      throw this.toast.error('Please enter remarks for reject...')
+      throw this.toast.error('Please enter remarks for reject...');
     if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
       throw this.toast.error('Something went wrong');
     this.supplierService
