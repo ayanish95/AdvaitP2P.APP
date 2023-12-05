@@ -54,6 +54,10 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     StorageLocation: ['', [Validators.required]],
   });
   docTypeControl = new FormControl();
+  searchUnitControl = new FormControl();
+  searchProductControl = new FormControl();
+  searchPlantControl = new FormControl();
+  searchStorageLocationControl = new FormControl();
 
   plantList!: Plants[];
   filteredPlants!: Observable<any>;
@@ -122,7 +126,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.productList = res[ResultEnum.Model];
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
-          this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterProducts(value || ''))
           );
@@ -138,7 +142,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.PRLineForm.get('Plant')!.valueChanges.pipe(
+          this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPlant(value || ''))
           );
@@ -154,7 +158,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.PRLineForm.get('Unit')!.valueChanges.pipe(
+          this.filteredUnits = this.searchUnitControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterUnit(value || ''))
           );
@@ -302,14 +306,30 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     return true;
   }
 
-  getPosts(event: any) {
+  onChangeProduct(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
+    console.log('product',product);
+    
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
-      this.PRLineForm.get('Unit')?.setValue(product?.BaseUnit ? product?.BaseUnit : '');
-
+      this.PRLineForm.get('Unit')?.setValue(product?.PurchaseUnit ? product?.PurchaseUnit : '');
     }
+    this.plantService
+      .getPlantListByPlantCode(product?.Plant ? product?.Plant : '')
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.plantList = res[ResultEnum.Model];
+          this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterPlant(value || ''))
+          );
+        }
+      });
   }
 
 
@@ -327,7 +347,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             if (IsEdit && this.locationList?.length > 0) {
               this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
             }
-            this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+            this.filteredlocation = this.searchStorageLocationControl!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterStorageLocation(value || ''))
             );
@@ -343,6 +363,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
   onClickAddProduct() {
     //Unit: this.unitList?.find(x => x.UOM == data?.Product?.BaseUnit) as any,
+    debugger;
     const PRline = this.PRLineForm.value;
     let temp = this.unitList?.find(x => x.UOM == PRline.Unit) as any;
     if (this.selectedLineId > 0) {

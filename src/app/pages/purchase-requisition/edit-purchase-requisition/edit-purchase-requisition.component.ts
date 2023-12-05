@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
@@ -61,6 +61,11 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   filteredProducts!: Observable<Products[]>;
   locationList!: StorageLocations[];
   filteredlocation!: Observable<StorageLocations[]>;
+
+  searchProductControl = new FormControl();
+  searchUnitControl = new FormControl();
+  searchPlantControl = new FormControl();
+  searchStorageLocationControl = new FormControl();
 
   PRLineItem: PurchaseRequisitionLine[] = [];
   dataSource = new MatTableDataSource<any>();
@@ -198,7 +203,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
           if (this.PRId)
             this.apiGetPRDetailsById(this.PRId);
-          this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterProducts(value || ''))
           );
@@ -234,7 +239,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.PRLineForm.get('Unit')!.valueChanges.pipe(
+          this.filteredUnits = this.searchUnitControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterUnit(value || ''))
           );
@@ -251,7 +256,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.locationList = res[ResultEnum.Model];
 
-          this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+          this.filteredlocation = this.searchStorageLocationControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterStorageLocation(value || ''))
           );
@@ -275,13 +280,15 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   }
 
   filterProducts(name: any) {
-    if (name?.ProductCode) {
+    if (name?.ProductCode || name?.Description) {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.Description.toLowerCase()));
     }
     else {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.toLowerCase()));
     }
   }
 
@@ -348,14 +355,29 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     return true;
   }
 
-  getPosts(event: any) {
+  onChangeProduct(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
-      this.PRLineForm.get('Unit')?.setValue(product?.BaseUnit ? product?.BaseUnit : '');
+      this.PRLineForm.get('Unit')?.setValue(product?.PurchaseUnit ? product?.PurchaseUnit : '');
 
     }
+    this.plantService
+    .getPlantListByPlantCode(product?.Plant ? product?.Plant : '')
+    .pipe(
+      finalize(() => {
+      })
+    )
+    .subscribe(res => {
+      if (res[ResultEnum.IsSuccess]) {
+        this.plantList = res[ResultEnum.Model];
+        this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+          startWith(''),
+          map(value => this.filterPlant(value || ''))
+        );
+      }
+    });
   }
 
 
