@@ -37,6 +37,7 @@ export class Method {
   static AddProduct = `/AddProduct`;
   static UpdateProduct = `/UpdateProduct`;
   static GetProductDetailsById = `/GetProductDetailsById`;
+  static GetProductListByPlantCode = `/GetProductListByPlantCode`;
   static DeleteProduct = `/DeleteProduct`;
   static AddPlant = `/AddPlant`;
   static UpdatePlant = `/UpdatePlant`;

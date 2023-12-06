@@ -7,6 +7,10 @@
     <mat-card-content *ngIf="PRDetails">
       <div class="row">
         <div class="col-md-2">
+          <h5 class="mb-0">PR Date</h5>
+          <p class="mt-0">{{PRDetails.PRDate | date : 'dd-MM-yyyy'}}</p>
+       </div>
+        <div class="col-md-2">
            <h5 class="mb-0">PR number</h5>
            <p class="mt-0">{{PRDetails.ERPPRNumber}}</p>
         </div>
@@ -15,9 +19,9 @@
             <p class="mt-0">{{PRDetails.PRDocType}}</p>
          </div>
          <div class="col-md-2">
-            <h5 class="mb-0">PR Date</h5>
-            <p class="mt-0">{{PRDetails.PRDate | date : 'dd-MM-yyyy'}}</p>
-         </div>
+          <h5 class="mb-0">Plant / Warehouse</h5>
+          <p class="mt-0">{{PRDetails.PlantCode}} - {{PRDetails.PlantName}}</p>
+       </div>
       </div>
       <div class="mt-20">
         <h4>Product List</h4>
@@ -47,11 +51,11 @@
             <td mat-cell *matCellDef="let element"> {{element?.DeliveryDate | date : 'dd-MM-yyyy'}}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Plant">
+          <!-- <ng-container matColumnDef="Plant">
             <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
             <td mat-cell *matCellDef="let element">
               {{element?.PlantDescription}} </td>
-          </ng-container>
+          </ng-container> -->
           <ng-container matColumnDef="Location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
             <td mat-cell *matCellDef="let element"> {{element?.LocationDescription}} </td>
