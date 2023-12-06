@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
-import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM } from '@core/models/purchase-requistion';
+import { PurchaseRequisitionDetailsVM } from '@core/models/purchase-requistion';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
@@ -20,7 +20,7 @@ export class ViewPurchaseRequisitionComponent implements OnInit {
     'Qty',
     'Unit',
     'DeliveryDate',
-    'Plant',
+    // 'Plant',
     'Location',
     // 'Close',
     // 'RFQ',
@@ -45,7 +45,6 @@ export class ViewPurchaseRequisitionComponent implements OnInit {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.PRDetails = res[ResultEnum.Model];
             this.dataSource.data = this.PRDetails.PRLineItems;

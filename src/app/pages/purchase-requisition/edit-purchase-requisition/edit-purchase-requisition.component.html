@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Edit Purchase Requistion</h2>
+        <h2>Edit Purchase Requisition</h2>
       </div>
     </div>
 
@@ -13,21 +13,14 @@
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> Doc Type</h5>
+            <h5>PR Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
-                   formControlName="DocType"
-                   placeholder="Doc Type">
-            <mat-autocomplete #docAutocomplete="matAutocomplete">
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
-              Please select doc type...
+                   formControlName="ERPpr"
+                   placeholder="ERP PR Number" [disabled]="true">
+            <mat-error *ngIf="PRHeaderForm.get('ERPpr')?.hasError('required')">
+              Please enter ERP PR Number...
             </mat-error>
           </mat-form-field>
         </div>
@@ -36,30 +29,50 @@
             <h5> PR Date</h5>
           </label>
           <mat-form-field>
-            <input matInput
-                   readonly
+            <input matInput [disabled]="true"
                    formControlName="PRDate">
-            <!-- <mat-datepicker-toggle readonly matSuffix
-                                   [for]="paymentPicker"></mat-datepicker-toggle>
-            <mat-datepicker readonly  format="dd-MM-yyyy" #paymentPicker></mat-datepicker> -->
-            <!-- <mat-error *ngIf="paymentDateModel.hasError('required')">
-                          Please choose a date.
-                        </mat-error>
-                        <mat-error *ngIf="paymentDateModel.hasError('matDatepickerMin')">
-                          Please choose a later date.
-                        </mat-error> -->
           </mat-form-field>
         </div>
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5>PR Number</h5>
+            <h5> Doc Type</h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
-                   formControlName="ERPpr"
-                   placeholder="ERP PR Number" readonly>
-            <mat-error *ngIf="PRHeaderForm.get('ERPpr')?.hasError('required')">
-              Please enter ERP PR Number...
+            <mat-select formControlName="DocType" placeholder="DocType" #singleSelect>
+              <mat-option >
+                <ngx-mat-select-search [formControl]="docTypeControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let DocType of filteredDocType | async" [value]="DocType.Type">
+                {{DocType.Type}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select doc type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Plant / Warehouse<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <mat-select formControlName="Plant" placeholder="Plant / Warehouse" #singleSelect
+                        (selectionChange)="onChangePlant($event.value.PlantCode)">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchPlantControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let plant of filteredPlants | async"
+                          [value]="plant">
+                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="PRHeaderForm.get('Plant')?.hasError('required')">
+              Please select plant / warehouse...
             </mat-error>
           </mat-form-field>
         </div>
@@ -108,15 +121,15 @@
             <td mat-cell *matCellDef="let element"> {{element?.DeliveryDate | date : 'dd-MM-yyyy'}}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Plant">
+          <!-- <ng-container matColumnDef="Plant">
             <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
             <td mat-cell *matCellDef="let element"> {{element?.Plant?.PlantCode}} -
               {{element?.Plant?.PlantName}} </td>
-          </ng-container>
+          </ng-container> -->
           <ng-container matColumnDef="Location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
-            <td mat-cell *matCellDef="let element"> {{element?.StorageLocation?.LocationCode}} -
-              {{element?.StorageLocation?.LocationName}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.LocationCode}} -
+              {{element?.LocationDescription}} </td>
           </ng-container>
           <ng-container matColumnDef="Edit">
             <th mat-header-cell *matHeaderCellDef> Edit </th>
@@ -226,7 +239,7 @@
                                        noEntriesFoundLabel="No Record Found..."
                                        placeholderLabel="Search..."></ngx-mat-select-search>
               </mat-option>
-              <mat-option *ngFor="let unit of filteredUnits | async" [value]="unit?.UOM">
+              <mat-option *ngFor="let unit of filteredUnits | async" [value]="unit">
                 {{ unit?.UOM }}
               </mat-option>
             </mat-select>
@@ -267,41 +280,7 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Plant / Warehouse<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <mat-select formControlName="Plant" placeholder="Plant / Warehouse" #singleSelect
-                        (selectionChange)="onChangePlant($event.value.PlantCode)">
-              <mat-option>
-                <ngx-mat-select-search [formControl]="searchPlantControl"
-                                       noEntriesFoundLabel="No Record Found..."
-                                       placeholderLabel="Search..."></ngx-mat-select-search>
-              </mat-option>
-              <mat-option *ngFor="let plant of filteredPlants | async"
-                          [value]="plant">
-                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
-              </mat-option>
-            </mat-select>
-
-            <!-- <input matInput
-                   [matAutocomplete]="plantAutocomplete"
-                   formControlName="Plant"
-                   placeholder="Plant / Warehouse">
-            <mat-autocomplete #plantAutocomplete="matAutocomplete"
-                              (optionSelected)="onChangePlant($event.option.value.PlantCode)"
-                              [displayWith]="plantDisplayFn">
-              <mat-option *ngFor="let plant of filteredPlants | async"
-                          [value]="plant">
-                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
-              </mat-option>
-            </mat-autocomplete> -->
-            <mat-error *ngIf="PRLineForm.get('Plant')?.hasError('required')">
-              Please select plant / warehouse...
-            </mat-error>
-          </mat-form-field>
-        </div>
+       
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Storage Location<small>*</small></h5>
