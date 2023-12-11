@@ -92,8 +92,7 @@ export class EditPurchaseOrderComponent implements OnInit {
     'Unit',
     'NetPrice',
     'TotalNetPrice',
-    'GST',
-    'IGST',
+    'TaxPercentage',
     'TaxAmount',
     'TotalAmount',
     'Currency',
@@ -164,7 +163,6 @@ export class EditPurchaseOrderComponent implements OnInit {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.PODetails = res[ResultEnum.Model];
             if (this.PODetails) {
@@ -186,26 +184,29 @@ export class EditPurchaseOrderComponent implements OnInit {
             this.PODetails.POLineItems?.forEach((item, index) => {
 
               this.POLineItem.push({
-                Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
+                // Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
+                ProductCode: item.ProductCode ? item.ProductCode : '',
                 ProductGroup: item.ProductGroup,
                 Description: item.ProductDescription,
                 Qty: item?.Qty,
                 DeliveryDate: item?.DeliveryDate,
                 Unit: this.unitList?.find(x => x.Id == item.UnitId),
                 Plant: this.plantList?.find(x => x.Id == item.PlantId),
-                StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
+                // StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
+                LocationCode: item?.LocationCode,
+                LocationDescription: item?.LocationDescription,
+                StorageLocationId: item.StorageLocationId,
                 NetPrice: item?.NetPrice,
                 TotalNetPrice: item?.TotalNetPrice,
                 Currency: item?.Currency,
-                GST: item?.GST,
-                IGST: item?.IGST,
+                TaxPercentage: item?.GST,
                 TaxAmount: item?.TaxAmount,
                 TotalAmount: item?.TotalAmount,
                 StockType: item?.StockType,
                 PRDetId: item?.PRDetId,
                 IsReturnItem: item.IsReturnItem,
                 IsFreeOfCharge: item.IsFreeOfCharge,
-                LineId: item?.Id,
+                POLineId: item?.Id,
                 Id: index + 1
               });
             });
@@ -574,13 +575,12 @@ export class EditPurchaseOrderComponent implements OnInit {
     });
   }
 
-  onCheckChangeFreeOfCharge(event:any){
-    console.log('event',event);
-    if(event?.checked){
+  onCheckChangeFreeOfCharge(event: any) {
+    if (event?.checked) {
       this.POLineForm.get('NetPrice')?.setValue('0');
       this.POLineForm.get('NetPrice')?.disable();
     }
-    else{
+    else {
       this.POLineForm.get('NetPrice')?.enable();
     }
   }
@@ -593,19 +593,14 @@ export class EditPurchaseOrderComponent implements OnInit {
         if (item?.Id == this.selectedLineId) {
           const IsFreeOfCharge = POline.IsFreeOfCharge;
           let netPrice = POline.NetPrice as unknown as number;
-          if(!netPrice)
-           netPrice =this.POLineForm.get('NetPrice')?.getRawValue();
+          if (!netPrice)
+            netPrice = this.POLineForm.get('NetPrice')?.getRawValue();
           const qty = POline.Qty as unknown as number;
           const totalNetPrice = Math.round(qty * netPrice);
-          let IsGST = false;
-          if (item.GST)
-            IsGST = true;
+
           let taxAmount = 0;
           if (totalNetPrice) {
-            if (item.GST)
-              taxAmount = Math.round((totalNetPrice * item.GST) / 100);
-            else
-              taxAmount = Math.round((totalNetPrice * (item.IGST ? item.IGST : 1)) / 100);
+            taxAmount = Math.round((totalNetPrice * (item.TaxPercentage ? item.TaxPercentage : 0)) / 100);
           }
           let totalAmount = 0;
           if (totalNetPrice) {
@@ -641,8 +636,8 @@ export class EditPurchaseOrderComponent implements OnInit {
     this.POLineItem.forEach((element, index) => {
       element.Id = index + 1;
       if (element.Id == id) {
-        if (element?.LineId) {
-          this.poService.deletePOLineByLineId(element.LineId ? element.LineId : 0).subscribe({
+        if (element?.POLineId) {
+          this.poService.deletePOLineByLineId(element.POLineId ? element.POLineId : 0).subscribe({
             next: (res: any) => {
               if (res[ResultEnum.IsSuccess]) {
                 this.toaster.success(res.Message);
@@ -678,7 +673,7 @@ export class EditPurchaseOrderComponent implements OnInit {
     if (this.POHeaderForm.valid) {
       const PRHeaderData = this.POHeaderForm.value as any;
       const PODetails: PurchaseOrderDataVM = {
-        Id:this.selectedPOId,
+        Id: this.selectedPOId,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData.SupplierCode?.Id as any,
         SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,

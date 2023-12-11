@@ -53,30 +53,36 @@ export interface PurchaseOrderDataVM{
     TotalNetPrice?: number;
     TotalTaxAmount?: number;
     TotalPOAmount?: number;
+    PlantId?: number;
     POLineItems:PurchaseOrderLine[];
 }
 
 export interface PurchaseOrderLine{
     Id:number;
-    LineId?:number;
-    Product?:Products;
+    POLineId?:number;
+    PRLineId?:number;
+    ERPPRNumber?:string;
+    // Product?:Products;
+    ProductId?:number;
     Description?:string;
+    ProductCode?:string;
     ProductGroup?:string;
     DeliveryDate?:Date;
     Qty?: number;
     Unit?: Units;
+    UnitId?:number;
     NetPrice?:number;
     TotalNetPrice?:number;
     Currency?:string;
     HSNCode?:string;
-    GST?:number;
-    IGST?:number;
-    SGST?:number;
-    CGST?:number;
+    TaxPercentage?:number;
     TaxAmount?:number;
     TotalAmount?:number;
     StockType?:string;
-    StorageLocation?: StorageLocations;
+    LocationCode?:string;
+    LocationDescription?:string;
+    // StorageLocation?: StorageLocations;
+    StorageLocationId?: number;
     Plant?: Plants;
     PRDetId?: number;
     RFQDetId?: number;

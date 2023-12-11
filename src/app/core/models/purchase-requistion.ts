@@ -73,16 +73,24 @@ export interface PurchaseRequisitionDetailsVM{
     PlantId?:number;
     PlantCode?:string;
     PlantName?:string;
+    CompanyCode?:string;
     PRLineItems:PurchaseRequisitionDetailsLine[];
 }
 export interface PurchaseRequisitionDetailsLine{
     Id?: number,
     PRHeaderId: number,
+    ERPPRNumber?: string,
     ProductId?: number,
     ProductCode?: string,
     ProductDescription?: string,
+    
     ProductGroup: string,
     Qty: number,
+    Tax?: number,
+    TaxAmount?: number,
+    NetPrice?: number,
+    TotalNetPrice?: number,
+    TotalAmount?: number,
     DeliveryDate: Date,
     UnitId: number,
     UnitName: string,

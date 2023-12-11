@@ -41,9 +41,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
     DocType: ['', [Validators.required]],
     CompanyCode: [''],
     PRno: [null, [Validators.required]],
+    Plant: [''],
     ContractNumber: [null],
     SupplierCode: [null, [Validators.required]],
-    SupplierName: [''],
     RFQNumber: [null],
     PODate: [new Date(), [Validators.required]],
   });
@@ -60,6 +60,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     StockType: ['', [Validators.required]],
     IsReturnItem: [false],
     IsFreeOfCharge: [false],
+    StorageLocation: [''],
   });
 
   plantList!: Plants[];
@@ -84,6 +85,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
   index = 0;
   displayedColumns: string[] = [
     'srNo',
+    'PRNumber',
+    'PRLineId',
     'ProductCode',
     'Description',
     'ProductGroup',
@@ -91,14 +94,13 @@ export class CreatePurchaseOrderComponent implements OnInit {
     'Unit',
     'NetPrice',
     'TotalNetPrice',
-    'GST',
-    'IGST',
+    'TaxPercentage',
     'TaxAmount',
     'TotalAmount',
     'Currency',
     'DeliveryDate',
     'StockType',
-    'Plant',
+    // 'Plant',
     'Location',
     'IsReturnItem',
     'IsFreeOfCharge',
@@ -119,15 +121,19 @@ export class CreatePurchaseOrderComponent implements OnInit {
   Role = Role;
   currentUserId!: number;
   rightsForApproval = false;
-  PRDetails!: PurchaseRequisitionDetailsVM;
+  PRDetails!: PurchaseRequisitionDetailsVM[];
   POLineItem: PurchaseOrderLine[] = [];
   supplierCurrency = 'INR';
   selectedSupplier!: Suppliers;
-  stateList!: States[];
   selectedLineId!: number;
   minDate!: Date;
   companyCode!:string;
   PRNoControl = new FormControl();
+
+  supplierControl = new FormControl();
+  docTypeControl = new FormControl();
+  searchPlantControl = new FormControl();
+  searchProductControl = new FormControl();
 
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService, private stateService: StateService,
     private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private supplierService: SupplierService, private prService: PurchaseRequistionService,
@@ -153,12 +159,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
   apiInitialize() {
     this.apiDocType();
     this.apiSupplier();
-    this.apiPRNoList();
+    // this.apiPRNoList();
     this.apiUnit();
-    this.apiProductList();
     this.apiPlantList();
-    this.apiStorageLocationList();
-    this.apiState();
+    //this.apiStorageLocationList();
   }
 
   apiDocType() {
@@ -171,7 +175,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.docTypeList = res[ResultEnum.Model];
-          this.filteredDocType = this.POHeaderForm.get('DocType')!.valueChanges.pipe(
+          this.filteredDocType = this.docTypeControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterDocType(value || ''))
           );
@@ -193,7 +197,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.suppliercodelist = res[ResultEnum.Model];
           this.suppliercodelist.map(x => x.ShortName = x.SupplierCode + (x.FirstName ? ' - ' + x.FirstName : ''));
-          this.filtersupplierCode = this.POHeaderForm.get('SupplierCode')!.valueChanges.pipe(
+          this.filtersupplierCode = this.supplierControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterSupplier(value || ''))
           );
@@ -203,24 +207,24 @@ export class CreatePurchaseOrderComponent implements OnInit {
       });
   }
 
-  apiPRNoList() {
+  apiPRNoList(doctype?: string, plantId?: number) {
     this.prService
-      .getAllPRNumber()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.prlist = res[ResultEnum.Model];
+      .getAllPRNumberForPO(doctype, plantId).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.prlist = res[ResultEnum.Model];
+            if (!this.prlist.length)
+              this.toaster.error(res[ResultEnum.Message]);
 
-          this.filteredprno = this.PRNoControl!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterPrno(value || ''))
-          );
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
+            this.filteredprno = this.PRNoControl!.valueChanges.pipe(
+              startWith(''),
+              map(value => this.filterPrno(value || ''))
+            );
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+        },
+        error: (e) => { this.toaster.error(e.Message); },
       });
   }
 
@@ -244,26 +248,23 @@ export class CreatePurchaseOrderComponent implements OnInit {
       });
   }
 
-  apiProductList() {
-    this.productService
-      .getProductList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+  apiProductByPlantCode(plantCode?: string) {
+    this.productService.getProductListByPlantCode(plantCode).subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.productList = res[ResultEnum.Model];
+          if (this.productList?.length == 0)
+            this.toaster.error('Product not found in this plant, please select other plant...');
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
-
-          // this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
-          //   startWith(''),
-          //   map(value => this.filterProducts(value || ''))
-          // );
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterProducts(value || ''))
+          );
         }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() { },
+    });
   }
 
   apiPlantList() {
@@ -276,6 +277,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.plantList = res[ResultEnum.Model];
+          this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterPlant(value || ''))
+          );
         }
         else {
           this.toaster.error(res[ResultEnum.Message]);
@@ -283,33 +288,18 @@ export class CreatePurchaseOrderComponent implements OnInit {
       });
   }
 
-  apiStorageLocationList() {
-    this.storageLocationService.getAllLocationList().pipe(
-      finalize(() => {
-      })
-    )
-      .subscribe(res => {
+  apiStorageLocationList(plantCode: string) {
+    this.storageLocationService.getStorageLocationByPlantCode(plantCode).subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.locationList = res[ResultEnum.Model];
         }
         else {
           this.toaster.error(res[ResultEnum.Message]);
         }
-      });
-  }
-
-  apiState() {
-    this.stateService.getStateList()
-      .pipe(finalize(() => { }))
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.stateList = res[ResultEnum.Model];
-          // this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
-          //   startWith(''),
-          //   map(value => this.filterStates(value || ''))
-          // );
-        }
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+    });
   }
 
   filterDocType(name: any) {
@@ -352,14 +342,11 @@ export class CreatePurchaseOrderComponent implements OnInit {
   }
 
   filterSupplier(name: any) {
-    if (name?.SupplierCode) {
-      return this.suppliercodelist.filter(Supplier =>
-        Supplier?.SupplierCode?.toLowerCase().includes(name.SupplierCode.toLowerCase()));
-    }
-    else {
-      return this.suppliercodelist.filter(Supplier =>
-        Supplier?.SupplierCode?.toLowerCase().includes(name.toLowerCase()));
-    }
+    return this.suppliercodelist.filter(Supplier =>
+      Supplier?.SupplierCode?.toLowerCase().includes(name?.toLowerCase()) ||
+      Supplier?.FirstName?.toLowerCase().includes(name?.toLowerCase()) ||
+      Supplier?.LastName?.toLowerCase().includes(name?.toLowerCase())
+    );
   }
 
   filterUnit(name: any) {
@@ -385,25 +372,28 @@ export class CreatePurchaseOrderComponent implements OnInit {
         location?.LocationName?.toLowerCase().includes(name.toLowerCase()));
     }
   }
+  filterProducts(name: any) {
+    if (name?.ProductCode || name?.Description) {
+      return this.productList.filter(product =>
+        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.Description.toLowerCase()));
+    }
+    else {
+      return this.productList.filter(product =>
+        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.toLowerCase()));
+    }
+  }
 
   filterPlant(name: any) {
-    if (name?.PlantCode || name?.PlantName)
-      return this.plantList.filter(plant =>
-        plant?.PlantName?.toLowerCase().indexOf(name.PlantName.toLowerCase()) === 0 ||
-        plant?.PlantCode?.toLowerCase().indexOf(name.PlantCode.toLowerCase()) === 0);
-    else
-      return this.plantList.filter(plant =>
-        plant?.PlantName?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        plant?.PlantCode?.toLowerCase().indexOf(name.toLowerCase()) === 0);
+    return this.plantList.filter(plant =>
+      plant?.PlantName?.toLowerCase().includes(name?.toLowerCase()) ||
+      plant?.PlantCode?.toLowerCase().includes(name?.toLowerCase()));
   }
 
   filterStockType(name: any) {
-    if (name?.Type)
-      return this.stockTypeList.filter(unit =>
-        unit?.Type?.toLowerCase().indexOf(name.Type.toLowerCase()) === 0);
-    else
-      return this.stockTypeList.filter(plant =>
-        plant?.Type?.toLowerCase().indexOf(name.toLowerCase()) === 0);
+    return this.stockTypeList.filter(plant =>
+      plant?.Type?.toLowerCase().includes(name?.toLowerCase()));
   }
 
   suppliercodee(supplierCode: Suppliers) {
@@ -465,70 +455,81 @@ export class CreatePurchaseOrderComponent implements OnInit {
     return true;
   }
 
+  getPRNUmberList() {
+    let docType = this.POHeaderForm.get('DocType')?.value;
+    let plant = this.POHeaderForm.get('Plant')?.value as any;
+    if (docType && plant) {
+      this.apiPRNoList(docType, plant?.Id);
+    }
+  }
+
+  onChangePlant(event: any) {
+    this.locationList = [];
+    this.POLineForm.get('StorageLocation')?.setValue(null);
+    if (event) {
+      this.apiProductByPlantCode(event?.PlantCode);
+      this.apiStorageLocationList(event?.PlantCode);
+    }
+  }
+
   onSelectChangeSupplier(event: any) {
 
     const supplier = this.suppliercodelist.find(x => x.SupplierCode?.toLowerCase() == event?.SupplierCode?.toLowerCase());
     if (supplier) {
       this.selectedSupplier = supplier;
       this.supplierCurrency = supplier?.Currency ? supplier?.Currency : 'INR';
-      this.POHeaderForm.get('SupplierName')?.setValue(supplier.FirstName + ' ' + supplier.LastName);
+      // this.POHeaderForm.get('SupplierName')?.setValue(supplier.FirstName + ' ' + supplier.LastName);
     }
   }
 
-  getprno(selectedPRNumber: number) {
-    if (!this.POHeaderForm.get('SupplierCode')?.value) {
-      this.POHeaderForm.get('SupplierCode')?.markAsTouched();
-      this.POHeaderForm.get('PRno')?.setValue(null);
-      throw this.toaster.error('Please select supplier code first...');
-    }
-
+  getprno(selectedPRNumber: any) {
+    let PRId: string;
+    PRId = selectedPRNumber.map((x: any) => x.Id);
     this.POLineItem = [];
     this.dataSource.data = [];
-    this.prService.getPRDetailsForPO(selectedPRNumber).subscribe(res => {
+    if (!PRId)
+      return;
+    this.prService.getPRDetailsForPO(PRId).subscribe(res => {
       if (res[ResultEnum.IsSuccess]) {
         this.PRDetails = res[ResultEnum.Model];
-        this.POHeaderForm.get('DocType')?.setValue(this.PRDetails?.PRDocType ? this.PRDetails?.PRDocType : '');
-        this.PRDetails.PRLineItems?.forEach((item, index) => {
-          const product = this.productList?.find(x => x.ProductCode == item.ProductCode);
-          const netPrice = product?.PriceIndicator == 'S' ? product?.StandardPrice : product?.MovingAvgPrice;
-          const totalNetPrice = Math.round(item?.Qty * (netPrice ? netPrice : 0));
-          const plant = this.plantList?.find(x => x.Id == item.PlantId);
-          const supplier = this.selectedSupplier;
-          const plantState = this.stateList.find(x => x.Id == plant?.StateId as unknown as number);
-          let IsGST = false;
-          if(plant && !this.POHeaderForm.get('CompanyCode')?.value){
-            this.POHeaderForm.get('CompanyCode')?.setValue(plant?.CompanyCode ? plant?.CompanyCode : '');
-          }
-          if (supplier?.State == plantState?.GSTStateCode)
-            IsGST = true;
-          let taxAmount = 0;
 
-          if (product?.GST && totalNetPrice) {
-            taxAmount = Math.round((totalNetPrice * product.GST) / 100);
-          }
-          const totalAmount = Math.round(totalNetPrice + taxAmount);
-          this.POLineItem.push({
-            Product: product,
-            ProductGroup: item.ProductGroup,
-            Description: item.ProductDescription,
-            Qty: item?.Qty,
-            DeliveryDate: item?.DeliveryDate,
-            Unit: this.unitList?.find(x => x.Id == item.UnitId),
-            Plant: this.plantList?.find(x => x.Id == item.PlantId),
-            StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
-            NetPrice: netPrice,
-            TotalNetPrice: totalNetPrice,
-            Currency: this.supplierCurrency,
-            GST: IsGST ? product?.GST : 0,
-            IGST: !IsGST ? product?.GST : 0,
-            TaxAmount: taxAmount,
-            TotalAmount: totalAmount,
-            StockType:'Unrestricted Stock',
-            PRDetId: item?.Id,
-            IsReturnItem: false,
-            IsFreeOfCharge: false,
-            LineId: 0,
-            Id: index + 1
+        //  let plant = this.plantList.find(x => x.Id == this.PRDetails?.PlantId) as any;
+        // this.POHeaderForm.get('DocType')?.setValue(this.PRDetails?.PRDocType ? this.PRDetails?.PRDocType : '');
+        // this.POHeaderForm.get('CompanyCode')?.setValue(this.PRDetails?.CompanyCode ? this.PRDetails?.CompanyCode : '');
+        // if (plant)
+        //   this.POHeaderForm.get('Plant')?.setValue(plant);
+        this.PRDetails.forEach(PRDetails => {
+          PRDetails.PRLineItems?.forEach((item, index) => {
+            const product = this.productList?.find(x => x.ProductCode == item.ProductCode);
+
+            this.POLineItem.push({
+              // Product: product,
+              ERPPRNumber: item?.ERPPRNumber ? item?.ERPPRNumber : '',
+              ProductId: item.ProductId,
+              ProductCode: item.ProductCode ? item.ProductCode : '',
+              ProductGroup: item.ProductGroup,
+              Description: item.ProductDescription,
+              Qty: item?.Qty,
+              DeliveryDate: item?.DeliveryDate,
+              Unit: this.unitList?.find(x => x.Id == item.UnitId),
+              UnitId: item.UnitId,
+              // Plant: this.plantList?.find(x => x.Id == item.PlantId),
+              LocationCode: item?.LocationCode,
+              LocationDescription: item?.LocationDescription,
+              StorageLocationId: item.StorageLocationId,
+              NetPrice: item?.NetPrice,
+              TotalNetPrice: item?.TotalNetPrice,
+              Currency: this.supplierCurrency,
+              TaxPercentage: item?.Tax,
+              TaxAmount: item?.TaxAmount,
+              TotalAmount: item?.TotalAmount,
+              StockType: 'Unrestricted Stock',
+              PRDetId: item?.Id,
+              IsReturnItem: false,
+              IsFreeOfCharge: false,
+              PRLineId: item?.Id,
+              Id: index + 1
+            });
           });
         });
         this.dataSource.data = this.POLineItem;
@@ -597,19 +598,14 @@ export class CreatePurchaseOrderComponent implements OnInit {
         if (item?.Id == this.selectedLineId) {
           const IsFreeOfCharge = POline.IsFreeOfCharge;
           let netPrice = POline.NetPrice as unknown as number;
-          if(!netPrice)
-          netPrice =this.POLineForm.get('NetPrice')?.getRawValue();
+          if (!netPrice)
+            netPrice = this.POLineForm.get('NetPrice')?.getRawValue();
           const qty = POline.Qty as unknown as number;
           const totalNetPrice = Math.round(qty * netPrice);
-          let IsGST = false;
-          if (item.GST)
-            IsGST = true;
+
           let taxAmount = 0;
           if (totalNetPrice) {
-            if (item.GST)
-              taxAmount = Math.round((totalNetPrice * item.GST) / 100);
-            else
-              taxAmount = Math.round((totalNetPrice * (item.IGST ? item.IGST : 1)) / 100);
+            taxAmount = Math.round((totalNetPrice * (item.TaxPercentage ? item.TaxPercentage : 0)) / 100);
           }
           let totalAmount = 0;
           if (totalNetPrice) {
@@ -619,7 +615,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
 
           item.Qty = qty;
           item.NetPrice = !IsFreeOfCharge ? netPrice : 0;
-          item.TotalNetPrice = !IsFreeOfCharge ?  totalNetPrice : 0;
+          item.TotalNetPrice = !IsFreeOfCharge ? totalNetPrice : 0;
           item.TaxAmount = !IsFreeOfCharge ? taxAmount : 0;
           item.TotalAmount = !IsFreeOfCharge ? totalAmount : 0;
           item.StockType = POline.StockType as any;
@@ -639,7 +635,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
 
   onClickDeleteItem() {
     if (this.POLineItem?.length == 1)
-    throw this.toaster.error('Purchase order must have one line item, you can not delete....');
+      throw this.toaster.error('Purchase order must have one line item, you can not delete....');
     if (this.selectedLineId) {
       this.POLineItem.forEach((element, index) => {
         element.Id = index + 1;
@@ -657,24 +653,25 @@ export class CreatePurchaseOrderComponent implements OnInit {
     if (this.POLineItem?.length == 0)
     throw this.toaster.error('Please select alteast one product for create purchase order...');
     this.POHeaderForm.touched;
-      if (this.POHeaderForm.valid) {
-        const PRHeaderData = this.POHeaderForm.value as any;
-        const PODetails: PurchaseOrderDataVM = {
-          Id: 0,
-          DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
-          SupplierId: PRHeaderData.SupplierCode?.Id as any,
-          SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-          SupplierName: PRHeaderData.SupplierName as any,
-          PRHeaderId: PRHeaderData.PRno?.Id,
-          ContractNumber: PRHeaderData.ContractNumber,
-          RFQHeaderId: PRHeaderData.RFQNumber,
-          CompanyCode: PRHeaderData.CompanyCode,
-          PODate: PRHeaderData.PODate ? PRHeaderData.PODate : new Date(),
-          TotalNetPrice: this.calculateTotalForFooter('TotalNetPrice'),
-          TotalTaxAmount:this.calculateTotalForFooter('TaxAmount'),
-          TotalPOAmount:this.calculateTotalForFooter('TotalAmount'),
-          POLineItems: this.POLineItem
-        };
+    if (this.POHeaderForm.valid) {
+      const PRHeaderData = this.POHeaderForm.value as any;
+      const PODetails: PurchaseOrderDataVM = {
+        Id: 0,
+        DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
+        SupplierId: PRHeaderData.SupplierCode?.Id as any,
+        SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
+        // SupplierName: PRHeaderData.SupplierName as any,
+        PRHeaderId: PRHeaderData.PRno?.Id,
+        ContractNumber: PRHeaderData.ContractNumber,
+        RFQHeaderId: PRHeaderData.RFQNumber,
+        CompanyCode: PRHeaderData.CompanyCode,
+        PODate: PRHeaderData.PODate ? PRHeaderData.PODate : new Date(),
+        PlantId: PRHeaderData.Plant?.Id,
+        TotalNetPrice: this.calculateTotalForFooter('TotalNetPrice'),
+        TotalTaxAmount: this.calculateTotalForFooter('TaxAmount'),
+        TotalPOAmount: this.calculateTotalForFooter('TotalAmount'),
+        POLineItems: this.POLineItem
+      };
 
     this.purchaseOrderService.createPO(PODetails).subscribe({
       next: (res: any) => {

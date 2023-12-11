@@ -23,6 +23,7 @@ export class Method {
   static DeletePRLineItemByLineId = `/DeletePRLineItemByLineId`;
   static GetAllPRHeaderList = `/GetAllPRHeaderList`;
   static GetAllPurchaseRequisitionNumber = `/GetAllPurchaseRequisitionNumber`;
+  static GetAllPRNumberForPO = `/GetAllPRNumberForPO`;
   static GetAllPRHeaderListByUserId = `/GetAllPRHeaderListByUserId`;
   static GetPendingPRByUserId = `/GetPendingPRByUserId`;
   static GetPRDetailsById = `/GetPRDetailsById`;
