@@ -9,15 +9,12 @@ export interface Products {
     BaseUnit?:string;
     PurchaseUnit?:string;
     SalesUnit:string;
-    PriceIndicator:string;
-    StandardPrice:number;
-    MovingAvgPrice:number;
     Currency:string;
-    Plant?:string;
-    HSNCode?:string;
     GST?:number;
-    IsBatchNo?: boolean;
-    IsSerialNo?: boolean;
+    Height?:number;
+    Width?:number;
+    Length?:number;
+    Weight?:number;
     IsActive?: boolean;
     CreatedBy?: string;
     CreatedOn?: Date;
@@ -27,6 +24,22 @@ export interface Products {
     DeletedOn?: Date;
     Extra1?: string;
     Extra2?: string;
+    ProductPlantMapping?:ProductPlantMapping[];
+}
+
+export interface ProductPlantMapping{
+    SRNo?:number;
+    Id?:number;
+    PlantId?:number;
+    PlantCode?:string;
+    PlantName?:string;
+    PriceIndicator?:string;
+    StandardPrice:number;
+    MovingAvgPrice:number;
+    HSNCode?:string;
+    IsBatchNo?: boolean;
+    IsSerialNo?: boolean;
+    IsDeleted?: boolean;
 }
 
 export interface ProductGroup{

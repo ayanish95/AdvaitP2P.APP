@@ -17,7 +17,7 @@
         <div class="mt-5">
             <div class="d-flex justify-content-end">
                 <button mat-button mat-raised-button color="primary"
-                        (click)="openAddProductModel(addProduct)">
+                [routerLink]="['add-product']">
                     <mat-icon>add</mat-icon>Add Product
                 </button>
             </div>
@@ -26,12 +26,12 @@
                     <th mat-header-cell *matHeaderCellDef># </th>
                     <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
                 </ng-container>
-                <ng-container matColumnDef="ProductCode">
+                <!-- <ng-container matColumnDef="ProductCode">
                     <th mat-header-cell *matHeaderCellDef> Product Code </th>
                     <td mat-cell *matCellDef="let element"> {{element?.Id}}</td>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="ERPProductCode">
-                    <th mat-header-cell *matHeaderCellDef> ERP Product Code </th>
+                    <th mat-header-cell *matHeaderCellDef>  Product Code </th>
                     <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
                 </ng-container>
                 <ng-container matColumnDef="Description">
@@ -46,28 +46,18 @@
                     <th mat-header-cell *matHeaderCellDef> Base Unit </th>
                     <td mat-cell *matCellDef="let element"> {{element?.BaseUnit}} </td>
                 </ng-container>
-                <ng-container matColumnDef="StandardPrice">
-                    <th mat-header-cell *matHeaderCellDef> Standard Price </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.StandardPrice}} </td>
+                <ng-container matColumnDef="PurchaseUnit">
+                    <th mat-header-cell *matHeaderCellDef> Purchase Unit </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.PurchaseUnit}} </td>
                 </ng-container>
-                <ng-container matColumnDef="MovingAvgPrice">
-                    <th mat-header-cell *matHeaderCellDef> Moving Avg. Price </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.MovingAvgPrice}} </td>
+                <ng-container matColumnDef="SalesUnit">
+                    <th mat-header-cell *matHeaderCellDef> Sales Unit </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.SalesUnit}} </td>
                 </ng-container>
-                <ng-container matColumnDef="Plant">
-                    <th mat-header-cell *matHeaderCellDef> Plant </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.Plant}} </td>
-                </ng-container>
-                <ng-container matColumnDef="IsBatchNo">
-                    <th mat-header-cell *matHeaderCellDef> Batch No </th>
-                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
-                                      [checked]="element?.IsBatchNo" (click)="IsBatchNoOrIsSerialNo('IsBatchNo',$event,element)"></mat-checkbox> </td>
-                </ng-container>
-                <ng-container matColumnDef="IsSerialNo">
-                    <th mat-header-cell *matHeaderCellDef> Serial No </th>
-                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
-                                      [checked]="element?.IsSerialNo" (click)="IsBatchNoOrIsSerialNo('IsSerialNo',$event,element)"></mat-checkbox> </td>
-                </ng-container>
+                <ng-container matColumnDef="IsActive">
+                    <th mat-header-cell *matHeaderCellDef> Active </th>
+                    <td mat-cell *matCellDef="let element">  <mat-checkbox color="primary" [checked]="element?.IsActive" (click)="IsActiveFlagUpdate(element,$event)"></mat-checkbox> </td>
+                  </ng-container>
                 <ng-container matColumnDef="View">
                   <th mat-header-cell *matHeaderCellDef> View </th>
                   <td mat-cell *matCellDef="let element">
@@ -77,8 +67,7 @@
                 <ng-container matColumnDef="Edit">
                     <th mat-header-cell *matHeaderCellDef> Edit </th>
                     <td mat-cell *matCellDef="let element">
-                        <button mat-icon-button
-                                (click)="openEditModelPopup(addProduct,element?.Id)"  matTooltip="Click to Edit">
+                        <button mat-icon-button [routerLink]="['edit-product']" [queryParams]="{id: element.Id}"  matTooltip="Click to Edit">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </td>
@@ -106,260 +95,6 @@
         </div>
     </mat-card-content>
 </mat-card>
-
-
-
-<ng-template #addProduct style="width: 56vw;">
-    <h2 mat-dialog-title> {{ !isEdit ? 'Add' : 'Edit' }} Product</h2>
-
-    <mat-dialog-content>
-        <form [formGroup]="productForm">
-            <div class="row mt-5">
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Product Group<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               [matAutocomplete]="productAutocomplete"
-                               formControlName="ProductGroup"
-                               placeholder="Product Group">
-                        <mat-autocomplete #productAutocomplete="matAutocomplete"
-                                          [displayWith]="productGroupDisplayFn">
-                            <mat-option *ngFor="let productGroup of filteredProductGroup | async"
-                                        [value]="productGroup">
-                                <span>{{ productGroup?.ProductGroupName }} - {{
-                                    productGroup?.Description }} </span>
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-error *ngIf="productForm.get('ProductGroup')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Product Description<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               formControlName="ProductDescription"
-                               placeholder="Product Description">
-                        <mat-error
-                                   *ngIf="productForm.get('ProductDescription')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>HSN Code<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               formControlName="HSNCode"
-                               placeholder="HSN Code">
-                        <mat-error
-                                   *ngIf="productForm.get('HSNCode')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Base UOM<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               [matAutocomplete]="baseUnitAutocomplete"
-                               formControlName="BaseUnit"
-                               placeholder="Unit">
-                        <mat-autocomplete #baseUnitAutocomplete="matAutocomplete"
-                                          [displayWith]="unitDisplayFn">
-                            <mat-option *ngFor="let unit of filteredBaseUnit | async"
-                                        [value]="unit">
-                                <span>{{ unit?.UOM }} </span>
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-error *ngIf="productForm.get('BaseUnit')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Purchase UOM<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               [matAutocomplete]="puchaseUnitAutocomplete"
-                               formControlName="PurchaseUnit"
-                               placeholder="Purchase Unit">
-                        <mat-autocomplete #puchaseUnitAutocomplete="matAutocomplete"
-                                          [displayWith]="unitDisplayFn">
-                            <mat-option *ngFor="let unit of filteredPurchaseUnit | async"
-                                        [value]="unit">
-                                <span>{{ unit?.UOM }} </span>
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-error *ngIf="productForm.get('PurchaseUnit')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Sales UOM<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               [matAutocomplete]="salesUnitAutocomplete"
-                               formControlName="SalesUnit"
-                               placeholder="Sales Unit">
-                        <mat-autocomplete #salesUnitAutocomplete="matAutocomplete"
-                                          [displayWith]="unitDisplayFn">
-                            <mat-option *ngFor="let unit of filteredSalesUnit | async"
-                                        [value]="unit">
-                                <span>{{ unit?.UOM }} </span>
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-error *ngIf="productForm.get('SalesUnit')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Price Indicator<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               [matAutocomplete]="PIUnitAutocomplete"
-                               formControlName="PriceIndicator"
-                               placeholder="Price Indicator">
-                        <mat-autocomplete #PIUnitAutocomplete="matAutocomplete"
-                                          [displayWith]="priceIndicatorDisplayFn">
-                            <mat-option *ngFor="let priceIndicator of filteredPriceIndicator | async"
-                                        [value]="priceIndicator"
-                                        (onSelectionChange)="onSelectPriceIndicator($event)">
-                                <span>{{ priceIndicator?.Name }} </span>
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-error *ngIf="productForm.get('PriceIndicator')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <ng-container *ngIf="selectedPriceIndicator=='S'">
-                    <div class="col-sm-6">
-                        <label class="custom-label">
-                            <h5>Standard Price<small>*</small></h5>
-                        </label>
-                        <mat-form-field class="demo-full-width">
-                            <input matInput
-                                   formControlName="StandardPrice"
-                                   placeholder="Standard Price"
-                                   (keypress)="onKeyPressWithDot($event)">
-                            <mat-error
-                                       *ngIf="productForm.get('StandardPrice')?.hasError('required')">
-                                This filed is required...
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </ng-container>
-                <ng-container *ngIf="selectedPriceIndicator=='V'">
-                    <div class="col-sm-6">
-                        <label class="custom-label">
-                            <h5>Moving Avg. Price<small>*</small></h5>
-                        </label>
-                        <mat-form-field class="demo-full-width">
-                            <input matInput
-                                   formControlName="MovingAvgPrice"
-                                   placeholder="Moving Avg. Price"
-                                   (keypress)="onKeyPressWithDot($event)">
-                            <mat-error
-                                       *ngIf="productForm.get('MovingAvgPrice')?.hasError('required')">
-                                This filed is required...
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </ng-container>
-                <ng-container>
-                    <div class="col-sm-6">
-                        <label class="custom-label">
-                            <h5>GST(%) <small>*</small></h5>
-                        </label>
-                        <mat-form-field class="demo-full-width">
-                            <input matInput
-                                   formControlName="GST"
-                                   placeholder="GST(%)" (keypress)="onKeyPressWithDot($event)">
-                            <mat-error
-                                       *ngIf="productForm.get('GST')?.hasError('required')">
-                                This filed is required...
-                            </mat-error>
-                            <mat-error
-                                       *ngIf="productForm.get('GST')?.hasError('min')">
-                                GST(%) must be minimum 0% and maximum 28%.
-                            </mat-error>
-                            <mat-error
-                                       *ngIf="productForm.get('GST')?.hasError('max')">
-                                GST(%) must be maximum 28%.
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </ng-container>
-                <div class="col-sm-6">
-                    <label class="custom-label">
-                        <h5>Plant<small>*</small></h5>
-                    </label>
-                    <mat-form-field class="demo-full-width">
-                        <input matInput
-                               [matAutocomplete]="plantAuto"
-                               formControlName="Plant"
-                               placeholder="Plant">
-                        <mat-autocomplete #plantAuto="matAutocomplete"
-                                          [displayWith]="plantDisplayFn">
-                            <mat-option *ngFor="let plant of filteredPlant | async"
-                                        [value]="plant">
-                                <span>{{ plant?.PlantCode }} - {{ plant?.PlantName }} </span>
-                            </mat-option>
-                        </mat-autocomplete>
-                        <mat-error *ngIf="productForm.get('Plant')?.hasError('required')">
-                            This filed is required...
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <ng-container>
-                    <div class="col-sm-12">
-                        <mat-checkbox color="primary"
-                                      formControlName="IsBatchNo">Batch No</mat-checkbox>
-                    </div>
-                </ng-container>
-                 <ng-container>
-                    <div class="col-sm-12">
-                        <mat-checkbox color="primary"
-                                      formControlName="IsSerialNo">Serial No</mat-checkbox>
-                    </div>
-                </ng-container>
-                <ng-container *ngIf="isEdit">
-                    <div class="col-sm-12">
-                        <mat-checkbox color="primary"
-                                      formControlName="IsActive">Active?</mat-checkbox>
-                    </div>
-                </ng-container>
-            </div>
-
-        </form>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-        <button mat-raised-button mat-dialog-close>Close</button>
-        <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-                [disabled]="productForm.invalid" (click)="onClickAddOrUpdateProduct()">{{ !isEdit ?
-            'Add' : 'Update' }}</button>
-    </mat-dialog-actions>
-
-</ng-template>
 
 <ng-template #deleteAlert>
     <h2 mat-dialog-title class="text-center">Delete Product</h2>
