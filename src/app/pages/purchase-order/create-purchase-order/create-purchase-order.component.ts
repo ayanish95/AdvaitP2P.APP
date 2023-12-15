@@ -55,6 +55,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     ProductGroup: [''],
     Unit: [''],
     Qty: ['', [Validators.required]],
+    Tax: [''],
     NetPrice: ['', [Validators.required]],
     DeliveryDate: ['', [Validators.required]],
     StockType: ['', [Validators.required]],
@@ -467,6 +468,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     this.locationList = [];
     this.POLineForm.get('StorageLocation')?.setValue(null);
     if (event) {
+      this.POHeaderForm.get('CompanyCode')?.setValue(event?.CompanyCode);
       this.apiProductByPlantCode(event?.PlantCode);
       this.apiStorageLocationList(event?.PlantCode);
     }
@@ -487,7 +489,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     PRId = selectedPRNumber.map((x: any) => x.Id);
     this.POLineItem = [];
     this.dataSource.data = [];
-    if (!PRId)
+    if (!PRId || PRId?.length==0)
       return;
     this.prService.getPRDetailsForPO(PRId).subscribe(res => {
       if (res[ResultEnum.IsSuccess]) {
@@ -520,7 +522,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               NetPrice: item?.NetPrice,
               TotalNetPrice: item?.TotalNetPrice,
               Currency: this.supplierCurrency,
-              TaxPercentage: item?.Tax,
+              Tax: item?.Tax,
               TaxAmount: item?.TaxAmount,
               TotalAmount: item?.TotalAmount,
               StockType: 'Unrestricted Stock',
@@ -565,6 +567,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
+        Tax: data.Tax,
         Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
         NetPrice: data?.NetPrice,
         DeliveryDate: data.DeliveryDate,
@@ -602,10 +605,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
             netPrice = this.POLineForm.get('NetPrice')?.getRawValue();
           const qty = POline.Qty as unknown as number;
           const totalNetPrice = Math.round(qty * netPrice);
-
+          let tax = POline?.Tax as unknown as number;;
           let taxAmount = 0;
           if (totalNetPrice) {
-            taxAmount = Math.round((totalNetPrice * (item.TaxPercentage ? item.TaxPercentage : 0)) / 100);
+            taxAmount = Math.round((totalNetPrice * (tax ? tax : 0)) / 100);
           }
           let totalAmount = 0;
           if (totalNetPrice) {
@@ -616,6 +619,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
           item.Qty = qty;
           item.NetPrice = !IsFreeOfCharge ? netPrice : 0;
           item.TotalNetPrice = !IsFreeOfCharge ? totalNetPrice : 0;
+          item.Tax = !IsFreeOfCharge ? tax : 0;
           item.TaxAmount = !IsFreeOfCharge ? taxAmount : 0;
           item.TotalAmount = !IsFreeOfCharge ? totalAmount : 0;
           item.StockType = POline.StockType as any;
@@ -660,7 +664,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData.SupplierCode?.Id as any,
         SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-        // SupplierName: PRHeaderData.SupplierName as any,
+       SupplierName: PRHeaderData.SupplierCode?.FirstName +' ' + PRHeaderData.SupplierCode?.LastName as any,
         PRHeaderId: PRHeaderData.PRno?.Id,
         ContractNumber: PRHeaderData.ContractNumber,
         RFQHeaderId: PRHeaderData.RFQNumber,

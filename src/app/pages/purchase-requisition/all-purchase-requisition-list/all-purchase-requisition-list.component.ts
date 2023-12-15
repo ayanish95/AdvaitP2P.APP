@@ -30,6 +30,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
     'PRDocType',
     'PRDate',
     'SAPStatus',
+    'Plant',
     'PRPendingBy',
     'Approved',
     'Edit',

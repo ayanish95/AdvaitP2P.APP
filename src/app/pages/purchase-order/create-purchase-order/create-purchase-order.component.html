@@ -219,7 +219,7 @@
 
             <ng-container matColumnDef="TaxPercentage">
               <th mat-header-cell *matHeaderCellDef> Tax(%) </th>
-              <td mat-cell *matCellDef="let element"> {{element?.TaxPercentage}}% </td>
+              <td mat-cell *matCellDef="let element"> {{element?.Tax}}% </td>
               <td mat-footer-cell *matFooterCellDef> </td>
             </ng-container>
 
@@ -385,6 +385,15 @@
             <mat-error *ngIf="POLineForm.get('Qty')?.hasError('required')">
               Please enter Qty...
             </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Tax<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <input matInput type="text" formControlName="Tax" (keypress)="onKeyPressWithDot($event)"
+                   placeholder="Tax">
           </mat-form-field>
         </div>
         <div class="col-sm-6">

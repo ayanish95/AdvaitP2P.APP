@@ -75,7 +75,7 @@ export interface PurchaseOrderLine{
     TotalNetPrice?:number;
     Currency?:string;
     HSNCode?:string;
-    TaxPercentage?:number;
+    Tax?:number;
     TaxAmount?:number;
     TotalAmount?:number;
     StockType?:string;

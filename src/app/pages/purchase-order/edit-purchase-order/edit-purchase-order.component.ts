@@ -199,7 +199,7 @@ export class EditPurchaseOrderComponent implements OnInit {
                 NetPrice: item?.NetPrice,
                 TotalNetPrice: item?.TotalNetPrice,
                 Currency: item?.Currency,
-                TaxPercentage: item?.GST,
+                Tax: item?.GST,
                 TaxAmount: item?.TaxAmount,
                 TotalAmount: item?.TotalAmount,
                 StockType: item?.StockType,
@@ -600,7 +600,7 @@ export class EditPurchaseOrderComponent implements OnInit {
 
           let taxAmount = 0;
           if (totalNetPrice) {
-            taxAmount = Math.round((totalNetPrice * (item.TaxPercentage ? item.TaxPercentage : 0)) / 100);
+            taxAmount = Math.round((totalNetPrice * (item.Tax ? item.Tax : 0)) / 100);
           }
           let totalAmount = 0;
           if (totalNetPrice) {

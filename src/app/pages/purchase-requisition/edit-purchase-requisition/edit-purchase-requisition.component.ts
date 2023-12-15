@@ -30,9 +30,9 @@ import { Location } from '@angular/common';
 export class EditPurchaseRequisitionComponent implements OnInit {
 
   PRHeaderForm = this.fb.group({
-    DocType: [null, [Validators.required]],
-    PRDate: [new Date(), [Validators.required]],
-    ERPpr: [null, [Validators.required]],
+    DocType: ['', [Validators.required]],
+    PRDate: [{ value: '', disabled: true }, [Validators.required]],
+    ERPpr: [{ value: '', disabled: true }, [Validators.required]],
     Plant: [{ value: '', disabled: true }, [Validators.required]]
 
   });

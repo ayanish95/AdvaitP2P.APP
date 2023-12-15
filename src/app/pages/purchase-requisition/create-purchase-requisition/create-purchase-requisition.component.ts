@@ -187,6 +187,9 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             map(value => this.filterProducts(value || ''))
           );
         }
+        else{
+          this.toaster.error(res[ResultEnum.Message]);
+        }
       },
       error: (e) => { this.toaster.error(e.Message); },
       complete() { },
@@ -356,7 +359,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     this.PRLineItem = [];
     this.dataSource.data = [];
     
-    this.apiProductByPlantCode(event)
+    this.apiProductByPlantCode(event);
     if (event) {
       this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
         finalize(() => {

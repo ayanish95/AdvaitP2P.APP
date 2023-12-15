@@ -26,6 +26,9 @@ export interface PurchaseRequisitionHeader{
     RejectedDate?: Date;
     PRPendingBy?: string;
     IsApprovalStart?: boolean;
+    PlantId?:number;
+    PlantCode?:string;
+    PlantName?:string;
 }
 
 
