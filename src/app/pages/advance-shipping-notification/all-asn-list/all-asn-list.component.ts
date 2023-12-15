@@ -29,21 +29,21 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     'srNo',
     'ASNNo',
     'ASNDate',
-    'PRNumber',
-    'PRNumber',
-    'PRDocType',
-    'PRDate',
+    'PONumber',
+    'PODocType',
+    'PODate',
     // 'Delete',
     'View',
-    'Edit',
+    'Edit'
   ];
   displayedColumns: string[] = [
     'srNo',
-    'PRNumber',
-    'PRDocType',
-    'PRDate',
+    'PONumber',
+    'PODocType',
+    'PODate',
     // 'Delete',
     'View',
+    'AddASN',
   ];
 
   dataSource = new MatTableDataSource<any>();
@@ -59,16 +59,14 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
-  currentUserId!: number;
   rightsForApproval = false;
   propChanges: any;
 
   constructor(private purchaseRequistionService: PurchaseRequistionService, private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    
+
     this.currentUserRole = this.authService.roles();
-    this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
 
     if (this.allPOList?.length > 0 && this.Type=='PO') {
@@ -139,7 +137,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     if (this.selectedPRId == 0 || this.selectedPRId == undefined)
       throw this.toaster.error('Something went wrong');
     this.purchaseRequistionService
-      .deletePR(this.selectedPRId, this.currentUserId)
+      .deletePR(this.selectedPRId)
       .pipe(
         finalize(() => {
         })

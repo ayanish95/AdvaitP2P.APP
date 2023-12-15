@@ -17,6 +17,9 @@ export class PlantService {
   getPlantList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantList}`);
   }
+  getPlantListByPlantCode(plantCode:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.Plant + Method.GetPlantListByPlantCode}/${plantCode}`);
+  }
 
   getPlantDetailsById(plantId:number): Observable<any> {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantDetailsById}/${plantId}`);

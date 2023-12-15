@@ -25,7 +25,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   @Input() searchText!: string;
   @Input() supplierList!: Suppliers[];
   propChanges: any;
-  rejectComments!:string;
+  rejectComments!: string;
 
   isLoading = true;
   displayedColumns: string[] = [
@@ -150,7 +150,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
             });
             dialogRef.afterClosed().subscribe((result: any) => {
               if (result != '' && result != undefined && result?.data) {
-                this.supplierService.approveSupplier(result?.data,this.userRole).subscribe({
+                this.supplierService.approveSupplier(result?.data, this.userRole).subscribe({
                   next: (res: any) => {
                     if (res[ResultEnum.IsSuccess]) {
                       this.toast.success(res.Message);
@@ -177,18 +177,18 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
   }
 
   openDialogReject(templateRef: TemplateRef<any>, event: any) {
-    debugger;
-    this.rejectComments='';
+    this.rejectComments = '';
     this.selectedSupplierId = event.Id;
     this.dialog.open(templateRef);
   }
 
   onClickReject() {
-    debugger;    
+    if (!this.rejectComments)
+      throw this.toast.error('Please enter remarks for reject...');
     if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
       throw this.toast.error('Something went wrong');
     this.supplierService
-      .rejectSupplier(this.selectedSupplierId,this.rejectComments)
+      .rejectSupplier(this.selectedSupplierId, this.rejectComments)
       .pipe(
         finalize(() => {
         })

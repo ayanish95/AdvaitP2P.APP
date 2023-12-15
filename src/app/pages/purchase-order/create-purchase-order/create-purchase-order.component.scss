@@ -14,7 +14,17 @@
 }
 
 td.mat-column-srNo {
-  min-width: 90px !important;
+  min-width: 40px !important;
+  max-width: 250px !important;
+  padding-right: 8px;
+}
+td.mat-column-PRNumber {
+  min-width: 150px !important;
+  max-width: 250px !important;
+  padding-right: 8px;
+}
+td.mat-column-PRLineId {
+  min-width: 100px !important;
   max-width: 250px !important;
   padding-right: 8px;
 }

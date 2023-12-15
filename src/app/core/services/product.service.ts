@@ -21,6 +21,10 @@ export class ProductService {
     return this.httpclient.authGet(`${Api.Product + Method.GetProductDetailsById}/${productId}`);
   }
 
+  getProductListByPlantCode(plantCode?:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.Product + Method.GetProductListByPlantCode}/${plantCode}`);
+  }
+
   addProduct(product:Products): Observable<any> {
     return this.httpclient.authPost(`${Api.Product + Method.AddProduct}`,product);
   }

@@ -1,10 +1,12 @@
 export interface GoodsReceivedNoteHeaderVM{
     Id?:number;
+    GRNo?:string;
     ASNNo?:string;
+    ASNId?:number;
     ERPPONumber?:string;
     DocType:string;
     SupplierId?:number;
-    DocumentDate?:Date;
+    GRDeliveryDate?:Date;
     CompanyCode?:string;
     CompanyName?:string;
     SupplierCode?:string;
@@ -34,7 +36,7 @@ export interface GoodsReceivedNoteHeaderVM{
     TotalWeight?: number;
     QtyWeight?: number;
     TotalQty?: number;
-    DeliveryQty?: number;
+    GRDeliveryQty?: number;
     DeliveryDate?: Date,
     OpenGRQty: number,
     Length?: number,

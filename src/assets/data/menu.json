@@ -7,57 +7,6 @@
       "icon": "dashboard"
     },
     {
-      "route": "pages/user",
-      "name": "user",
-      "type": "link",
-      "icon": "people",
-      "permissions": {
-        "only": [
-          "Admin"
-        ]
-      }
-    },
-    {
-      "route": "pages/supplier",
-      "name": "supplier",
-      "type": "link",
-      "icon": "person",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin",
-          "ProcurementTeam"
-
-        ]
-      }
-    },
-    {
-      "route": "pages/product",
-      "name": "product",
-      "type": "link",
-      "icon": "layers",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin"
-
-        ]
-      }
-    },
-    {
-      "route": "pages/plant",
-      "name": "plant",
-      "type": "link",
-      "icon": "location_city",
-      "permissions": {
-        "only": [
-          "Supplier",
-          "Admin"
-
-        ]
-      }
-    },
-    {
       "route": "pages/purchase-requisition",
       "name": "purchaseRequisition",
       "type": "link",
@@ -68,7 +17,8 @@
           "Admin",
           "ProcurementTeam",
           "CommercialTeam",
-          "FinanceTeam"
+          "FinanceTeam",
+          "WarehouseTeam"
 
         ]
       }
@@ -82,20 +32,7 @@
         "only": [
           "UserTeam",
           "ProcurementTeam",
-          "Admin"
-
-        ]
-      }
-
-    },
-    {
-      "route": "pages/quotation",
-      "name": "quotation",
-      "type": "link",
-      "icon": "queue",
-      "permissions": {
-        "only": [
-          "UserTeam",
+          "FinanceTeam",
           "Admin"
 
         ]
@@ -106,10 +43,10 @@
       "route": "pages/advance-shipping-notification",
       "name": "ASN",
       "type": "link",
-      "icon": "queue",
+      "icon": "add_alert",
       "permissions": {
         "only": [
-          "UserTeam",
+          "Supplier",
           "Admin"
 
         ]
@@ -120,10 +57,22 @@
       "route": "pages/goods-received-note",
       "name": "GRN",
       "type": "link",
-      "icon": "queue",
+      "icon": "local_shipping",
       "permissions": {
         "only": [
-          "UserTeam",
+          "Admin"
+
+        ]
+      }
+
+    },
+    {
+      "route": "pages/quality-control",
+      "name": "QualityControl",
+      "type": "link",
+      "icon": "done_all",
+      "permissions": {
+        "only": [
           "Admin"
 
         ]
@@ -137,7 +86,7 @@
       "icon": "queue",
       "permissions": {
         "only": [
-          "UserTeam",
+          "WarehouseTeam",
           "Admin"
 
         ]
@@ -145,21 +94,73 @@
 
     },
     {
-      "route": "pages/quality-control",
-      "name": "QualityControl",
-      "type": "link",
-      "icon": "queue",
+      "route": "masters",
+      "name": "masteruser",
+      "type": "sub",
+      "icon": "assignment_ind",
+      "children": [
+        {
+          "route": "user",
+          "icon": "assignment_ind",
+          "name": "user",
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
+
+        },
+        {
+          "route": "plant",
+          "name": "plant",
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
+        },
+        {
+          "route": "product",
+          "name": "product",
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
+        },
+        {
+          "route": "supplier",
+          "name": "supplier",
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin",
+              "ProcurementTeam",
+              "CommercialTeam",
+              "FinanceTeam",
+              "MasterUser"
+            ]
+          }
+        }
+
+
+      ],
       "permissions": {
         "only": [
-          "UserTeam",
-          "Admin"
-
+          "Admin",
+          "ProcurementTeam",
+          "CommercialTeam",
+          "FinanceTeam",
+          "MasterUser"
         ]
       }
 
     },
     {
-      "route": "pages",
+      "route": "config",
       "name": "configuration",
       "type": "sub",
       "icon": "settings",
@@ -480,7 +481,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam","ProcurementTeam"]
+        "except": ["Supplier","Admin","UserTeam","FinanceTeam","ProcurementTeam","WarehouseTeam"]
       }
     },
     {
@@ -511,7 +512,7 @@
         }
       ],
       "permissions": {
-        "except": ["Supplier","Admin","UserTeam","ProcurementTeam"]
+        "except": ["Supplier","Admin","UserTeam","FinanceTeam","ProcurementTeam","WarehouseTeam"]
 
       }
     },
@@ -533,7 +534,7 @@
         }
       ],
       "permissions": {
-        "only": "Admin"
+        "only": "Admin1"
       }
     },
     {

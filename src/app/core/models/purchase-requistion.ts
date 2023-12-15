@@ -26,6 +26,9 @@ export interface PurchaseRequisitionHeader{
     RejectedDate?: Date;
     PRPendingBy?: string;
     IsApprovalStart?: boolean;
+    PlantId?:number;
+    PlantCode?:string;
+    PlantName?:string;
 }
 
 
@@ -35,20 +38,26 @@ export interface PurchaseRequisitionDataVM{
     PRDocType:string;
     PRToRFQ?:boolean;
     PRDate?:Date;
+    PlantId?:number;
     PRLineItem:PurchaseRequisitionLine[];
 }
 
 export interface PurchaseRequisitionLine{
     Id:number;
     LineId?:number;
-    Product?:Products;
+    ProductId?:number;
+    ProductCode?:string;
     Description?:string;
     ProductGroup?:string;
     DeliveryDate?:Date;
-    Plant?: Plants;
+    // Plant?: Plants;
     Qty?: number;
     StorageLocation?: StorageLocations;
     Unit?: Units;
+    UnitId?: number;
+    StorageLocationId?: number;
+    LocationCode?: string,
+    LocationDescription?: string,
 }
 
 export interface PurchaseRequisitionDetailsVM{
@@ -64,23 +73,34 @@ export interface PurchaseRequisitionDetailsVM{
     RejectedDate?: Date;
     PRPendingBy?: string;
     IsApprovalStart?: boolean;
+    PlantId?:number;
+    PlantCode?:string;
+    PlantName?:string;
+    CompanyCode?:string;
     PRLineItems:PurchaseRequisitionDetailsLine[];
 }
 export interface PurchaseRequisitionDetailsLine{
     Id?: number,
     PRHeaderId: number,
-    ProductId: number,
-    ProductCode: string,
-    ProductDescription: string,
+    ERPPRNumber?: string,
+    ProductId?: number,
+    ProductCode?: string,
+    ProductDescription?: string,
+    
     ProductGroup: string,
     Qty: number,
+    Tax?: number,
+    TaxAmount?: number,
+    NetPrice?: number,
+    TotalNetPrice?: number,
+    TotalAmount?: number,
     DeliveryDate: Date,
     UnitId: number,
     UnitName: string,
     UnitDescription: string,
-    PlantId: number,
-    PlantCode: string,
-    PlantDescription: string,
+    PlantId?: number,
+    PlantCode?: string,
+    PlantDescription?: string,
     StorageLocationId: number,
     LocationCode: string,
     LocationDescription: string,

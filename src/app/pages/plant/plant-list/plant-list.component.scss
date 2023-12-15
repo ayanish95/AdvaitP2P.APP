@@ -1,3 +1,11 @@
 .mat-mdc-form-field {
     width: inherit !important;
 }
+.mat-mdc-card-header {
+  h3 {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 5px;
+      letter-spacing: 1px;
+  }
+}

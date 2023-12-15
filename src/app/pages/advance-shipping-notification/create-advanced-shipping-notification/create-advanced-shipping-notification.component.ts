@@ -22,6 +22,8 @@ import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { ASNDetailsLine, AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
 import { CommonEnum } from '@core/enums/common-enum';
+import { Location } from '@angular/common';
+
 
 
 @Component({
@@ -86,6 +88,10 @@ export class CreateAdvancedShippingNotificationComponent {
     'ProductCode',
     'Description',
     'Deliveryqty',
+    'Weight',
+    'Length',
+    'Width',
+    'Height',
     'PutAwayqty',
     'Unit',
     'Plant',
@@ -103,7 +109,7 @@ export class CreateAdvancedShippingNotificationComponent {
   batchAndSerialNoList: AdvancedShipmentNotificationProductDet[] = [];
   constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private advanceShippingNotificationService: AdvanceShippingNotificationService,
     private toaster: ToastrService, private docTypeSerivce: DocTypeService, private purchaseOrderService: PurchaseOrderService,
-    private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
+    private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService,private location: Location) {
     this.route.queryParams.subscribe((params: any) => {
       this.POId = params.id;
       // if (!this.PRId || this.PRId <= 0)
@@ -156,10 +162,10 @@ export class CreateAdvancedShippingNotificationComponent {
 
   filterPono(name: any) {
     if (name?.Id) {
-      return this.approvedPolist.filter(po => po.ERPPONumber);
+      return this.approvedPolist?.filter(po => po.ERPPONumber);
     }
     else {
-      return this.approvedPolist.filter(po => po.ERPPONumber);
+      return this.approvedPolist?.filter(po => po.ERPPONumber);
     }
   }
 
@@ -248,7 +254,11 @@ export class CreateAdvancedShippingNotificationComponent {
                 IsDeleted: true,
                 DeletedOn: item.DeletedOn,
                 Extra1: '',
-                Extra2: ''
+                Extra2: '',
+                QtyWeight : 0,
+                Length : 0,
+                Width : 0,
+                Height :0
               });
             });
 
@@ -317,6 +327,8 @@ export class CreateAdvancedShippingNotificationComponent {
     this.selecteItemQty = 0;
     const isSerialNo = data?.IsSerialNo;
     const isBatchNo = data?.IsBatchNo;
+    console.log('data',data);
+
     while (this.BatchAndSerialNoForm.controls.items?.length !== 0) {
       this.BatchAndSerialNoForm.controls.items.removeAt(0);
     }
@@ -473,6 +485,42 @@ export class CreateAdvancedShippingNotificationComponent {
 
     this.dataSource.data = this.ASNLineItems;
   }
+  DetLineChangeQtyWeight(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].QtyWeight = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeLength(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Length = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeWidth(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Width = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
+  DetLineChangeHeight(paramevent: any, paramIndex: number) {
+    debugger;
+    const _letNumber = Number(paramevent.target.value);
+
+    this.ASNLineItems[paramIndex].Height = _letNumber;
+
+    //this.dataSource.data[paramIndex].Qty = _letNumber;
+    this.dataSource.data = this.ASNLineItems;
+  }
   openForAddAsn() {
     // if(this.batchAndSerialNoList?.length == 0)
 
@@ -507,7 +555,7 @@ export class CreateAdvancedShippingNotificationComponent {
         DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
         ShippingDate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
         ASNDetails: lineDet,
-       
+
       };
 
       this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
@@ -528,6 +576,9 @@ export class CreateAdvancedShippingNotificationComponent {
         },
       });
     }
+  }
+  onClickBack() {
+    this.location.back();
   }
 
 

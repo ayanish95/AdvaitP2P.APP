@@ -459,7 +459,7 @@ export class AddApprovalStrategyComponent implements OnInit {
           if (res[ResultEnum.IsSuccess]) {
             this.toaster.success(res.Message);
             this.configForm.reset();
-            this.router.navigateByUrl('/pages/approval-config');
+            this.router.navigateByUrl('/config/approval-config');
           }
           else {
             this.toaster.error(res.Message);
@@ -478,7 +478,7 @@ export class AddApprovalStrategyComponent implements OnInit {
             this.toaster.success(res.Message);
             this.configForm.reset();
             this.selectedIdATId = 0;
-            this.router.navigateByUrl('/pages/approval-config');
+            this.router.navigateByUrl('/config/approval-config');
           }
           else {
             this.toaster.error(res.Message);

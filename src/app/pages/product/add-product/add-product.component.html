@@ -1,0 +1,387 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+    <mat-card-header>
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>Create Product </h2>
+            </div>
+        </div>
+
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="productForm">
+            <div class="row mt-5">
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Product Group<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <mat-select formControlName="ProductGroup" placeholder="ProductGroup"
+                                    #singleSelect>
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="searchProductGroupControl"
+                                                       noEntriesFoundLabel="No Record Found..."
+                                                       placeholderLabel="Search..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let productGroup of filteredProductGroup | async"
+                                        [value]="productGroup">
+                                <span>{{ productGroup?.ProductGroupName }} -
+                                    {{productGroup?.Description }} </span>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="productForm.get('ProductGroup')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Product Description<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="ProductDescription"
+                               placeholder="Product Description">
+                        <mat-error
+                                   *ngIf="productForm.get('ProductDescription')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-2">
+                    <label class="custom-label">
+                        <h5>Base UOM<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <mat-select formControlName="BaseUnit" placeholder="Base Unit"
+                                    #singleSelect>
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="searchBaseUOMControl"
+                                                       noEntriesFoundLabel="No Record Found..."
+                                                       placeholderLabel="Search..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let unit of filteredBaseUnit | async"
+                                        [value]="unit">
+                                <span>{{ unit?.UOM }} </span>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="productForm.get('BaseUnit')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-2">
+                    <label class="custom-label">
+                        <h5>Purchase UOM<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <mat-select formControlName="PurchaseUnit" placeholder="Purchase Unit"
+                                    #singleSelect>
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="searchPurchaseUOMControl"
+                                                       noEntriesFoundLabel="No Record Found..."
+                                                       placeholderLabel="Search..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let unit of filteredPurchaseUnit | async"
+                                        [value]="unit">
+                                <span>{{ unit?.UOM }} </span>
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="productForm.get('PurchaseUnit')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-2">
+                    <label class="custom-label">
+                        <h5>Sales UOM<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <mat-select formControlName="SalesUnit" placeholder="Sales Unit"
+                                    #singleSelect>
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="searchSalesUOMControl"
+                                                       noEntriesFoundLabel="No Record Found..."
+                                                       placeholderLabel="Search..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let unit of filteredSalesUnit | async"
+                                        [value]="unit">
+                                <span>{{ unit?.UOM }} </span>
+                            </mat-option>
+                        </mat-select>
+
+                        <mat-error *ngIf="productForm.get('SalesUnit')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Tax(%) <small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="GST"
+                               placeholder="Tax(%)" (keypress)="onKeyPressWithDot($event)">
+                        <mat-error
+                                   *ngIf="productForm.get('GST')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                        <mat-error
+                                   *ngIf="productForm.get('GST')?.hasError('min')">
+                            GST(%) must be minimum 0% and maximum 28%.
+                        </mat-error>
+                        <mat-error
+                                   *ngIf="productForm.get('GST')?.hasError('max')">
+                            GST(%) must be maximum 28%.
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Height</h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput formControlName="Height" placeholder="Height">
+                        <mat-error *ngIf="productForm.get('Height')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-2">
+                    <label class="custom-label">
+                        <h5>Width</h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput formControlName="Width" placeholder="Width">
+                        <mat-error *ngIf="productForm.get('Width')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-2">
+                    <label class="custom-label">
+                        <h5>Length</h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput formControlName="Length" placeholder="Length">
+                        <mat-error *ngIf="productForm.get('Length')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-2">
+                    <label class="custom-label">
+                        <h5>Weight</h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput formControlName="Weight" placeholder="Weight">
+                        <mat-error *ngIf="productForm.get('Weight')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-12">
+                    <mat-list role="list">
+                        <mat-divider></mat-divider>
+                    </mat-list>
+                </div>
+            </div>
+        </form>
+        
+        <form [formGroup]="productPlantForm">
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h3>Add Plant Details</h3>
+                </div>
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Plant<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <mat-select formControlName="Plant" placeholder="Plant"
+                                    #singleSelect>
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="searchPlantControl"
+                                                       noEntriesFoundLabel="No Record Found..."
+                                                       placeholderLabel="Search..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let plant of filteredPlant | async"
+                                        [value]="plant">
+                                <span>{{ plant?.PlantCode }} - {{ plant?.PlantName }} </span>
+                            </mat-option>
+                        </mat-select>
+
+                        <mat-error *ngIf="productPlantForm.get('Plant')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Price Indicator<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <mat-select formControlName="PriceIndicator" placeholder="Price Indicator"
+                                    #singleSelect>
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="searchPriceIndicatorControl"
+                                                       noEntriesFoundLabel="No Record Found..."
+                                                       placeholderLabel="Search..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let priceIndicator of filteredPriceIndicator | async"
+                                        [value]="priceIndicator">
+                                <span>{{ priceIndicator?.Name }} </span>
+                            </mat-option>
+                        </mat-select>
+
+                        <mat-error
+                                   *ngIf="productPlantForm.get('PriceIndicator')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Standard Price<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="StandardPrice"
+                               placeholder="Standard Price"
+                               (keypress)="onKeyPressWithDot($event)">
+                        <mat-error
+                                   *ngIf="productPlantForm.get('StandardPrice')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>Moving Avg. Price<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="MovingAvgPrice"
+                               placeholder="Moving Avg. Price"
+                               (keypress)="onKeyPressWithDot($event)">
+                        <mat-error
+                                   *ngIf="productPlantForm.get('MovingAvgPrice')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-3">
+                    <label class="custom-label">
+                        <h5>HSN Code<small>*</small></h5>
+                    </label>
+                    <mat-form-field class="demo-full-width">
+                        <input matInput
+                               formControlName="HSNCode"
+                               placeholder="HSN Code">
+                        <mat-error
+                                   *ngIf="productPlantForm.get('HSNCode')?.hasError('required')">
+                            This filed is required...
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-3 d-flex align-items-center">
+                    <mat-checkbox color="primary"
+                                  formControlName="IsBatchNo">Batch No</mat-checkbox>
+                    <mat-checkbox color="primary"
+                                  formControlName="IsSerialNo">Serial No</mat-checkbox>
+                </div>
+                <div class="col-sm-12">
+                    <button mat-button mat-raised-button color="primary" (click)="addPlant()">
+                        <mat-icon>add</mat-icon>
+                        {{isEdit ?'Update' :  'Add'}} Plant
+                    </button>
+                </div>
+               
+            </div>
+        </form>
+
+
+        <div class="mt-20">
+            <h4>Plant List</h4>
+            <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="srNo">
+                    <th mat-header-cell *matHeaderCellDef># </th>
+                    <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Plant">
+                    <th mat-header-cell *matHeaderCellDef> Plant </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} - {{element?.PlantName}}</td>
+                </ng-container>
+                <ng-container matColumnDef="PriceIndicator">
+                    <th mat-header-cell *matHeaderCellDef> Price Indicator </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.PriceIndicator == 'S' ? 'Standard Price' : 'Moving Avg. Price' }} </td>
+                </ng-container>
+                <ng-container matColumnDef="StandardPrice">
+                    <th mat-header-cell *matHeaderCellDef> Standard Price </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.StandardPrice}} </td>
+                </ng-container>
+                <ng-container matColumnDef="MovingAvgPrice">
+                    <th mat-header-cell *matHeaderCellDef> Moving Avg. Price </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.MovingAvgPrice}} </td>
+                </ng-container>
+               
+                <ng-container matColumnDef="HSNCode">
+                    <th mat-header-cell *matHeaderCellDef> HSN Code </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.HSNCode}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="IsBatchNo">
+                    <th mat-header-cell *matHeaderCellDef> Is BatchNo </th>
+                    <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsBatchNo"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="IsSerialNo">
+                    <th mat-header-cell *matHeaderCellDef> IsSerialNo </th>
+                    <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsSerialNo"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="Edit">
+                    <th mat-header-cell *matHeaderCellDef> Edit </th>
+                    <td mat-cell *matCellDef="let element" (click)="editPlantDetials(element)">
+                        <button mat-icon-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Delete">
+                    <th mat-header-cell *matHeaderCellDef> Delete </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button  (click)="openDeleteModel(deleteAlert,element.Id)">
+                            <!-- -->
+                            <mat-icon>delete</mat-icon></button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                                 [columnCount]="displayedColumns.length"></app-no-record-found>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button mat-button mat-raised-button color="primary" (click)="onClickAddProduct()">
+              Save
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<ng-template #deleteAlert>
+    <h2 mat-dialog-title class="text-center">Delete Plant Details</h2>
+    <div mat-dialog-content>Are you sure want to delete this plant?</div>
+    <div mat-dialog-actions class="d-flex justify-content-center">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteItem()"  matTooltip="Click to Delete">Delete</button>
+    </div>
+</ng-template>

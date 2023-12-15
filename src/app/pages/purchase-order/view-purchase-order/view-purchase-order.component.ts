@@ -97,7 +97,7 @@ export class ViewPurchaseOrderComponent {
   }
 
   print() {
-    debugger;
+    //debugger;
     let mergefile = '';
     let orderRow = '';
     const totalRow = '';

@@ -261,8 +261,7 @@ export class UserListComponent {
       });
   }
 
- async updateService(user:any){
-  debugger
+ async updateService(user:any){  
     await this.userService.updateUser(user).subscribe({
       next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
@@ -281,8 +280,7 @@ export class UserListComponent {
     });
   }
 
-  IsActiveFlagUpdate(element:any,e:any){
-    debugger
+  IsActiveFlagUpdate(element:any,e:any){    
     element.IsActive = e.srcElement.checked;
     this.updateService(element);
   }

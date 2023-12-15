@@ -1,8 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { DateAdapter } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
@@ -21,6 +20,7 @@ import { StorageLocationService } from '@core/services/storage-location.service'
 import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-edit-purchase-requisition',
@@ -30,8 +30,11 @@ import { Observable, finalize, map, startWith } from 'rxjs';
 export class EditPurchaseRequisitionComponent implements OnInit {
 
   PRHeaderForm = this.fb.group({
-    DocType: [null, [Validators.required]],
-    PRDate: [new Date(), [Validators.required]],
+    DocType: ['', [Validators.required]],
+    PRDate: [{ value: '', disabled: true }, [Validators.required]],
+    ERPpr: [{ value: '', disabled: true }, [Validators.required]],
+    Plant: [{ value: '', disabled: true }, [Validators.required]]
+
   });
 
   PRLineForm = this.fb.group({
@@ -41,7 +44,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     Qty: ['', [Validators.required]],
     Unit: ['', [Validators.required]],
     DeliveryDate: ['', [Validators.required]],
-    Plant: ['', [Validators.required]],
+    // Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
 
@@ -58,6 +61,13 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   locationList!: StorageLocations[];
   filteredlocation!: Observable<StorageLocations[]>;
 
+  docTypeControl = new FormControl();
+  searchProductControl = new FormControl();
+  searchUnitControl = new FormControl();
+  searchPlantControl = new FormControl();
+  searchStorageLocationControl = new FormControl();
+
+
   PRLineItem: PurchaseRequisitionLine[] = [];
   dataSource = new MatTableDataSource<any>();
   index = 0;
@@ -70,7 +80,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     'Qty',
     'Unit',
     'DeliveryDate',
-    'Plant',
+    // 'Plant',
     'Location',
     'Edit',
     'Delete',
@@ -78,10 +88,12 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   minDate: Date = new Date();
   PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
-  currentUserId!:number;
+  isEdit = false;
+  IsNewselectedLine!: number;
+  currentUserId!: number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router, private route: ActivatedRoute,private authService:AuthService) {
+    private router: Router, private route: ActivatedRoute, private authService: AuthService, private location: Location) {
     this.route.queryParams.subscribe((params: any) => {
       this.PRId = params.id;
       if (!this.PRId || this.PRId <= 0)
@@ -91,7 +103,6 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentUserId = this.authService.userId();
     this.apiDocType();
     this.apiProductList();
     this.apiPlantList();
@@ -110,29 +121,40 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.PRDetails = res[ResultEnum.Model];
             if (this.PRDetails) {
-              if(this.PRDetails?.IsApprovedByAll || this.PRDetails?.IsRejected){
-                 this.toast.error('You can not update this PR');
-                 this.router.navigateByUrl('/pages/purchase-requisition');
+              // if(this.PRDetails?.IsApprovedByAll || this.PRDetails?.IsRejected){
+              //    this.toast.error('You can not update this PR');
+              //    this.router.navigateByUrl('/pages/purchase-requisition');
+              // }
+              if (this.PRDetails?.PlantCode) {
+                this.onChangePlant(this.PRDetails.PlantCode);
+                this.apiProductByPlantCode(this.PRDetails.PlantCode);
               }
               this.PRHeaderForm.patchValue({
                 DocType: this.PRDetails.PRDocType as any,
-                PRDate: this.formatDate(this.PRDetails.PRDate) as any
+                PRDate: this.formatDate(this.PRDetails.PRDate) as any,
+                ERPpr: this.PRDetails.ERPPRNumber as any,
+                Plant: this.plantList?.find(x => x.Id == this.PRDetails.PlantId) as any
               });
             }
             this.PRDetails.PRLineItems?.forEach((item, index) => {
               this.PRLineItem.push({
-                Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
+                // Product: item.PlantCode,
+                ProductId: this.productList?.find(x => x.ProductCode == item.ProductCode)?.Id,
                 ProductGroup: item.ProductGroup,
+                ProductCode: item.ProductCode,
                 Description: item.ProductDescription,
                 Qty: item?.Qty,
                 DeliveryDate: item?.DeliveryDate,
                 Unit: this.unitList?.find(x => x.Id == item.UnitId),
-                Plant: this.plantList?.find(x => x.Id == item.PlantId),
+                UnitId:item.UnitId,
+                // Plant: this.plantList?.find(x => x.Id == item.PlantId),
                 StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
+                LocationCode: item.LocationCode,
+                LocationDescription: item.LocationDescription,
+                StorageLocationId: item.StorageLocationId,
                 LineId: item?.Id,
                 Id: index + 1
               });
@@ -147,6 +169,24 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         else
           this.toast.error(res[ResultEnum.Message]);
       });
+  }
+  apiProductByPlantCode(plantCode?: string) {
+    this.productService.getProductListByPlantCode(plantCode).subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.productList = res[ResultEnum.Model];
+          if (this.productList?.length == 0)
+            this.toast.error('Product not found in this plant, please select other plant...');
+          this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterProducts(value || ''))
+          );
+        }
+      },
+      error: (e) => { this.toast.error(e.Message); },
+      complete() { },
+    });
   }
 
   private formatDate(date: any) {
@@ -169,7 +209,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.docTypeList = res[ResultEnum.Model];
-          this.filteredDocType = this.PRHeaderForm.get('DocType')!.valueChanges.pipe(
+          this.filteredDocType = this.docTypeControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterDocType(value || ''))
           );
@@ -190,7 +230,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
           if (this.PRId)
             this.apiGetPRDetailsById(this.PRId);
-          this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterProducts(value || ''))
           );
@@ -208,7 +248,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.PRLineForm.get('Plant')!.valueChanges.pipe(
+          this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPlant(value || ''))
           );
@@ -226,7 +266,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.PRLineForm.get('Unit')!.valueChanges.pipe(
+          this.filteredUnits = this.searchUnitControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterUnit(value || ''))
           );
@@ -243,7 +283,7 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.locationList = res[ResultEnum.Model];
 
-          this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+          this.filteredlocation = this.searchStorageLocationControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterStorageLocation(value || ''))
           );
@@ -267,13 +307,15 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   }
 
   filterProducts(name: any) {
-    if (name?.ProductCode) {
+    if (name?.ProductCode || name?.Description) {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.Description.toLowerCase()));
     }
     else {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.toLowerCase()));
     }
   }
 
@@ -340,11 +382,13 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     return true;
   }
 
-  getPosts(event: any) {
+  onChangeProduct(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
+      this.PRLineForm.get('Unit')?.setValue(product?.PurchaseUnit ? product?.PurchaseUnit : '');
+
     }
   }
 
@@ -352,6 +396,9 @@ export class EditPurchaseRequisitionComponent implements OnInit {
   onChangePlant(event: any, IsEdit = false, locationId?: number) {
     this.locationList = [];
     this.PRLineForm.get('StorageLocation')?.setValue(null);
+    this.PRLineItem = [];
+    this.dataSource.data = [];
+
     if (event) {
       this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
         finalize(() => {
@@ -360,11 +407,11 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         .subscribe(res => {
           if (res[ResultEnum.IsSuccess]) {
             this.locationList = res[ResultEnum.Model];
-            if (IsEdit && this.locationList?.length > 0) {
-              this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
-            }
+            // if (IsEdit && this.locationList?.length > 0) {
+            //   this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
+            // }
 
-            this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+            this.filteredlocation = this.searchStorageLocationControl!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterStorageLocation(value || ''))
             );
@@ -382,18 +429,20 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     this.PRLineForm.reset();
     this.PRLineForm.updateValueAndValidity();
     if (data) {
+      this.isEdit = true;
       this.selectedLineId = data?.Id;
       this.minDate = data.DeliveryDate;
-      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
+      // await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
       this.PRLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
+        // Product: data?.ProductCode,
+        Product: this.productList?.find(x => x.ProductCode == data?.ProductCode) as any,
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        Unit: data.Unit,
         DeliveryDate: data.DeliveryDate,
-        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
-        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
+        // Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
+        StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocationId) as any,
       });
     }
     this.dialog.open(templateRef, {
@@ -404,18 +453,23 @@ export class EditPurchaseRequisitionComponent implements OnInit {
 
 
   onClickAddProduct() {
-    const PRline = this.PRLineForm.value;
+    const PRline = this.PRLineForm.value as any;
     if (this.selectedLineId > 0) {
       this.PRLineItem.forEach(item => {
         if (item?.Id == this.selectedLineId) {
-          item.Product = PRline.Product as unknown as Products,
-            item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
-            item.Description = PRline.Description ? PRline.Description : '',
+          item.ProductId = PRline.Product?.Id as unknown as number,
+            item.ProductCode = PRline?.Product?.ProductCode ? PRline?.Product?.ProductCode : '',
+            item.ProductGroup = PRline?.Product?.ProductGroup ? PRline?.Product?.ProductGroup : '',
+            item.Description = PRline?.Product?.Description ? PRline?.Product?.Description : '',
             item.Qty = PRline?.Qty as unknown as number,
             item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            item.Unit = PRline.Unit as unknown as Units,
-            item.Plant = PRline.Plant as unknown as Plants,
+            item.Unit = this.unitList?.find(x => x.UOM == PRline?.Unit?.UOM) as unknown as Units,
+            item.UnitId = PRline.Unit?.Id as any,
+            // item.Plant = PRline.Plant as unknown as Plants,
             item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
+            item.LocationCode = PRline?.StorageLocation?.LocationCode,
+            item.LocationDescription = PRline?.StorageLocation?.LocationName,
+            item.StorageLocationId = PRline?.StorageLocation?.Id,
             item.LineId = item.LineId,
             item.Id = item.Id;
         }
@@ -423,33 +477,74 @@ export class EditPurchaseRequisitionComponent implements OnInit {
     }
     else {
       this.PRLineItem.push({
-        Product: PRline.Product as unknown as Products,
-        ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
-        Description: PRline.Description ? PRline.Description : '',
+        ProductId: PRline.Product?.Id as unknown as number,
+        ProductCode: PRline?.Product?.ProductCode ? PRline?.Product?.ProductCode : '',
+        ProductGroup: PRline?.Product?.ProductGroup ? PRline?.Product?.ProductGroup : '',
+        Description: PRline?.Product?.Description ? PRline?.Product?.Description : '',
         Qty: PRline?.Qty as unknown as number,
         DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        Unit: PRline.Unit as unknown as Units,
-        Plant: PRline.Plant as unknown as Plants,
+        Unit: this.unitList?.find(x => x.UOM == PRline?.Unit?.UOM) as unknown as Units,
+        UnitId: PRline.Unit?.Id as any,
+        // Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
+        LocationCode: PRline.StorageLocation?.LocationCode,
+        LocationDescription: PRline.StorageLocation?.LocationName,
+        StorageLocationId: PRline.StorageLocation?.Id,
         Id: this.PRLineItem.length + 1,
         LineId: 0
       });
     }
+    this.isEdit = false;
     this.selectedLineId = 0;
     this.dataSource.data = this.PRLineItem;
   }
 
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
-    console.log('data', data);
     if (this.PRLineItem?.length == 1)
       throw this.toast.error('PR must have one line item, you can not delete....');
+
     if (data?.LineId > 0) {
-      this.dialog.open(templateRef);
       this.selectedLineId = data?.Id;
     }
-    else{
-      const id = data?.Id;
+    else {
+      this.IsNewselectedLine = data?.Id;
+    }
+    this.dialog.open(templateRef);
+  }
+
+  onClickDeleteItem() {
+    if (this.selectedLineId) {
+      const id = this.selectedLineId;
+      this.PRLineItem.forEach((element, index) => {
+        element.Id = index + 1;
+        if (element.Id == id) {
+          if (element?.LineId) {
+            this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0).subscribe({
+              next: (res: any) => {
+                if (res[ResultEnum.IsSuccess]) {
+                  this.toast.success(res.Message);
+                }
+                else {
+                  this.toast.error(res.Message);
+                }
+              },
+              error: (e) => { this.toast.error(e.Message); },
+              complete() {
+
+              },
+            });
+          }
+          this.dialog.closeAll();
+          this.PRLineItem.splice(index, 1);
+        }
+      });
+      this.PRLineItem.forEach((element, index) => {
+        element.Id = index + 1;
+      });
+    }
+    else if (!this.selectedLineId && this.selectedLineId == 0) {
+      const id = this.IsNewselectedLine;
       this.PRLineItem.forEach((element, index) => {
         element.Id = index + 1;
         if (element.Id == id) {
@@ -459,56 +554,33 @@ export class EditPurchaseRequisitionComponent implements OnInit {
       this.PRLineItem.forEach((element, index) => {
         element.Id = index + 1;
       });
-      this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
     }
-  }
-
-  onClickDeleteItem() {
-    const id = this.selectedLineId;
-    this.PRLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-      if (element.Id == id) {
-        if (element?.LineId) {
-          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0,this.currentUserId).subscribe({
-            next: (res: any) => {
-              if (res[ResultEnum.IsSuccess]) {
-                this.toast.success(res.Message);
-              }
-              else {
-                this.toast.error(res.Message);
-              }
-            },
-            error: (e) => { this.toast.error(e.Message); },
-            complete() {
-
-            },
-          });
-        }
-        this.dialog.closeAll();
-        this.PRLineItem.splice(index, 1);
-      }
-    });
-    this.PRLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-    });
     this.dataSource = new MatTableDataSource<any>(this.PRLineItem);
     this.selectedLineId = 0;
+    this.IsNewselectedLine = 0;
+  }
+
+  onClickCloseDialog() {
+    this.selectedLineId = 0;
+    this.dialog.closeAll();
   }
 
   onClickCreatePR() {
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
-      const PRHeaderData = this.PRHeaderForm.value;
+      const PRHeaderData = this.PRHeaderForm.value as any;
       const PRDate = this.PRHeaderForm.get('PRDate')?.getRawValue();
+      const Plant = this.PRHeaderForm.get('Plant')?.getRawValue();
       const PRDetails: PurchaseRequisitionDataVM = {
         Id: this.PRId,
         ERPPRNumber: this.PRDetails.ERPPRNumber,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         PRDate: PRDate ? PRDate : new Date(),
+        PlantId: Plant?.Id ? Plant?.Id : 0,
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.updatePR(PRDetails,this.currentUserId).subscribe({
+      this.prService.updatePR(PRDetails).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);
@@ -526,6 +598,9 @@ export class EditPurchaseRequisitionComponent implements OnInit {
         },
       });
     }
+  }
+  onClickBack() {
+    this.location.back();
   }
 }
 

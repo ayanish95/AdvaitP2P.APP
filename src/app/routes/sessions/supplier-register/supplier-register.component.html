@@ -268,15 +268,15 @@
                             <div class="col-sm-6">
                                 <mat-form-field>
                                     <mat-label>State</mat-label>
-                                    <input matInput
-                                           [matAutocomplete]="autocomplete"
-                                           formControlName="state">
-                                    <mat-autocomplete #autocomplete="matAutocomplete" multiple>
-                                        <mat-option *ngFor="let state of filteredStates | async"
-                                                    [value]="state.Name">
-                                            <span>{{ state.Name }}</span>
+                                    <mat-select formControlName="state" placeholder="State" #singleSelect>
+                                        <mat-option>
+                                          <ngx-mat-select-search [formControl]="basicInfoFromStateControl" placeholder="State"
+                                           noEntriesFoundLabel="No Record Found..." placeholderLabel="Search..."></ngx-mat-select-search>
                                         </mat-option>
-                                    </mat-autocomplete>
+                                        <mat-option *ngFor="let state of filteredStates | async" [value]="state">
+                                                {{state?.Name}}
+                                        </mat-option>
+                                      </mat-select> 
                                     <mat-error
                                                *ngIf="addressForm.get('state')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>

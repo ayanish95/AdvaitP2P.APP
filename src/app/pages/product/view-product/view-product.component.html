@@ -5,42 +5,111 @@
       <mat-card-title>Product Detail</mat-card-title>
     </div>
     <div class="col-md-3 d-flex justify-content-end">
-      <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()"> Back</button>
     </div>
   </mat-card-header>
-    <mat-card-content *ngIf="productDetails">
-      <div class="row">
-        <div class="col-md-2">
-          <h5 class="mb-0">Product Name</h5>
-          <p class="mt-0">{{productDetails.ProductFullName}}</p>
-       </div>
-        <div class="col-md-2">
-          <h5 class="mb-0" style="color: rgb(30, 24, 24);">Product Group</h5>
-          <p class="mt-0">{{productDetails.ProductGroup}}</p>
-       </div>
-           <div class="col-md-2">
-            <h5 class="mb-0">Product Description</h5>
-            <p class="mt-0">{{productDetails.Description}}</p>
-         </div>
-        <div class="col-md-2">
-           <h5 class="mb-0">Product Code</h5>
-           <p class="mt-0">{{productDetails.ProductCode}}</p>
-        </div>
-        <div class="col-md-2">
-            <h5 class="mb-0">Unit</h5>
-            <p class="mt-0">{{productDetails.PurchaseUnit}}</p>
-         </div>
-         <div class="col-md-2">
+  <mat-card-content *ngIf="productDetails">
+    <div class="row">
+      <div class="col-md-2">
+        <h5 class="mb-0">Product Code</h5>
+        <p class="mt-5">{{productDetails.ProductCode}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Product Name</h5>
+        <p class="mt-5">{{productDetails.Description}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0" style="color: rgb(30, 24, 24);">Product Group</h5>
+        <p class="mt-5">{{productDetails.ProductGroup}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Base Unit</h5>
+        <p class="mt-5">{{productDetails.BaseUnit}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Purchase Unit</h5>
+        <p class="mt-5">{{productDetails.PurchaseUnit}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Sales Unit</h5>
+        <p class="mt-5">{{productDetails.SalesUnit}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Tax(%)</h5>
+        <p class="mt-5">{{productDetails.GST ? productDetails.GST : 0}}%</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Height</h5>
+        <p class="mt-5">{{productDetails.Height}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Width</h5>
+        <p class="mt-5">{{productDetails.Width}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Length</h5>
+        <p class="mt-5">{{productDetails.Length}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Weight</h5>
+        <p class="mt-5">{{productDetails.Weight}}</p>
+      </div>
+      <!-- <div class="col-md-2">
           <h5 class="mb-0">Standard Price</h5>
           <p class="mt-0">{{productDetails.StandardPrice}}</p>
-       </div>
-       <div class="col-md-2">
+       </div> -->
+      <!-- <div class="col-md-2">
         <h5 class="mb-0">HSN Code</h5>
         <p class="mt-0">{{productDetails.HSNCode}}</p>
-     </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-
-
+     </div> -->
+    </div>
+    <div class="mt-20">
+      <h4>Plant List</h4>
+      <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="srNo">
+              <th mat-header-cell *matHeaderCellDef># </th>
+              <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+          </ng-container>
+          <ng-container matColumnDef="Plant">
+              <th mat-header-cell *matHeaderCellDef> Plant </th>
+              <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} - {{element?.PlantName}}</td>
+          </ng-container>
+          <ng-container matColumnDef="PriceIndicator">
+              <th mat-header-cell *matHeaderCellDef> Price Indicator </th>
+              <td mat-cell *matCellDef="let element"> {{element?.PriceIndicator == 'S' ? 'Standard Price' : 'Moving Avg. Price' }} </td>
+          </ng-container>
+          <ng-container matColumnDef="StandardPrice">
+              <th mat-header-cell *matHeaderCellDef> Standard Price </th>
+              <td mat-cell *matCellDef="let element"> {{element?.StandardPrice}} </td>
+          </ng-container>
+          <ng-container matColumnDef="MovingAvgPrice">
+              <th mat-header-cell *matHeaderCellDef> Moving Avg. Price </th>
+              <td mat-cell *matCellDef="let element"> {{element?.MovingAvgPrice}} </td>
+          </ng-container>
+         
+          <ng-container matColumnDef="HSNCode">
+              <th mat-header-cell *matHeaderCellDef> HSN Code </th>
+              <td mat-cell *matCellDef="let element"> {{element?.HSNCode}}
+              </td>
+          </ng-container>
+          <ng-container matColumnDef="IsBatchNo">
+              <th mat-header-cell *matHeaderCellDef> Is BatchNo </th>
+              <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
+              <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary" [disabled]="true"
+                                [checked]="element?.IsBatchNo"></mat-checkbox> </td>
+          </ng-container>
+          <ng-container matColumnDef="IsSerialNo">
+              <th mat-header-cell *matHeaderCellDef> IsSerialNo </th>
+              <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
+              <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary" [disabled]="true"
+                                [checked]="element?.IsSerialNo"></mat-checkbox> </td>
+          </ng-container>
+         
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                           [columnCount]="displayedColumns.length"></app-no-record-found>
+  </div>
+  </mat-card-content>
+</mat-card>

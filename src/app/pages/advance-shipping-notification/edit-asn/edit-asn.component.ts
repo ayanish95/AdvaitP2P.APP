@@ -19,6 +19,7 @@ import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
 import { CommonEnum } from '@core/enums/common-enum';
+import { find } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-asn',
@@ -139,8 +140,8 @@ export class EditAsnComponent {
                 Shippingdate: this.formatDate(this.ASNDetails?.ShippingDate) as any,
                 Deliverydate: this.formatDate(this.ASNDetails?.DeliveryDate) as any,
               });
-              debugger
-              let  shippingDate=new Date(this.ASNDetails?.ShippingDate ? this.ASNDetails?.ShippingDate : new Date());
+              
+              const  shippingDate=new Date(this.ASNDetails?.ShippingDate ? this.ASNDetails?.ShippingDate : new Date());
               if (this.currentDate.getTime() > shippingDate.getTime())
                 this.minShippingDate = new Date(shippingDate);
                 if (this.currentDate.getTime() > new Date(this.ASNDetails?.DeliveryDate ? this.ASNDetails?.DeliveryDate : new Date()).getTime())
@@ -172,8 +173,7 @@ export class EditAsnComponent {
               });
             });
 
-            this.dataSource.data = this.ASNLineItems;
-            // this.dataSource.data = this.PRDetails.PRLineItems;
+            this.dataSource.data = this.ASNLineItems;            
           }
 
           else
@@ -232,6 +232,7 @@ export class EditAsnComponent {
   createFormForBatchAndSerialNo(type: any,data:any) {
     if (type == CommonEnum.All) {
       return this.fb.group({
+        Id: [data?.Id],
         PoId: [data?.POId],
         POLineId: [data?.PODetId],
         BatchNo: [data?.BatchNo],
@@ -240,6 +241,7 @@ export class EditAsnComponent {
     }
     else if (type == CommonEnum.BatchNo) {
       return this.fb.group({
+        Id: [data?.Id],
         PoId: [data?.POId],
         POLineId: [data?.PODetId],
         BatchNo: [data?.BatchNo],
@@ -248,6 +250,7 @@ export class EditAsnComponent {
     }
     else if (type == CommonEnum.SerialNo) {
       return this.fb.group({
+        Id: [data?.Id],
         PoId: [data?.POId],
         POLineId: [data?.PODetId],
         SerialNo: [data?.SerialNo],
@@ -282,10 +285,12 @@ export class EditAsnComponent {
   }
 
   onClickAddBatchSerialNo() {
+    debugger;
+    this.batchAndSerialNoList = [];
     const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
     batchSerialNo?.forEach((data: any) => {
       this.batchAndSerialNoList.push({
-        Id: 0,
+        Id: data?.Id,
         PoId: data?.PoId,
         PoDetId: data?.POLineId,
         BatchNo: data?.BatchNo ? data?.BatchNo : '',
@@ -293,9 +298,21 @@ export class EditAsnComponent {
         SerialNo: data?.SerialNo ? data?.SerialNo : '',
       });
     });
+    
+    this.ASNLineItems.forEach( x =>{                      
+      x.ASNProductDetails.forEach(y =>
+        {
+          if(y.Id == this.batchAndSerialNoList[0].Id){
+            y.Qty = this.batchAndSerialNoList[0].Qty;
+            y.BatchNo = this.batchAndSerialNoList[0].BatchNo;
+            y.SerialNo = this.batchAndSerialNoList[0].SerialNo;
+          }
+        });    
+    });    
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
+    debugger;
     if (this.ASNLineItems?.length == 1)
       throw this.toaster.error('ASN must have one line item, you can not delete....');
     if (data?.LineId > 0) {
@@ -352,7 +369,7 @@ export class EditAsnComponent {
     const _letNumber = Number(paramevent.target.value);
 
     //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
-    let totalQty=  this.ASNLineItems[paramIndex]?.TotalQty! ? this.ASNLineItems[paramIndex]?.TotalQty! : 0;
+    const totalQty=  this.ASNLineItems[paramIndex]?.TotalQty! ? this.ASNLineItems[paramIndex]?.TotalQty! : 0;
     this.ASNLineItems[paramIndex].OpenGRQty = totalQty - _letNumber;
     this.ASNLineItems[paramIndex].DeliveryQty = _letNumber;
 
@@ -385,7 +402,8 @@ export class EditAsnComponent {
     if (this.ASNHeaderForm.valid) {
       const PRHeaderData = this.ASNHeaderForm.value as any;
       const ASNAdd: AdvancedShipmentNotificationVM = {
-        POId: this.POId,
+        Id: this.ASNDetails.Id,
+        POId: this.ASNDetails.POId,
         ERPPONumber: PRHeaderData.PoNo as any,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData?.SupplierId as any,
@@ -395,7 +413,7 @@ export class EditAsnComponent {
 
       };
 
-      this.advanceShippingNotificationService.AddAsn(ASNAdd).subscribe({
+      this.advanceShippingNotificationService.UpdateASNDetails(ASNAdd).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toaster.success(res.Message);

@@ -24,6 +24,10 @@
         <th mat-header-cell *matHeaderCellDef> SAP Status </th>
         <td mat-cell *matCellDef="let element"> {{element?.SAPStatus}} </td>
       </ng-container>
+      <ng-container matColumnDef="Plant">
+        <th mat-header-cell *matHeaderCellDef> Plant </th>
+        <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} - {{element?.PlantName}} </td>
+      </ng-container>
       <ng-container matColumnDef="PRPendingBy">
         <th mat-header-cell *matHeaderCellDef> Approval Pending  By</th>
         <td mat-cell *matCellDef="let element">

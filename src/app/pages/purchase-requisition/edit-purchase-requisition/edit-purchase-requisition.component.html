@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Edit Purchase Requistion</h2>
+        <h2>Edit Purchase Requisition</h2>
       </div>
     </div>
 
@@ -13,21 +13,14 @@
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> Doc Type</h5>
+            <h5>PR Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="docAutocomplete"
-                   formControlName="DocType"
-                   placeholder="Doc Type">
-            <mat-autocomplete #docAutocomplete="matAutocomplete" >
-              <mat-option *ngFor="let docType of filteredDocType | async"
-                          [value]="docType?.Type">
-                <span>{{ docType?.Type }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
-              Please select doc type...
+                   formControlName="ERPpr"
+                   placeholder="ERP PR Number" [disabled]="true">
+            <mat-error *ngIf="PRHeaderForm.get('ERPpr')?.hasError('required')">
+              Please enter ERP PR Number...
             </mat-error>
           </mat-form-field>
         </div>
@@ -36,22 +29,57 @@
             <h5> PR Date</h5>
           </label>
           <mat-form-field>
-            <input matInput
-                   readonly
+            <input matInput [disabled]="true"
                    formControlName="PRDate">
-            <!-- <mat-datepicker-toggle readonly matSuffix
-                                   [for]="paymentPicker"></mat-datepicker-toggle>
-            <mat-datepicker readonly  format="dd-MM-yyyy" #paymentPicker></mat-datepicker> -->
-            <!-- <mat-error *ngIf="paymentDateModel.hasError('required')">
-                          Please choose a date.
-                        </mat-error>
-                        <mat-error *ngIf="paymentDateModel.hasError('matDatepickerMin')">
-                          Please choose a later date.
-                        </mat-error> -->
           </mat-form-field>
         </div>
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5> Doc Type</h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <mat-select formControlName="DocType" placeholder="DocType" #singleSelect>
+              <mat-option >
+                <ngx-mat-select-search [formControl]="docTypeControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let DocType of filteredDocType | async" [value]="DocType.Type">
+                {{DocType.Type}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="PRHeaderForm.get('DocType')?.hasError('required')">
+              Please select doc type...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-3">
+          <label class="custom-label">
+            <h5>Plant / Warehouse<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <mat-select formControlName="Plant" placeholder="Plant / Warehouse" #singleSelect
+                        (selectionChange)="onChangePlant($event.value.PlantCode)">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchPlantControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let plant of filteredPlants | async"
+                          [value]="plant">
+                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="PRHeaderForm.get('Plant')?.hasError('required')">
+              Please select plant / warehouse...
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <div class="col-sm-12 d-flex align-items-center mt-15">
           <button mat-button mat-raised-button color="primary"
+                  *ngIf="!this.PRDetails?.IsApprovedByAll && !this.PRDetails?.IsRejected"
                   (click)="openModelForAddItem(editProduct)">
             <mat-icon>add</mat-icon>
             Add Item
@@ -69,15 +97,15 @@
           </ng-container>
           <ng-container matColumnDef="ProductCode">
             <th mat-header-cell *matHeaderCellDef> ProductCode </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductCode}}</td>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
           </ng-container>
           <ng-container matColumnDef="Description">
             <th mat-header-cell *matHeaderCellDef> Description </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Product?.Description}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.Description}} </td>
           </ng-container>
           <ng-container matColumnDef="ProductGroup">
             <th mat-header-cell *matHeaderCellDef> ProductGroup </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductGroup}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.ProductGroup}} </td>
           </ng-container>
           <ng-container matColumnDef="Qty">
             <th mat-header-cell *matHeaderCellDef> Qty </th>
@@ -85,38 +113,39 @@
           </ng-container>
           <ng-container matColumnDef="Unit">
             <th mat-header-cell *matHeaderCellDef> Unit </th>
-            <td mat-cell *matCellDef="let element"> {{element?.Unit?.UnitName}} -
-              {{element?.Unit?.MeasurementUnitName}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.Unit.UOM}}
+            </td>
           </ng-container>
           <ng-container matColumnDef="DeliveryDate">
             <th mat-header-cell *matHeaderCellDef> DeliveryDate </th>
             <td mat-cell *matCellDef="let element"> {{element?.DeliveryDate | date : 'dd-MM-yyyy'}}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Plant">
+          <!-- <ng-container matColumnDef="Plant">
             <th mat-header-cell *matHeaderCellDef> Plant / Warehouse </th>
             <td mat-cell *matCellDef="let element"> {{element?.Plant?.PlantCode}} -
               {{element?.Plant?.PlantName}} </td>
-          </ng-container>
+          </ng-container> -->
           <ng-container matColumnDef="Location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
-            <td mat-cell *matCellDef="let element"> {{element?.StorageLocation?.LocationCode}} -
-              {{element?.StorageLocation?.LocationName}} </td>
+            <td mat-cell *matCellDef="let element"> {{element?.LocationCode}} -
+              {{element?.LocationDescription}} </td>
           </ng-container>
           <ng-container matColumnDef="Edit">
             <th mat-header-cell *matHeaderCellDef> Edit </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button (click)="openModelForAddItem(editProduct,element)">
-                    <mat-icon>edit</mat-icon>
-                </button>
+              <button mat-icon-button (click)="openModelForAddItem(editProduct,element)">
+                <mat-icon>edit</mat-icon>
+              </button>
             </td>
-        </ng-container>
+          </ng-container>
           <ng-container matColumnDef="Delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
-            <td mat-cell *matCellDef="let element"> 
-             <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">  <mat-icon >delete</mat-icon></button>
-             </td>
-        </ng-container>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="openModelForDeleteItem(deleteAlert,element)">
+                <mat-icon>delete</mat-icon></button>
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
@@ -124,8 +153,12 @@
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">
+        <button mat-raised-button (click)="onClickBack()" style="margin: 10px;color: brown;">
+          Back</button>
         <button [disabled]="!dataSource.data.length || PRHeaderForm.invalid" mat-raised-button
-                color="primary" (click)="onClickCreatePR()" > Update PR</button>
+                color="primary" style="margin: 10px;" (click)="onClickCreatePR()"> Update
+          PR</button>
+
       </div>
     </form>
   </mat-card-content>
@@ -141,10 +174,23 @@
       <div class="row mt-5">
         <div class="col-sm-6">
           <label class="custom-label">
-            <h5>Product Code<small>*</small></h5>
+            <h5>Product Code {{selectedLineId}}<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
+            <mat-select formControlName="Product" placeholder="Product Code" #singleSelect
+                        (selectionChange)="onChangeProduct($event.value)">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchProductControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let product of filteredProducts | async"
+                          [value]="product">
+                <span>{{ product.ProductCode }} - {{ product.Description }}</span>
+              </mat-option>
+            </mat-select>
+
+            <!-- <input matInput
                    [matAutocomplete]="autocomplete"
                    formControlName="Product"
                    placeholder="Product Code">
@@ -154,7 +200,7 @@
                           [value]="product">
                 <span>{{ product.ProductCode }}</span>
               </mat-option>
-            </mat-autocomplete>
+            </mat-autocomplete> -->
             <mat-error *ngIf="PRLineForm.get('Product')?.hasError('required')">
               Please select product code...
             </mat-error>
@@ -166,7 +212,7 @@
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="Description"
-            placeholder="Product Description" readonly>
+                   placeholder="Product Description" readonly>
 
           </mat-form-field>
         </div>
@@ -176,8 +222,27 @@
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="ProductGroup" readonly
-            placeholder="Product Group">
+                   placeholder="Product Group">
 
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Purchase Unit<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <!-- <input matInput type="text" formControlName="Unit" readonly
+                   placeholder="Product unit"> -->
+            <mat-select formControlName="Unit" placeholder="Purchase Unit" #singleSelect>
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchUnitControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let unit of filteredUnits | async" [value]="unit">
+                {{ unit?.UOM }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
@@ -186,36 +251,16 @@
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="Qty" (keypress)="onKeyPress($event)"
-            placeholder="Qty"
+                   placeholder="Qty"
                    required>
-                   <mat-error *ngIf="PRLineForm.get('Qty')?.hasError('required')">
-                    Please enter Qty...
-                  </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Unit<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="unitAutocomplete"
-                   formControlName="Unit"
-                   placeholder="Unit">
-            <mat-autocomplete #unitAutocomplete="matAutocomplete" [displayWith]="unitDisplayFn">
-              <mat-option *ngFor="let unit of filteredUnits | async"
-                          [value]="unit">
-                <span>{{ unit?.UOM }} - {{ unit?.MeasurementUnitName }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRLineForm.get('Unit')?.hasError('required')">
-              Please select unit...
+            <mat-error *ngIf="PRLineForm.get('Qty')?.hasError('required')">
+              Please enter Qty...
             </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
           <label class="custom-label">
-            <h5>Delivery Date<small>*</small></h5>
+            <h5> Expected Delivery Date<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
@@ -235,34 +280,26 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div class="col-sm-6">
-          <label class="custom-label">
-            <h5>Plant / Warehouse<small>*</small></h5>
-          </label>
-          <mat-form-field class="demo-full-width">
-            <input matInput
-                   [matAutocomplete]="plantAutocomplete"
-                   formControlName="Plant"
-                   placeholder="Plant / Warehouse">
-            <mat-autocomplete #plantAutocomplete="matAutocomplete"
-                              (optionSelected)="onChangePlant($event.option.value.PlantCode)"
-                              [displayWith]="plantDisplayFn">
-              <mat-option *ngFor="let plant of filteredPlants | async"
-                          [value]="plant">
-                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="PRLineForm.get('Plant')?.hasError('required')">
-              Please select plant / warehouse...
-            </mat-error>
-          </mat-form-field>
-        </div>
+       
         <div class="col-sm-6">
           <label class="custom-label">
             <h5>Storage Location<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
+            <mat-select formControlName="StorageLocation" placeholder="Storage Location"
+                        #singleSelect>
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchStorageLocationControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let location of filteredlocation | async"
+                          [value]="location">
+                <span>{{ location.LocationCode }} - {{ location.LocationName }}</span>
+              </mat-option>
+            </mat-select>
+
+            <!-- <input matInput
                    [matAutocomplete]="storageAutocomplete"
                    formControlName="StorageLocation"
                    placeholder="Storage Location">
@@ -272,30 +309,31 @@
                           [value]="location">
                 <span>{{ location.LocationCode }} - {{ location.LocationName }}</span>
               </mat-option>
-            </mat-autocomplete>
+            </mat-autocomplete> -->
             <mat-error *ngIf="PRLineForm.get('StorageLocation')?.hasError('required')">
               Please select storage location...
             </mat-error>
           </mat-form-field>
         </div>
       </div>
-
     </form>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button (click)="onClickCloseDialog()">Close</button>
     <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ? 'Update' : 'Add'}}</button>
+            (click)="onClickAddProduct()" [disabled]="PRLineForm.invalid">{{ selectedLineId ?
+      'Update' : 'Add'}}</button>
   </mat-dialog-actions>
 
 </ng-template>
 
 <ng-template #deleteAlert>
   <h2 mat-dialog-title class="text-center">Delete Purchase Requisition Line Item</h2>
-  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to delete this item?</div>
+  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to
+    delete this item?</div>
   <div mat-dialog-actions class="d-flex justify-content-center">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
   </div>
 </ng-template>

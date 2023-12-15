@@ -91,11 +91,11 @@ export class ApprovalConfigComponent implements OnInit {
     this.filter.Page = page.pageIndex + 1;
   }
   onClickAddConfig() {
-    this.router.navigateByUrl('/pages/approval-config/add-approval');
+    this.router.navigateByUrl('/config/approval-config/add-approval');
   }
 
   openEditModelPopup(templateRef: TemplateRef<any>, plantId: number) {
-    this.router.navigateByUrl('/pages/approval-config/edit-approval');
+    this.router.navigateByUrl('/config/approval-config/edit-approval');
   }
 
   openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {

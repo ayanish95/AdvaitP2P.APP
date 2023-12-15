@@ -21,6 +21,7 @@ import { StorageLocationService } from '@core/services/storage-location.service'
 import { UnitService } from '@core/services/unit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-create-purchase-requisition',
@@ -38,8 +39,9 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
 
   PRHeaderForm = this.fb.group({
-    DocType: [null, [Validators.required]],
     PRDate: [new Date(), [Validators.required]],
+    DocType: [null, [Validators.required]],
+    Plant: [null, [Validators.required]],
   });
 
   PRLineForm = this.fb.group({
@@ -49,10 +51,13 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     Qty: ['', [Validators.required]],
     Unit: ['', [Validators.required]],
     DeliveryDate: ['', [Validators.required]],
-    Plant: ['', [Validators.required]],
     StorageLocation: ['', [Validators.required]],
   });
   docTypeControl = new FormControl();
+  searchUnitControl = new FormControl();
+  searchProductControl = new FormControl();
+  searchPlantControl = new FormControl();
+  searchStorageLocationControl = new FormControl();
 
   plantList!: Plants[];
   filteredPlants!: Observable<any>;
@@ -78,40 +83,25 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     'Qty',
     'Unit',
     'DeliveryDate',
-    'Plant',
+    // 'Plant',
     'Location',
     'Edit',
     'Delete',
   ];
   currentDate: Date = new Date();
   selectedLineId!: number;
-  currentUserId!:number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
-    private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
-    private router: Router,private authService:AuthService) {
+    private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
+    private router: Router, private authService: AuthService, private location: Location) {
     this.dateAdapter.setLocale('en-GB'); // DD/MM/YYYY
   }
 
   ngOnInit(): void {
 
     this.PRHeaderForm.get('PRDate')?.disable();
-    this.currentUserId = this.authService.userId();
-    this.docTypeSerivce
-      .getAllDocType()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe((res) => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.docTypeList = res[ResultEnum.Model];
-          this.filteredDocType = this.docTypeControl.valueChanges.pipe(
-            startWith(''),
-            map((value) => this.filterDocType(value || ''))
-
-          );
-        }
-      });
+    this.apiDocType();
+    this.apiPlant();
+    this.apiUnit();
 
     this.productService
       .getProductList()
@@ -123,45 +113,89 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.productList = res[ResultEnum.Model];
           this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
-          this.filteredProducts = this.PRLineForm.get('Product')!.valueChanges.pipe(
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterProducts(value || ''))
           );
         }
       });
 
-    this.plantService
-      .getPlantList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+
+  }
+
+  apiDocType() {
+    this.docTypeSerivce.getAllDocType().subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.docTypeList = res[ResultEnum.Model];
+          this.filteredDocType = this.docTypeControl.valueChanges.pipe(
+            startWith(''),
+            map((value) => this.filterDocType(value || ''))
+          );
+        }
+        else {
+          this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() { },
+    });
+  }
+
+  apiPlant() {
+    this.plantService.getPlantList().subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.PRLineForm.get('Plant')!.valueChanges.pipe(
+          this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterPlant(value || ''))
           );
         }
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() { },
+    });
+  }
 
-    this.unitService
-      .getAllUnit()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+  apiUnit() {
+    this.unitService.getAllUnit().subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.PRLineForm.get('Unit')!.valueChanges.pipe(
+          this.filteredUnits = this.searchUnitControl!.valueChanges.pipe(
             startWith(''),
             map(value => this.filterUnit(value || ''))
           );
         }
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() { },
+    });
   }
+
+  apiProductByPlantCode(plantCode?: string) {
+    this.productService.getProductListByPlantCode(plantCode).subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.productList = res[ResultEnum.Model];
+          if (this.productList?.length == 0)
+            this.toaster.error('Product not found in this plant, please select other plant...');
+          this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterProducts(value || ''))
+          );
+        }
+        else{
+          this.toaster.error(res[ResultEnum.Message]);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() { },
+    });
+  }
+
   filterDocType(value: string): DocTypes[] {
 
     const filterValue = value.toLowerCase();
@@ -182,13 +216,15 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   // }
 
   filterProducts(name: any) {
-    if (name?.ProductCode) {
+    if (name?.ProductCode || name?.Description) {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.ProductCode.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.Description.toLowerCase()));
     }
     else {
       return this.productList.filter(product =>
-        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()));
+        product?.ProductCode?.toLowerCase().includes(name.toLowerCase()) ||
+        product?.Description?.toLowerCase().includes(name.toLowerCase()));
     }
   }
 
@@ -232,7 +268,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   productDisplayFn(product: Products) {
-    return product ? product.ProductCode! : '';
+    return product ? product.ProductCode + ' - ' + product.Description : '';
   }
 
   unitDisplayFn(units: Units) {
@@ -248,6 +284,14 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   }
 
   openModelForAddItem(templateRef: TemplateRef<any>) {
+    if (!this.PRHeaderForm.get('DocType')?.value) {
+      this.PRHeaderForm.get('DocType')?.markAsTouched();
+      throw this.toaster.error('Please select Doc Type...');
+    }
+    if (!this.PRHeaderForm.get('Plant')?.value) {
+      this.PRHeaderForm.get('Plant')?.markAsTouched();
+      throw this.toaster.error('Please select plant...');
+    }
     this.PRLineForm.reset();
     this.PRLineForm.updateValueAndValidity();
     this.dialog.open(templateRef, {
@@ -255,27 +299,25 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
       panelClass: 'custom-modalbox'
     });
   }
-  clearInput(event: Event) {
-    event.preventDefault();
-  }
 
-
-  async openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
+  openModelForEditItem(templateRef: TemplateRef<any>, data?: any) {
     this.PRLineForm.reset();
     this.PRLineForm.updateValueAndValidity();
     if (data) {
       this.selectedLineId = data?.Id;
-      await this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
+      const PRHeaderData = this.PRHeaderForm.value as any;
+      
       this.PRLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode) as any,
+        Product: this.productList?.find(x => x.ProductCode == data?.ProductCode) as any,
         Description: data?.Description,
         ProductGroup: data?.ProductGroup,
         Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        Unit: data.Unit,
         DeliveryDate: data.DeliveryDate,
-        Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
+        // Plant: this.plantList?.find(x => x.Id == data?.Plant?.Id) as any,
         StorageLocation: this.locationList?.find(x => x.Id == data?.StorageLocation?.Id) as any
       });
+      // this.onChangePlant(PRHeaderData?.Plant?.PlantCode as any, true, data?.StorageLocation?.Id);
     }
     this.dialog.open(templateRef, {
       width: '56vw',
@@ -299,12 +341,13 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     return true;
   }
 
-  getPosts(event: any) {
-    debugger
+  onChangeProduct(event: any) {
     const product = this.productList.find(x => x.ProductCode?.toLowerCase() == event?.ProductCode?.toLowerCase());
+
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
+      this.PRLineForm.get('Unit')?.setValue(product?.PurchaseUnit ? product?.PurchaseUnit : '');
     }
   }
 
@@ -312,6 +355,11 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
   onChangePlant(event: any, IsEdit = false, locationId?: number) {
     this.locationList = [];
     this.PRLineForm.get('StorageLocation')?.setValue(null);
+
+    this.PRLineItem = [];
+    this.dataSource.data = [];
+    
+    this.apiProductByPlantCode(event);
     if (event) {
       this.storageLocationService.getStorageLocationByPlantCode(event).pipe(
         finalize(() => {
@@ -323,47 +371,55 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
             if (IsEdit && this.locationList?.length > 0) {
               this.PRLineForm.get('StorageLocation')?.setValue(this.locationList.find(x => x.Id == locationId) as any);
             }
-            this.filteredlocation = this.PRLineForm.get('StorageLocation')!.valueChanges.pipe(
+            this.filteredlocation = this.searchStorageLocationControl!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterStorageLocation(value || ''))
             );
           }
           else {
-            this.toast.error(res[ResultEnum.Message]);
+            this.toaster.error(res[ResultEnum.Message]);
           }
         });
 
     } else
-      this.toast.error('Plant code not found');
+      this.toaster.error('Plant code not found');
   }
 
   onClickAddProduct() {
-    const PRline = this.PRLineForm.value;
+    //Unit: this.unitList?.find(x => x.UOM == data?.Product?.BaseUnit) as any,
+    const PRline = this.PRLineForm.value as any;
+    
     if (this.selectedLineId > 0) {
       this.PRLineItem.forEach(item => {
         if (item?.Id == this.selectedLineId) {
-          item.Product = PRline.Product as unknown as Products,
-            item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
-            item.Description = PRline.Description ? PRline.Description : '',
-            item.Qty = PRline?.Qty as unknown as number,
-            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            item.Unit = PRline.Unit as unknown as Units,
-            item.Plant = PRline.Plant as unknown as Plants,
-            item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
-            item.LineId = item.LineId,
-            item.Id = item.Id;
+          item.ProductId = PRline.Product?.Id as unknown as number,
+          item.ProductCode = PRline.Product?.ProductCode ? PRline.Product?.ProductCode : '',
+          item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
+          item.Description = PRline.Description ? PRline.Description : '',
+          item.Qty = PRline?.Qty as unknown as number,
+          item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
+          item.Unit = this.unitList?.find(x => x.UOM == PRline?.Unit?.UOM) as unknown as Units,
+          item.UnitId = PRline.Unit?.Id as any,
+          item.StorageLocationId = PRline.StorageLocation?.Id as any,
+          // item.Plant = PRline.Plant as unknown as Plants,
+          item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
+          item.LineId = item.LineId,
+          item.Id = item.Id
         }
       });
     }
     else {
       this.PRLineItem.push({
-        Product: PRline.Product as unknown as Products,
+        ProductId : PRline.Product?.Id as unknown as number,
+        ProductCode: PRline.Product?.ProductCode ? PRline.Product?.ProductCode : '',
         ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
         Description: PRline.Description ? PRline.Description : '',
         Qty: PRline?.Qty as unknown as number,
         DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        Unit: PRline.Unit as unknown as Units,
-        Plant: PRline.Plant as unknown as Plants,
+        Unit: this.unitList?.find(x => x.UOM == PRline?.Unit?.UOM) as unknown as Units,
+        UnitId : PRline.Unit?.Id as any,
+        StorageLocationId : PRline.StorageLocation?.Id as any,
+        // Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
         Id: this.PRLineItem.length + 1
       });
@@ -386,35 +442,38 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
 
 
   onClickCreatePR() {
-
     this.PRHeaderForm.touched;
     if (this.PRHeaderForm.valid) {
-      const PRHeaderData = this.PRHeaderForm.value;
+      const PRHeaderData = this.PRHeaderForm.value as any;
       const PRDate = this.PRHeaderForm.get('PRDate')?.getRawValue();
       const PRDetails: PurchaseRequisitionDataVM = {
         Id: 0,
         PRDocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         PRDate: PRDate ? PRDate : new Date(),
+        PlantId: PRHeaderData?.Plant?.Id ? PRHeaderData?.Plant?.Id : 0,
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.createPR(PRDetails,this.currentUserId).subscribe({
+      this.prService.createPR(PRDetails).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
-            this.toast.success(res.Message);
+            this.toaster.success(res.Message);
             this.PRHeaderForm.reset();
             this.PRLineForm.reset();
             this.router.navigateByUrl('/pages/purchase-requisition');
           }
           else {
-            this.toast.error(res.Message);
+            this.toaster.error(res.Message);
           }
         },
-        error: (e) => { this.toast.error(e.Message); },
+        error: (e) => { this.toaster.error(e.Message); },
         complete() {
 
         },
       });
     }
+  }
+  onClickBack() {
+    this.location.back();
   }
 }

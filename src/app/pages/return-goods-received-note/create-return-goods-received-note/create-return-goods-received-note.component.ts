@@ -94,7 +94,6 @@ filtersupplierCode!:Observable<Suppliers[]>;
   minDate: Date = new Date();
   PRDetails!: PurchaseRequisitionDetailsVM;
   selectedLineId!: number;
-  currentUserId!:number;
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toast: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private prService: PurchaseRequistionService,
     private router: Router, private route: ActivatedRoute,private authService:AuthService,private supplierService: SupplierService) {
@@ -107,7 +106,6 @@ filtersupplierCode!:Observable<Suppliers[]>;
   }
 
   ngOnInit() {
-    this.currentUserId = this.authService.userId();
     this.apiDocType();
     this.apiProductList();
     this.apiPlantList();
@@ -215,13 +213,13 @@ filtersupplierCode!:Observable<Suppliers[]>;
             }
             this.PRDetails.PRLineItems?.forEach((item, index) => {
               this.PRLineItem.push({
-                Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
+                ProductId: this.productList?.find(x => x.ProductCode == item.ProductCode)?.Id,
                 ProductGroup: item.ProductGroup,
                 Description: item.ProductDescription,
                 Qty: item?.Qty,
                 DeliveryDate: item?.DeliveryDate,
                 Unit: this.unitList?.find(x => x.Id == item.UnitId),
-                Plant: this.plantList?.find(x => x.Id == item.PlantId),
+                // Plant: this.plantList?.find(x => x.Id == item.PlantId),
                 StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
                 LineId: item?.Id,
                 Id: index + 1
@@ -495,35 +493,36 @@ filtersupplierCode!:Observable<Suppliers[]>;
 
 
   onClickAddProduct() {
-    const PRline = this.PRLineForm.value;
+    const PRline = this.PRLineForm.value as any;
     if (this.selectedLineId > 0) {
       this.PRLineItem.forEach(item => {
         if (item?.Id == this.selectedLineId) {
-          item.Product = PRline.Product as unknown as Products,
-            item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
-            item.Description = PRline.Description ? PRline.Description : '',
-            item.Qty = PRline?.Qty as unknown as number,
-            item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
-            item.Unit = PRline.Unit as unknown as Units,
-            item.Plant = PRline.Plant as unknown as Plants,
-            item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
-            item.LineId = item.LineId,
-            item.Id = item.Id;
+          item.ProductId = PRline.Product?.Id as unknown as number,
+          item.ProductCode = PRline.ProductCode ? PRline.ProductCode : '',
+          item.ProductGroup = PRline.ProductGroup ? PRline.ProductGroup : '',
+          item.Description = PRline.Description ? PRline.Description : '',
+          item.Qty = PRline?.Qty as unknown as number,
+          item.DeliveryDate = PRline?.DeliveryDate as unknown as Date,
+          item.Unit = this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
+          // item.Plant = PRline.Plant as unknown as Plants,
+          item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
+          item.LineId = item.LineId,
+          item.Id = item.Id
         }
       });
     }
     else {
       this.PRLineItem.push({
-        Product: PRline.Product as unknown as Products,
+        ProductId : PRline.Product?.Id as unknown as number,
+        ProductCode: PRline.ProductCode ? PRline.ProductCode : '',
         ProductGroup: PRline.ProductGroup ? PRline.ProductGroup : '',
         Description: PRline.Description ? PRline.Description : '',
         Qty: PRline?.Qty as unknown as number,
         DeliveryDate: PRline?.DeliveryDate as unknown as Date,
-        Unit: PRline.Unit as unknown as Units,
-        Plant: PRline.Plant as unknown as Plants,
+        Unit: this.unitList?.find(x => x.UOM == PRline.Unit) as unknown as Units,
+        // Plant: PRline.Plant as unknown as Plants,
         StorageLocation: PRline.StorageLocation as unknown as StorageLocations,
-        Id: this.PRLineItem.length + 1,
-        LineId: 0
+        Id: this.PRLineItem.length + 1
       });
     }
     this.selectedLineId = 0;
@@ -559,7 +558,7 @@ filtersupplierCode!:Observable<Suppliers[]>;
       element.Id = index + 1;
       if (element.Id == id) {
         if (element?.LineId) {
-          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0,this.currentUserId).subscribe({
+          this.prService.deletePRLineByLineId(element.LineId ? element.LineId : 0).subscribe({
             next: (res: any) => {
               if (res[ResultEnum.IsSuccess]) {
                 this.toast.success(res.Message);
@@ -597,7 +596,7 @@ filtersupplierCode!:Observable<Suppliers[]>;
         PRLineItem: this.PRLineItem
       };
 
-      this.prService.updatePR(PRDetails,this.currentUserId).subscribe({
+      this.prService.updatePR(PRDetails).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toast.success(res.Message);

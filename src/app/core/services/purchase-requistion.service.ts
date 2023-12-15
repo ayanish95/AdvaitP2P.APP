@@ -14,8 +14,8 @@ export class PurchaseRequistionService {
   getAllPRHeaderList(): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPRHeaderList}`);
   }
-  getAllPRNumber(): Observable<any> {
-    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPurchaseRequisitionNumber}`);
+  getAllPRNumberForPO(docType?:string,plantId?:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPRNumberForPO}/${docType}/${plantId}`);
   }
   getAllPRHeaderListByUserId(): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetAllPRHeaderListByUserId}`);
@@ -28,28 +28,28 @@ export class PurchaseRequistionService {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetPRDetailsById}/${Id}`);
   }
 
-  getPRDetailsForPO(Id:number): Observable<any> {
+  getPRDetailsForPO(Id:string): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.GetPRDetailsForPO}/${Id}`);
   }
 
-  createPR(PRVM: any,currentUserId:number) {
-    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.CreatePurchaseRequisition}/${currentUserId}`, PRVM);
-  } 
-  updatePR(PRVM: any,currentUserId:number) {
-    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.UpdatePurchaseRequisition}/${currentUserId}`, PRVM);
+  createPR(PRVM: any) {
+    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.CreatePurchaseRequisition}`, PRVM);
+  }
+  updatePR(PRVM: any) {
+    return this.httpclient.authPost(`${Api.PurchaseRequisition + Method.UpdatePurchaseRequisition}`, PRVM);
   }
 
-  deletePR(Id:number,currentUserId:number): Observable<any> {
-    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.DeletePurchaseRequisitionById}/${Id}/${currentUserId}`);
+  deletePR(Id:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.DeletePurchaseRequisitionById}/${Id}`);
   }
-  deletePRLineByLineId(lineId:number,currentUserId:number): Observable<any> {
-    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.DeletePRLineItemByLineId}/${lineId}/${currentUserId}`);
+  deletePRLineByLineId(lineId:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.DeletePRLineItemByLineId}/${lineId}`);
   }
 
   approvePRById(Id:number): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.ApprovePRById}/${Id}`);
   }
-  
+
   rejectPRById(Id:number): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseRequisition + Method.RejectPRById}/${Id}`);
   }

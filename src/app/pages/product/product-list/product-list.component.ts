@@ -9,14 +9,11 @@ import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Plants } from '@core/models/plants';
 import { ProductGroup, Products } from '@core/models/products';
-import { Suppliers } from '@core/models/suppliers';
 import { Units } from '@core/models/units';
 import { PlantService } from '@core/services/plant.service';
 import { ProductGroupService } from '@core/services/product-group.service';
 import { ProductService } from '@core/services/product.service';
-import { RoleService } from '@core/services/role.service';
 import { UnitService } from '@core/services/unit.service';
-import { UserService } from '@core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 
@@ -46,16 +43,19 @@ export class ProductListComponent {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
-    'ProductCode',
+    // 'ProductCode',
     'ERPProductCode',
     'Description',
     'ProductGroup',
     'BaseUnit',
-    'StandardPrice',
-    'MovingAvgPrice',
-    'Plant',
-    'IsBatchNo',
-    'IsSerialNo',
+    'PurchaseUnit',
+    'SalesUnit',
+    // 'StandardPrice',
+    // 'MovingAvgPrice',
+    // 'Plant',
+    // 'IsBatchNo',
+    // 'IsSerialNo',
+    'IsActive',
     'View',
     'Edit',
     'Delete',
@@ -94,10 +94,7 @@ export class ProductListComponent {
   rightsForApproval = false;
 
   constructor(private productService: ProductService, private dialog: MatDialog, private authService: AuthService,
-    private productGroupService: ProductGroupService,
-    private unitService: UnitService, private plantService: PlantService,
-    private fb: FormBuilder,
-    private toaster: ToastrService) { }
+    private fb: FormBuilder,private toaster: ToastrService) { }
 
   ngOnInit() {
     this.currentUserRole = this.authService.roles();
@@ -112,34 +109,6 @@ export class ProductListComponent {
 
   apiInitialize() {
     this.apiProductList();
-    this.apiUnitList();
-    this.apiProductGroup();
-    this.apiPlantList();
-
-    this.filteredBaseUnit = this.productForm.get('BaseUnit')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterUnit(value || ''))
-    );
-    this.filteredPurchaseUnit = this.productForm.get('PurchaseUnit')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterUnit(value || ''))
-    );
-    this.filteredSalesUnit = this.productForm.get('SalesUnit')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterUnit(value || ''))
-    );
-    this.filteredProductGroup = this.productForm.get('ProductGroup')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterProductGroup(value || ''))
-    );
-    this.filteredPriceIndicator = this.productForm.get('PriceIndicator')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterPriceIndicator(value || ''))
-    );
-    this.filteredPlant = this.productForm.get('Plant')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterPlant(value || ''))
-    );
   }
 
   apiProductList() {
@@ -163,127 +132,6 @@ export class ProductListComponent {
       });
   }
 
-  apiUnitList() {
-    this.unitService
-      .getAllUnit()
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.unitList = res[ResultEnum.Model];
-
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
-      });
-  }
-
-  apiProductGroup() {
-    this.productGroupService
-      .getProductGroupList()
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.productGroupList = res[ResultEnum.Model];
-
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
-      });
-
-
-  }
-
-  apiPlantList() {
-    this.plantService
-      .getPlantList()
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.plantList = res[ResultEnum.Model];
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
-      });
-
-  }
-
-  filterUnit(name: any) {
-    if (name?.UOM) {
-      return this.unitList.filter(role =>
-        role?.UOM?.toLowerCase().includes(name.UOM.toLowerCase()));
-    }
-    else {
-      return this.unitList.filter(role =>
-        role?.UOM?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-  filterProductGroup(name: any) {
-    if (name?.ProductGroupName || name?.Description) {
-      return this.productGroupList.filter(productgroup =>
-        productgroup?.ProductGroupName?.toLowerCase().indexOf(name.ProductGroupName.toLowerCase()) === 0 ||
-        productgroup?.Description?.toLowerCase().indexOf(name.Description.toLowerCase()) === 0);
-    }
-    else {
-      return this.productGroupList.filter(productgroup =>
-        productgroup?.ProductGroupName?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        productgroup?.Description?.toLowerCase().indexOf(name.toLowerCase()) === 0);
-    }
-  }
-
-
-  filterPriceIndicator(name: any) {
-    if (name?.Name || name?.Id) {
-      return this.priceIndicator.filter(role =>
-        role?.Name?.toLowerCase().includes(name.Name.toLowerCase()) ||
-        role?.Id?.toLowerCase().includes(name.Id.toLowerCase()));
-    }
-    else {
-      return this.priceIndicator.filter(role =>
-        role?.Name?.toLowerCase().includes(name.toLowerCase()) ||
-        role?.Id?.toLowerCase().includes(name.toLowerCase()));
-    }
-  }
-
-  filterPlant(name: any) {
-    if (name?.PlantCode || name?.PlantName) {
-      return this.plantList.filter(productgroup =>
-        productgroup?.PlantCode?.toLowerCase().indexOf(name.PlantCode.toLowerCase()) === 0 ||
-        productgroup?.PlantName?.toLowerCase().indexOf(name.PlantName.toLowerCase()) === 0);
-    }
-    else {
-      return this.plantList.filter(productgroup =>
-        productgroup?.PlantCode?.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
-        productgroup?.PlantName?.toLowerCase().indexOf(name.toLowerCase()) === 0);
-    }
-  }
-
-  unitDisplayFn(role: Units) {
-    return role ? role.UOM! : '';
-  }
-
-  priceIndicatorDisplayFn(role: any) {
-    return role ? role?.Name! : '';
-  }
-
-  productGroupDisplayFn(productGroup: ProductGroup) {
-    return productGroup ? productGroup.ProductGroupName + ' - ' + productGroup.Description! : '';
-  }
-  plantDisplayFn(plant: Plants) {
-    return plant ? plant.PlantCode + ' - ' + plant.PlantName! : '';
-  }
-
   searchSupplier(filterValue: any) {
     filterValue = filterValue.target.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -297,141 +145,9 @@ export class ProductListComponent {
     this.filter.Page = page.pageIndex + 1;
   }
 
-  onKeyPress(evt: any) {
-    const charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57))
-      return false;
-    return true;
-  }
-
-  onKeyPressWithDot(evt: any) {
-    const charCode = (evt.which) ? evt.which : evt.keyCode;
-    if(charCode !=46){
-    if (charCode > 31 && (charCode < 48 || charCode > 57) )
-      return false;
-    }
-    return true;
-  }
-
-  openAddProductModel(templateRef: TemplateRef<any>) {
-    this.isEdit = false;
-    this.productForm.reset();
-    this.productForm.updateValueAndValidity();
-    this.dialog.open(templateRef, {
-      width: '56vw',
-      panelClass: 'custom-modalbox'
-    });
-  }
-
-  openEditModelPopup(templateRef: TemplateRef<any>, productId: number) {
-    this.selectedProductId = productId;
-    this.isEdit = true;
-    this.productForm.reset();
-    this.productForm.updateValueAndValidity();
-    this.productService
-      .getProductDetailsById(productId)
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.productDetails = res[ResultEnum.Model];
-          if (this.productDetails) {
-            this.selectedPriceIndicator = this.productDetails.PriceIndicator;
-            this.productForm.patchValue({
-              ProductGroup: this.productGroupList.find(x => x.ProductGroupName == this.productDetails.ProductGroup) as any,
-              ProductDescription: this.productDetails.Description,
-              BaseUnit: this.unitList.find(x => x.UOM == this.productDetails.BaseUnit) as any,
-              PurchaseUnit: this.unitList.find(x => x.UOM == this.productDetails.PurchaseUnit) as any,
-              SalesUnit: this.unitList.find(x => x.UOM == this.productDetails.SalesUnit) as any,
-              PriceIndicator: this.priceIndicator.find(x => x.Id == this.productDetails.PriceIndicator) as any,
-              StandardPrice: this.productDetails.StandardPrice?.toString(),
-              MovingAvgPrice: this.productDetails.MovingAvgPrice?.toString(),
-              Plant: this.plantList.find(x => x.PlantCode == this.productDetails.Plant) as any,
-              HSNCode: this.productDetails.HSNCode,
-              GST: this.productDetails.GST as any,
-              IsBatchNo:this.productDetails.IsBatchNo,
-              IsSerialNo:this.productDetails.IsSerialNo,
-              IsActive: this.productDetails.IsActive,
-            });
-          }
-          else {
-            this.toaster.error('User not found');
-          }
-        }
-        else {
-          this.toaster.error(res[ResultEnum.Message]);
-        }
-      });
-    this.dialog.open(templateRef, {
-      width: '56vw',
-      panelClass: 'custom-modalbox'
-    });
-  }
-
   openDeleteModel(templateRef: TemplateRef<any>, productId: number) {
     this.selectedProductId = productId;
     this.dialog.open(templateRef);
-  }
-
-  onSelectPriceIndicator(event: any) {
-    this.selectedPriceIndicator = event.source?.value?.Id;
-    if (this.selectedPriceIndicator == 'S') {
-      this.productForm.controls.StandardPrice.setValidators([Validators.required]);
-      this.productForm.controls.MovingAvgPrice.setValidators(null);
-    }
-    else {
-      this.productForm.controls.MovingAvgPrice.setValidators([Validators.required]);
-      this.productForm.controls.StandardPrice.setValidators(null);
-    }
-    this.productForm.controls.StandardPrice.updateValueAndValidity();
-    this.productForm.controls.MovingAvgPrice.updateValueAndValidity();
-  }
-
-  onClickAddOrUpdateProduct() {
-    const productData = this.productForm.value as any;
-    const product = {
-      Id: this.isEdit ? this.selectedProductId : 0,
-      ProductCode: '',
-      Description: productData.ProductDescription,
-      ProductGroup: productData.ProductGroup?.ProductGroupName,
-      BaseUnit: productData.BaseUnit?.UOM,
-      PurchaseUnit: productData.PurchaseUnit?.UOM,
-      SalesUnit: productData.SalesUnit?.UOM,
-      PriceIndicator: productData.PriceIndicator?.Id,
-      StandardPrice: productData.StandardPrice ? productData.StandardPrice : 0,
-      MovingAvgPrice: productData.MovingAvgPrice ? productData.MovingAvgPrice : 0,
-      Plant: productData.Plant?.PlantCode,
-      IsBatchNo: productData.IsBatchNo,
-      IsSerialNo:productData.IsSerialNo,
-      IsActive: this.isEdit ? productData.IsActive : true,
-      HSNCode: productData.HSNCode,
-      GST: productData.GST
-    } as Products;
-
-    if (!this.isEdit) {
-      this.productService.addProduct(product).subscribe({
-        next: (res: any) => {
-          if (res[ResultEnum.IsSuccess]) {
-            this.toaster.success(res.Message);
-            this.productForm.reset();
-            this.apiProductList();
-          }
-          else {
-            this.toaster.error(res.Message);
-          }
-        },
-        error: (e) => { this.toaster.error(e.Message); },
-        complete() {
-
-        },
-      });
-    }
-    else {
-      this.updateProductService(product);
-    }
   }
 
   onClickDeleteProduct() {
@@ -486,5 +202,10 @@ export class ProductListComponent {
 
       },
     });
+  }
+
+  IsActiveFlagUpdate(element:any,e:any){    
+    element.IsActive = e.srcElement.checked;
+    this.updateProductService(element);
   }
 }

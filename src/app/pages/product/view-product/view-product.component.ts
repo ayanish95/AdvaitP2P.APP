@@ -19,14 +19,13 @@ import { Products } from '@core/models/products';
 export class ViewProductComponent {
   displayedColumns: string[] = [
     'srNo',
-    'ProductCode',
-    'ProductGroup',
-    'Qty',
-    'Unit',
     'Plant',
-    'Location',
-    // 'Close',
-    // 'RFQ',
+    'PriceIndicator',
+    'StandardPrice',
+    'MovingAvgPrice',
+    'HSNCode',
+    'IsBatchNo',
+    'IsSerialNo',
   ];
   productid!: number;
   productDetails!: Products;
@@ -51,9 +50,11 @@ export class ViewProductComponent {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.productDetails = res[ResultEnum.Model];
+            if(res[ResultEnum.Model]?.ProductPlantMapping.length>0){
+              this.dataSource.data=res[ResultEnum.Model]?.ProductPlantMapping;
+            }
           }
           else
             this.toaster.error(res[ResultEnum.Message]);

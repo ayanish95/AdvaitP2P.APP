@@ -4,10 +4,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { Plants } from '@core/models/plants';
+import { GoodsReceivedNoteHeaderVM } from '@core/models/goods-received-note';
 import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
-import { PlantService } from '@core/services/plant.service';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
+import { GoodsReceptionNotificationService } from '@core/services/goods-reception-notification.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 @Component({
@@ -19,9 +18,12 @@ export class ListGoodsReceivedNoteComponent {
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
+    'GRNo',
+    'GRDeliveryDate',
     'PRNumber',
     'PRDocType',
-    'PRDate',
+    'PODate',
+    'Supplier',
     'View',
     'Delete'
   ];
@@ -31,25 +33,30 @@ export class ListGoodsReceivedNoteComponent {
   currentPage = 1;
   pageSize = 10;
   PRHeaderList!: PurchaseRequisitionHeader[];
+  GRHeaderList!: GoodsReceivedNoteHeaderVM[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
-  selectedPRId!: number;
+  selectedGRId!: number;
   filter: Filter = new Filter();
   index = 0;
 
-  constructor(private purchaseRequistionService:PurchaseRequistionService,private toaster:ToastrService,private dialog: MatDialog) {}
+  constructor(private grnService: GoodsReceptionNotificationService, private toaster: ToastrService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.purchaseRequistionService
-      .getAllPRHeaderList()
+    this.apiLoadAllGRNList();
+  }
+
+  apiLoadAllGRNList() {
+    this.grnService
+      .GetAllGRList()
       .pipe(
         finalize(() => {
         })
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          this.PRHeaderList = res[ResultEnum.Model];
-          this.dataSource.data = this.PRHeaderList;
+          this.GRHeaderList = res[ResultEnum.Model];
+          this.dataSource.data = this.GRHeaderList;
           this.dataSource.paginator = this.paginator;
           this.filter = new Filter();
           this.filter.OrderBy = OrderBy.DESC;
@@ -57,7 +64,7 @@ export class ListGoodsReceivedNoteComponent {
           this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
         }
         else
-        this.toaster.error(res[ResultEnum.Message]);
+          this.toaster.error(res[ResultEnum.Message]);
       });
   }
 
@@ -74,7 +81,31 @@ export class ListGoodsReceivedNoteComponent {
     this.filter.Page = page.pageIndex + 1;
   }
   openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
-    this.selectedPRId = plantId;
+    this.selectedGRId = plantId;
     this.dialog.open(templateRef);
+  }
+
+  onClickDelete() {
+    if (this.selectedGRId == 0 || this.selectedGRId == undefined)
+      throw this.toaster.error('Something went wrong');
+    this.grnService
+      .DeleteGRById(this.selectedGRId)
+      .subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+            this.apiLoadAllGRNList();
+            this.selectedGRId = 0;
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+
+          this.dialog.closeAll();
+        },
+        error: (e) => { this.toaster.error(e.Message); },
+        complete() {
+
+        },
+      });
   }
 }

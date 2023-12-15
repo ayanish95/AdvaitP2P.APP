@@ -19,5 +19,6 @@ export class Api {
   static ApprovalStrategy = `ApprovalStrategy`;
   static PurchaseOrder = `PurchaseOrder`;
   static AdvancedShipmentNotification = `AdvancedShipmentNotification`;
+  static GoodsReceiptNotification = `GoodsReceiptNotification`;
 
 }

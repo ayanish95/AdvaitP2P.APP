@@ -30,6 +30,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
     'PRDocType',
     'PRDate',
     'SAPStatus',
+    'Plant',
     'PRPendingBy',
     'Approved',
     'Edit',
@@ -40,7 +41,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
   dataSource1: any;
   currentPage = 1;
   pageSize = 10;
-  @ViewChild('paginator')
+  @ViewChild(MatPaginator)
   paginator!: MatPaginator;
   filter: Filter = new Filter();
   index = 0;
@@ -48,27 +49,25 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
   selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
-  currentUserId!: number;
   rightsForApproval = false;
   propChanges: any;
   constructor(private purchaseRequistionService: PurchaseRequistionService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog, private strategyService: ApprovalStrategyService) { }
 
   ngOnInit() {
     this.currentUserRole = this.authService.roles();
-    this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
-   
     if (this.isSAPEnabled == 'false')
       this.displayedColumns = this.displayedColumns.filter(x => x != 'SAPStatus');
 
-      if (this.allPRHeaderList?.length > 0) {
+      // if (this.allPRHeaderList?.length > 0) {
         this.dataSource.data = this.allPRHeaderList;
         this.dataSource.paginator = this.paginator;
         this.filter = new Filter();
+        this.filter.PageSize = 10;
         this.filter.OrderBy = OrderBy.DESC;
         this.filter.OrderByColumn = 'id';
-        this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
-      }
+        this.filter.TotalRecords = this.allPRHeaderList?.length;
+      // }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -78,15 +77,17 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
       this.allPRHeaderList = currentValue;
       this.dataSource.data = this.allPRHeaderList;
       this.dataSource.paginator = this.paginator;
-      this.filter = new Filter();
-      this.filter.OrderBy = OrderBy.DESC;
-      this.filter.OrderByColumn = 'id';
-      this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
+     
     }
     if (this.propChanges?.ApprovalStrategyList) {
       const currentValue = this.propChanges.ApprovalStrategyList?.currentValue;
       this.ApprovalStrategyList = currentValue;
     }
+    this.filter = new Filter();
+    this.filter.PageSize = 10;
+    this.filter.OrderBy = OrderBy.DESC;
+    this.filter.OrderByColumn = 'id';
+    this.filter.TotalRecords = this.allPRHeaderList?.length;
   }
 
   // api for get all list who have rights for approve supplier and based on that show approve and reject button
@@ -102,7 +103,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
           this.ApprovalStrategyList = res[ResultEnum.Model];
           // Condition - Here is the check the current user have rights for approve the supplier, If yes then it've show the approve and reject button otherwise it will disappear for the user
           if (this.currentUserRole != Role.Admin)
-            this.rightsForApproval = this.ApprovalStrategyList.filter(x => x.UserId == this.currentUserId)?.length > 0 ? true : false;
+            this.rightsForApproval = this.ApprovalStrategyList.filter(x => x.UserId)?.length > 0 ? true : false;
           else
             this.rightsForApproval = true;
           // if (!this.rightsForApproval && this.currentUserRole !== Role.Admin)
@@ -136,7 +137,7 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
     if (this.selectedPRId == 0 || this.selectedPRId == undefined)
       throw this.toaster.error('Something went wrong');
     this.purchaseRequistionService
-      .deletePR(this.selectedPRId, this.currentUserId)
+      .deletePR(this.selectedPRId)
       .pipe(
         finalize(() => {
         })

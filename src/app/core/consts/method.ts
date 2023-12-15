@@ -5,6 +5,7 @@ export class Method {
   static GetSupplierDetailsById = `/GetSupplierDetailsById`;
   static GetProductList = `/GetProductList`;
   static GetPlantList = `/GetPlantList`;
+  static GetPlantListByPlantCode = `/GetPlantListByPlantCode`;
   static GetStateList = `/GetStateList`;
   static GetStateListByCountryCode = `/GetStateListByCountryCode`;
   static GetProductGroupList = `/GetProductGroupList`;
@@ -22,6 +23,7 @@ export class Method {
   static DeletePRLineItemByLineId = `/DeletePRLineItemByLineId`;
   static GetAllPRHeaderList = `/GetAllPRHeaderList`;
   static GetAllPurchaseRequisitionNumber = `/GetAllPurchaseRequisitionNumber`;
+  static GetAllPRNumberForPO = `/GetAllPRNumberForPO`;
   static GetAllPRHeaderListByUserId = `/GetAllPRHeaderListByUserId`;
   static GetPendingPRByUserId = `/GetPendingPRByUserId`;
   static GetPRDetailsById = `/GetPRDetailsById`;
@@ -36,6 +38,7 @@ export class Method {
   static AddProduct = `/AddProduct`;
   static UpdateProduct = `/UpdateProduct`;
   static GetProductDetailsById = `/GetProductDetailsById`;
+  static GetProductListByPlantCode = `/GetProductListByPlantCode`;
   static DeleteProduct = `/DeleteProduct`;
   static AddPlant = `/AddPlant`;
   static UpdatePlant = `/UpdatePlant`;
@@ -70,5 +73,10 @@ export class Method {
   static DeleteASNById = `/DeleteASNById`;
   static GetAllASNListForGR = `/GetAllASNListForGR`;
   static GetAllASNDetailsById = `/GetASNById`;
+  static CreateGR = `/CreateGR`;
+  static GetAllGRList = `/GetAllGRList`;
+  static GetAllGRListForQC = `/GetAllGRListForQC`;
+  static DeleteGRById = `/DeleteGRById`;
+  static GetGRNDetailsById = `/GetGRNDetailsById`;
 
 }
