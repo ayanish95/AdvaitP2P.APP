@@ -268,7 +268,7 @@ export class EditProductComponent implements OnInit {
     this.productPlantForm.markAllAsTouched();
     if (!this.productPlantForm.valid)
       return;
-    let plantDetails = this.productPlantForm.value as any;
+    const plantDetails = this.productPlantForm.value as any;
     if (this.productPlantForm.value) {
       if (plantDetails?.Id > 0) {
         this.productPlantMappingList.forEach(element => {
@@ -281,7 +281,7 @@ export class EditProductComponent implements OnInit {
               element.MovingAvgPrice = plantDetails?.MovingAvgPrice,
               element.HSNCode = plantDetails?.HSNCode,
               element.IsBatchNo = plantDetails?.IsBatchNo,
-              element.IsSerialNo = plantDetails?.IsSerialNo
+              element.IsSerialNo = plantDetails?.IsSerialNo;
           }
         });
       }
@@ -318,7 +318,7 @@ export class EditProductComponent implements OnInit {
         HSNCode: event?.HSNCode,
         IsBatchNo: event?.IsBatchNo,
         IsSerialNo: event?.IsSerialNo,
-      })
+      });
     }
   }
 
@@ -345,7 +345,7 @@ export class EditProductComponent implements OnInit {
     if (!this.productForm.valid)
       return;
     if (this.productPlantMappingList.length <= 0)
-      throw this.toaster.error("Please add at least one plant for this product...")
+      throw this.toaster.error('Please add at least one plant for this product...');
 
     const product = {
       Id: this.productDetails.Id,

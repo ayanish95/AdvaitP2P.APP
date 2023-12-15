@@ -404,7 +404,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
           // item.Plant = PRline.Plant as unknown as Plants,
           item.StorageLocation = PRline.StorageLocation as unknown as StorageLocations,
           item.LineId = item.LineId,
-          item.Id = item.Id
+          item.Id = item.Id;
         }
       });
     }
