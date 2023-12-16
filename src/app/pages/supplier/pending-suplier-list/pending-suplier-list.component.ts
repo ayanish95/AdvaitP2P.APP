@@ -21,7 +21,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./pending-suplier-list.component.scss']
 })
 export class PendingSuplierListComponent implements OnInit, OnChanges {
-
+  //This component show pending supplier which is not approved
   @Input() searchText!: string;
   @Input() supplierList!: Suppliers[];
   propChanges: any;
@@ -75,6 +75,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
 
   }
 
+  //On change event when tab change from parent component
   ngOnChanges(changes: SimpleChanges) {
     this.propChanges = changes;
     if (this.propChanges.searchText) {
@@ -121,6 +122,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
       });
   }
 
+  // Search supplier from parent component
   searchSupplier(filterValue: any) {
     filterValue = filterValue;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -129,11 +131,14 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
     }
   }
 
+  //Supplier list pagination page change event
   pageChange(page: PageEvent) {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
+
+  //Open dialog for approve supplier and call api for approve supplier
   openDialog(event: any) {
     this.supplierService.getSupplierDetailById(event.Id).pipe(
       finalize(() => {
@@ -176,12 +181,14 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
       });
   }
 
+  //Open dialog for reject supplier
   openDialogReject(templateRef: TemplateRef<any>, event: any) {
     this.rejectComments = '';
     this.selectedSupplierId = event.Id;
     this.dialog.open(templateRef);
   }
 
+  //API call for reject supplier
   onClickReject() {
     if (!this.rejectComments)
       throw this.toast.error('Please enter remarks for reject...');

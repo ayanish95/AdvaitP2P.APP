@@ -39,6 +39,7 @@ export class ViewProductComponent {
   }
 
   ngOnInit(): void {
+    //API product details by product id
     this.productService
       .getProductDetailsById(this.productid)
       .pipe(
@@ -60,6 +61,8 @@ export class ViewProductComponent {
           this.toaster.error(res[ResultEnum.Message]);
       });
   }
+
+  //On click back button
   onClickBack() {
     this.location.back();
   }

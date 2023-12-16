@@ -25,6 +25,7 @@ import { Observable, finalize, startWith, map } from 'rxjs';
   styleUrls: ['./add-supplier-for-admin.component.scss']
 })
 export class AddSupplierForAdminComponent implements OnInit {
+  //This component only for add suppier for admin
 
   basicInfoFromCountryControl = new FormControl();
   basicInfoFromStateControl = new FormControl();
@@ -106,6 +107,7 @@ export class AddSupplierForAdminComponent implements OnInit {
 
   }
 
+  //API product group list
   apiProductGroup() {
     this.productGroupService
       .getProductGroupList()
@@ -124,6 +126,8 @@ export class AddSupplierForAdminComponent implements OnInit {
         }
       });
   }
+
+  //API for country list
   apiCountryList() {
     this.countryService
       .getCountryList()
@@ -143,6 +147,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       });
   }
 
+  //API for state list api
   apiState() {
     this.stateService.getStateList()
       .pipe(finalize(() => { }))
@@ -157,7 +162,8 @@ export class AddSupplierForAdminComponent implements OnInit {
       });
   }
 
-  async apiGetStateByCountryList(countryCode: string) {
+  //API for get state by country 
+  apiGetStateByCountryList(countryCode: string) {
     this.stateService.getStateListByCountryCode(countryCode).pipe(finalize(() => { }))
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
@@ -174,6 +180,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       });
   }
 
+  //API for get supplier by Id
   apiGetSupplierById(supplierId: number) {
     this.supplierService.getSupplierDetailById(supplierId).pipe(
       finalize(() => { })
@@ -234,6 +241,8 @@ export class AddSupplierForAdminComponent implements OnInit {
         }
       });
   }
+
+  //Funcation for trim value
   trimFormValue(value: any) {
     if (value)
       return value;
@@ -241,6 +250,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       return '';
   }
 
+  //Search country for dropdown
   filterCountry(name: any) {
     if (name?.CountryWithCode) {
       return this.countryList.filter(role =>
@@ -258,6 +268,7 @@ export class AddSupplierForAdminComponent implements OnInit {
     return state ? state?.Name! : '';
   }
 
+  //Search state for dropdown
   filterStates(name: any) {
     if (name?.Name) {
       return this.stateList?.filter(role =>
@@ -268,6 +279,7 @@ export class AddSupplierForAdminComponent implements OnInit {
         role?.Name?.toLowerCase().includes(name.toLowerCase()));
     }
   }
+  //Search product for dropdown
   filterProduct(name: any) {
     if (name?.Description) {
       return this.productGroupList.filter(state =>
@@ -392,6 +404,7 @@ export class AddSupplierForAdminComponent implements OnInit {
     };
   }
 
+  //Step change event
   selectionChange(event: StepperSelectionEvent) {
     this.basicInfoFrom.touched;
 
@@ -427,6 +440,8 @@ export class AddSupplierForAdminComponent implements OnInit {
       this.selectedIndex = this.selectedIndex;
     }
   }
+
+  //Next step or previous step event
   nextOrPrevious(type: string) {
     if (this.basicInfoFrom.invalid && this.selectedIndex == 0 && type == 'next') {
       this.basicInfoFrom.markAllAsTouched();
@@ -446,7 +461,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       this.selectedIndex = this.selectedIndex - 1;
   }
 
-
+// Api call supplier register
   onClickRegister() {
     const basicInfoForm = this.basicInfoFrom.value as any;
     const addressForm = this.addressForm.value as any;
@@ -478,7 +493,7 @@ export class AddSupplierForAdminComponent implements OnInit {
       ERPStatus: this.supplierDetails?.ERPStatus ? this.supplierDetails?.ERPStatus : false,
       IsActive: this.isEdit ? bankDetailForm.IsActive : true,
     } as Suppliers;
-    if (!this.isEdit) {
+    if (!this.isEdit) { // Add supplier API
       this.supplierService.supplierRegisterFromAdmin(supplier).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
@@ -498,7 +513,7 @@ export class AddSupplierForAdminComponent implements OnInit {
 
         },
       });
-    } else {
+    } else { //Update supplier API
       this.supplierService.updateSupplier(supplier).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {

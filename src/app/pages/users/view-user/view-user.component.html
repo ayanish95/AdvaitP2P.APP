@@ -40,7 +40,7 @@
       <div class="col-md-12">
         <h5 class="mb-0">Plants</h5>
         <ng-container *ngIf="userList?.Plants">
-          <p  class="mt-5" >Plants (<a (click)="openModelAddUser(viewPlant,userList.Plants)">{{userList.Plants?.length}}</a>) </p> 
+          <p  class="mt-5" >Plants (<a (click)="openModelViewPlant(viewPlant,userList.Plants)">{{userList.Plants?.length}}</a>) </p> 
         </ng-container>
         <ng-container *ngIf="!userList?.Plants">
           <p  class="mt-5" >No Plant Assigned</p>

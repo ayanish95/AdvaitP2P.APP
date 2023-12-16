@@ -57,7 +57,8 @@ export class ViewUserComponent {
     this.location.back();
   }
   
-  openModelAddUser(templateRef: TemplateRef<any>,plants:any) {
+  // Modal popup for view plant
+  openModelViewPlant(templateRef: TemplateRef<any>,plants:any) {
     this.dataSource.data=plants;
     this.dialog.open(templateRef, {
       width: '45vw',

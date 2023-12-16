@@ -28,6 +28,7 @@
             <mat-tab>
                 <ng-template mat-tab-label>All Suppliers</ng-template>
                 <div class="mt-5">
+                    <!-- Component For Show All Supplier -->
                     <app-all-suplier-list [supplierList]="allSuppliierList"
                                           [searchText]="searchText"
                                           (APICallAllSupplierList)="apiAllSupplierList()"></app-all-suplier-list>
@@ -36,6 +37,7 @@
             <mat-tab>
                 <ng-template mat-tab-label>Pendiing For Approval</ng-template>
                 <div class="mt-5">
+                    <!-- Component For Show All Pending Supplier -->
                     <app-pending-suplier-list [supplierList]="pendingSuppliierList"
                                               (APICallPendingSupplierList)="apiAllPendingList()"
                                               [searchText]="searchText"></app-pending-suplier-list>
@@ -44,6 +46,7 @@
             <mat-tab>
                 <ng-template mat-tab-label>Approved</ng-template>
                 <div class="mt-5">
+                    <!-- Component For Show All Approved Supplier -->
                     <app-approved-suplier-list [supplierList]="approveSuppliierList"
                                                [searchText]="searchText"></app-approved-suplier-list>
                 </div>
@@ -51,6 +54,7 @@
             <mat-tab>
               <ng-template mat-tab-label>Rejected</ng-template>
               <div class="mt-5">
+                <!-- Component For Show All Rejected Supplier -->
                 <app-reject-suplier-list [supplierList]="rejectsuplierlist"
                 [searchText]="searchText"></app-reject-suplier-list>
               </div>

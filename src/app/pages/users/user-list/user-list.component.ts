@@ -24,11 +24,11 @@ import { Observable, finalize, map, startWith } from 'rxjs';
 })
 export class UserListComponent {
   isLoading = true;
-  displayedColumns: string[] = ['srNo', 'userName', 'name', 'roleName', 'erpUserId', 'email', 'mobile', 'isActive','Actions'
-  // , 'edit'
-  // , 'View'
-  // , 'delete'
-];
+  displayedColumns: string[] = ['srNo', 'userName', 'name', 'roleName', 'erpUserId', 'email', 'mobile', 'isActive', 'Actions'
+    // , 'edit'
+    // , 'View'
+    // , 'delete'
+  ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
   currentPage = 1;
@@ -86,6 +86,7 @@ export class UserListComponent {
     this.apiRole();
   }
 
+  // API for user list
   apiUserList() {
     this.userService
       .getUserList().subscribe({
@@ -105,8 +106,7 @@ export class UserListComponent {
         complete() { },
       });
   }
-
-
+  // API for plant list which is use while creat or update users
   apiPlant() {
     this.plantService.getPlantList().subscribe({
       next: (res: any) => {
@@ -123,6 +123,7 @@ export class UserListComponent {
     });
   }
 
+  // API for roles list
   apiRole() {
     this.roleService
       .getAllRoleList().subscribe({
@@ -142,12 +143,13 @@ export class UserListComponent {
       });
   }
 
+  // Search plant for plant dropdown
   filterPlant(name: any) {
     return this.plantList.filter(plant =>
       plant?.PlantName?.toLowerCase().includes(name.toLowerCase()) ||
       plant?.PlantCode?.toLowerCase().includes(name.toLowerCase()));
   }
-
+  // Search role for roles dropdown
   filterRoles(name: any) {
     if (name?.DisplayName) {
       return this.roleList.filter(role =>
@@ -158,11 +160,12 @@ export class UserListComponent {
         role?.DisplayName?.toLowerCase().includes(name.toLowerCase()));
     }
   }
-
+// funcation for display role in dropdown
   roleDisplayFn(role: Roles) {
     return role ? role.DisplayName! : '';
   }
 
+  // Global search for user
   searchUser(filterValue: any) {
     filterValue = filterValue.target.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -176,6 +179,7 @@ export class UserListComponent {
     this.filter.Page = page.pageIndex + 1;
   }
 
+  // Modal popup for create user
   openModelAddUser(templateRef: TemplateRef<any>) {
     this.userForm.reset();
     this.userForm.updateValueAndValidity();
@@ -185,6 +189,7 @@ export class UserListComponent {
     });
   }
 
+  // Model popup for edit user details
   openModelEditUser(templateRef: TemplateRef<any>, userId: number) {
     this.editUserForm.reset();
     this.editUserForm.updateValueAndValidity();
@@ -207,7 +212,7 @@ export class UserListComponent {
               Role: this.roleList.find(x => x.Id == Number(this.userDetails.RoleId)) as any,
               Email: this.userDetails.Email,
               Mobile: this.userDetails.Mobile,
-              Plant: this.plantList?.filter(x=>this.userDetails.PlantId?.includes(x.Id)) as any,
+              Plant: this.plantList?.filter(x => this.userDetails.PlantId?.includes(x.Id)) as any,
               IsActive: this.userDetails.IsActive,
             });
           }
@@ -225,11 +230,13 @@ export class UserListComponent {
     });
   }
 
+  // Open alert modal popup for delete user
   openDeleteModel(templateRef: TemplateRef<any>, userId: number) {
     this.selectedUserId = userId;
     this.dialog.open(templateRef);
   }
 
+  // User save api
   onClickAddUser() {
     const userFormValue = this.userForm.value as any;
     let plantId = userFormValue.Plant.map((x: any) => x.Id);
@@ -263,6 +270,7 @@ export class UserListComponent {
     });
   }
 
+  //User update api
   onClickUpdateUser() {
     const userFormValue = this.editUserForm.value as any;
     let plantId = userFormValue.Plant.map((x: any) => x.Id);
@@ -281,6 +289,8 @@ export class UserListComponent {
 
     this.updateService(user);
   }
+
+  //User delete api
   onClickDeleteUser() {
     this.userService
       .deleteUser(this.selectedUserId)
@@ -320,6 +330,7 @@ export class UserListComponent {
     });
   }
 
+  // User active or inactive api call
   IsActiveFlagUpdate(element: any, e: any) {
     element.IsActive = e.srcElement.checked;
     this.updateService(element);

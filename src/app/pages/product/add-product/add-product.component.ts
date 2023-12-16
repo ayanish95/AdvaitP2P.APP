@@ -103,6 +103,7 @@ export class AddProductComponent implements OnInit {
     this.apiInitialize();
   }
 
+  // All api list
   apiInitialize() {
     this.apiUnitList();
     this.apiProductGroup();
@@ -115,6 +116,7 @@ export class AddProductComponent implements OnInit {
 
   }
 
+  //API unit list
   apiUnitList() {
     this.unitService
       .getAllUnit().subscribe(res => {
@@ -138,6 +140,7 @@ export class AddProductComponent implements OnInit {
       });
   }
 
+  //API product group list
   apiProductGroup() {
     this.productGroupService
       .getProductGroupList().subscribe(res => {
@@ -155,6 +158,7 @@ export class AddProductComponent implements OnInit {
 
   }
 
+  //API plant list
   apiPlantList() {
     this.plantService
       .getPlantList()
@@ -172,6 +176,7 @@ export class AddProductComponent implements OnInit {
 
   }
 
+  //Search unit dropdown
   filterUnit(name: any) {
     if (name?.UOM) {
       return this.unitList?.filter(role =>
@@ -202,6 +207,7 @@ export class AddProductComponent implements OnInit {
       productgroup?.PlantName?.toLowerCase().includes(name.toLowerCase()));
   }
 
+  //Funcation for allow only digit in input text filed
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -218,6 +224,7 @@ export class AddProductComponent implements OnInit {
     return true;
   }
 
+  //Modal popup for add plant
   openModelForAddPlant(templateRef: TemplateRef<any>) {
     this.dialog.open(templateRef, {
       width: '56vw',
@@ -225,6 +232,7 @@ export class AddProductComponent implements OnInit {
     });
   }
 
+  //Add or Update plant in line item
   addPlant() {
     this.productPlantForm.markAllAsTouched();
     if (!this.productPlantForm.valid)
@@ -267,6 +275,7 @@ export class AddProductComponent implements OnInit {
     this.dialog.closeAll();
   }
 
+  //Open modal popup for edit plant details and bind it
   editPlantDetials(templateRef: TemplateRef<any>,event: any) {
     this.isEdit = true;
     if (event) {
@@ -287,11 +296,13 @@ export class AddProductComponent implements OnInit {
     });
   }
 
+  //Open delete alert modal popup
   openDeleteModel(templateRef: TemplateRef<any>, productId: number) {
     this.selectedProductId = productId;
     this.dialog.open(templateRef);
   }
 
+  //Click event delete plant from line item
   onClickDeleteItem() {
     const index: number = this.productPlantMappingList.findIndex(x => x.Id == this.selectedProductId);
     if (index !== -1) {
@@ -302,7 +313,7 @@ export class AddProductComponent implements OnInit {
     this.dialog.closeAll();
   }
 
-
+//API call add product
   onClickAddProduct() {
     const productData = this.productForm.value as any;
     this.productForm.markAllAsTouched();
@@ -349,6 +360,7 @@ export class AddProductComponent implements OnInit {
     }
   }
 
+  //Update product API
   updateProductService(product: any) {
     this.productService.updateProduct(product).subscribe({
       next: (res: any) => {

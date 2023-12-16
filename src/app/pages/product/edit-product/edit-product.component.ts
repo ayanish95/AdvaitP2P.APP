@@ -94,10 +94,11 @@ export class EditProductComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.apiUnitList();
-    this.apiProductGroup();
-    this.apiPlantList();
+    this.apiUnitList(); // API unit list
+    this.apiProductGroup(); //API product group
+    this.apiPlantList(); //API plant list
 
+    //Search price indicator
     this.filteredPriceIndicator = this.searchPriceIndicatorControl!.valueChanges.pipe(
       startWith(''),
       map(value => this.filterPriceIndicator(value || ''))
@@ -112,13 +113,15 @@ export class EditProductComponent implements OnInit {
       IsBatchNo: [false],
       IsSerialNo: [false]
     });
-    this.apiInitialize();
+    this.apiInitialize(); //API Initialize
   }
 
+  //Funcation for api initialize
   apiInitialize() {
     this.apiGetProductDetailsById();
   }
 
+  //API get product details by Id
   apiGetProductDetailsById() {
     this.productService
       .getProductDetailsById(this.selectedProductId).subscribe(res => {
@@ -161,6 +164,7 @@ export class EditProductComponent implements OnInit {
       });
   }
 
+  //API unit list
   apiUnitList() {
     this.unitService
       .getAllUnit().subscribe(res => {
@@ -184,6 +188,7 @@ export class EditProductComponent implements OnInit {
       });
   }
 
+  //API product group list
   apiProductGroup() {
     this.productGroupService
       .getProductGroupList().subscribe(res => {
@@ -197,10 +202,9 @@ export class EditProductComponent implements OnInit {
         else
           this.toaster.error(res[ResultEnum.Message]);
       });
-
-
   }
 
+  //API plant list
   apiPlantList() {
     this.plantService
       .getPlantList()
@@ -218,6 +222,7 @@ export class EditProductComponent implements OnInit {
 
   }
 
+  //Search unit for dropdown
   filterUnit(name: any) {
     if (name?.UOM) {
       return this.unitList?.filter(role =>
@@ -228,6 +233,7 @@ export class EditProductComponent implements OnInit {
         role?.UOM?.toLowerCase().includes(name.toLowerCase()));
     }
   }
+  //Search product group for dropdown
   filterProductGroup(name: any) {
 
     return this.productGroupList?.filter(productgroup =>
@@ -235,19 +241,21 @@ export class EditProductComponent implements OnInit {
       productgroup?.Description?.toLowerCase().includes(name.toLowerCase()));
   }
 
-
+//Search price indicator for dropdown
   filterPriceIndicator(name: any) {
     return this.priceIndicator.filter(role =>
       role?.Name?.toLowerCase().includes(name.toLowerCase()) ||
       role?.Id?.toLowerCase().includes(name.toLowerCase()));
   }
 
+  //Search plant dropdown
   filterPlant(name: any) {
     return this.plantList?.filter(productgroup =>
       productgroup?.PlantCode?.toLowerCase().includes(name.toLowerCase()) ||
       productgroup?.PlantName?.toLowerCase().includes(name.toLowerCase()));
   }
 
+  //Funcation for allow only digit on key press event
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -264,6 +272,7 @@ export class EditProductComponent implements OnInit {
     return true;
   }
 
+  //Open modal popup for add plant
   openModelForAddPlant(templateRef: TemplateRef<any>) {
     this.dialog.open(templateRef, {
       width: '56vw',
@@ -271,6 +280,7 @@ export class EditProductComponent implements OnInit {
     });
   }
 
+  //Add or Update plant
   addPlant() {
     this.productPlantForm.markAllAsTouched();
     if (!this.productPlantForm.valid)
@@ -314,6 +324,7 @@ export class EditProductComponent implements OnInit {
     this.dialog.closeAll();
   }
 
+  //Open modal poup for edit plant details and bind all the details in form
   editPlantDetials(templateRef: TemplateRef<any>,event: any) {
     this.isEdit = true;
     if (event) {
@@ -334,11 +345,14 @@ export class EditProductComponent implements OnInit {
     });
   }
 
+  //Modal popup for delete alert
   openDeleteModel(templateRef: TemplateRef<any>, productId: number) {
     this.selectedProductId = productId;
     this.dialog.open(templateRef);
   }
 
+
+  //Click event delete plant from line item
   onClickDeleteItem() {
     const index: number = this.productPlantMappingList.findIndex(x => x.Id == this.selectedProductId);
     if (index !== -1) {
@@ -350,7 +364,7 @@ export class EditProductComponent implements OnInit {
   }
 
 
-
+//Click event APi product add
   onClickAddProduct() {
     const productData = this.productForm.value as any;
     this.productForm.markAllAsTouched();
@@ -380,6 +394,7 @@ export class EditProductComponent implements OnInit {
 
   }
 
+  //API update product
   updateProductService(product: any) {
     this.productService.updateProduct(product).subscribe({
       next: (res: any) => {
