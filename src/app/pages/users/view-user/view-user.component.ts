@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
-import { Suppliers } from '@core/models/suppliers';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { Location } from '@angular/common';
-import { UsersVM } from '@core/models/users';
+import { Users } from '@core/models/users';
 import { UserService } from '@core/services/user.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-view-user',
@@ -17,21 +17,16 @@ import { UserService } from '@core/services/user.service';
 export class ViewUserComponent {
   displayedColumns: string[] = [
     'srNo',
-    'ProductCode',
-    'ProductGroup',
-    'Qty',
-    'Unit',
-    'Plant',
-    'Location',
-    // 'Close',
-    // 'RFQ',
+    'PlantCode',
+    'PlantName',
+    'CompanyCode'
   ];
   userid!: number;
-  userList!: UsersVM;
+  userList!: Users;
 
   dataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private location: Location, private toaster: ToastrService, private userService: UserService,
+  constructor(private location: Location, private toaster: ToastrService, private userService: UserService,private dialog: MatDialog,
     private route: ActivatedRoute) {
 
     this.route.queryParams.subscribe((params: any) => {
@@ -48,7 +43,6 @@ export class ViewUserComponent {
       )
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.userList = res[ResultEnum.Model];
           }
@@ -61,5 +55,13 @@ export class ViewUserComponent {
   }
   onClickBack() {
     this.location.back();
+  }
+  
+  openModelAddUser(templateRef: TemplateRef<any>,plants:any) {
+    this.dataSource.data=plants;
+    this.dialog.open(templateRef, {
+      width: '45vw',
+      panelClass: 'custom-modalbox'
+    });
   }
 }
