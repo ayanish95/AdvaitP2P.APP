@@ -264,6 +264,13 @@ export class EditProductComponent implements OnInit {
     return true;
   }
 
+  openModelForAddPlant(templateRef: TemplateRef<any>) {
+    this.dialog.open(templateRef, {
+      width: '56vw',
+      panelClass: 'custom-modalbox'
+    });
+  }
+
   addPlant() {
     this.productPlantForm.markAllAsTouched();
     if (!this.productPlantForm.valid)
@@ -304,9 +311,10 @@ export class EditProductComponent implements OnInit {
     this.dataSource.data = this.productPlantMappingList;
     this.productPlantForm.reset();
     this.isEdit = false;
+    this.dialog.closeAll();
   }
 
-  editPlantDetials(event: any) {
+  editPlantDetials(templateRef: TemplateRef<any>,event: any) {
     this.isEdit = true;
     if (event) {
       this.productPlantForm.patchValue({
@@ -320,6 +328,10 @@ export class EditProductComponent implements OnInit {
         IsSerialNo: event?.IsSerialNo,
       });
     }
+    this.dialog.open(templateRef, {
+      width: '56vw',
+      panelClass: 'custom-modalbox'
+    });
   }
 
   openDeleteModel(templateRef: TemplateRef<any>, productId: number) {
