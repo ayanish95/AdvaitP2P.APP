@@ -78,5 +78,8 @@ export class Method {
   static GetAllGRListForQC = `/GetAllGRListForQC`;
   static DeleteGRById = `/DeleteGRById`;
   static GetGRNDetailsById = `/GetGRNDetailsById`;
+  static GetAllCompanyList = `/GetAllCompanyList`;
+  static AddCompany = `/AddCompany`;
+  static GetCompanyDetailsById = `/GetCompanyDetailsById`;
 
 }
