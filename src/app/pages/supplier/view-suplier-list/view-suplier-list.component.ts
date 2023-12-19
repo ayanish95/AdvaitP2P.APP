@@ -33,14 +33,15 @@ export class ViewSuplierListComponent {
   index = 0;
   constructor(private supplierService: SupplierService,private location: Location, private toaster: ToastrService, private route: ActivatedRoute) {
 
+    //Get query param value
     this.route.queryParams.subscribe((params: any) => {
       this.SpId = params.id;
     });
   }
 
   ngOnInit(): void {
+    // API call get supplier details by supplier id
     this.supplierService
-
       .getSupplierDetailById(this.SpId)
       .pipe(
         finalize(() => {
@@ -51,7 +52,6 @@ export class ViewSuplierListComponent {
           console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.allSuppliierList = res[ResultEnum.Model];
-            console.log(this.allSuppliierList);
             // this.dataSource.data = this.allSuppliierList.State;
           }
           else
@@ -61,6 +61,8 @@ export class ViewSuplierListComponent {
           this.toaster.error(res[ResultEnum.Message]);
       });
   }
+
+  //On click back button
   onClickBack() {
     this.location.back();
   }

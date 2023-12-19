@@ -36,6 +36,7 @@ export class SupplierListComponent implements OnInit {
     this.apiAllSupplierList();
   }
 
+  // API for get all supplier list
   apiAllSupplierList(){
     this.supplierService
     .getSupplierList()
@@ -56,6 +57,8 @@ export class SupplierListComponent implements OnInit {
       }
     });
   }
+
+  // API for get all pending supplier list
   apiAllPendingList(){
     this.supplierService
     .getSupplierList(false)
@@ -74,9 +77,12 @@ export class SupplierListComponent implements OnInit {
     });
   }
 
+  // Search supplier
   searchSupplier(filterValue: any) {
     this.searchText = filterValue.target.value;
   }
+
+  //On tab change event
   onTabChanged(event: any) {
     if (event?.index==0) {
       this.apiAllSupplierList();
@@ -103,6 +109,7 @@ export class SupplierListComponent implements OnInit {
 
   }
 
+  // Open modal popup for add supplier and call add supplier API
   onClickAddSupplier(){
     const dialogRef = this.dialog.open(AddSupplierForAdminComponent, {
       width: '60vw',

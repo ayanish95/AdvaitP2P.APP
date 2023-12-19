@@ -19,9 +19,9 @@ import { AuthService } from '@core/authentication/auth.service';
 })
 export class AllSuplierListComponent implements OnInit, OnChanges {
 
-  @Input() searchText!: string;
-  @Input() supplierList!: Suppliers[];
-  @Output() APICallAllSupplierList: EventEmitter<string> = new EventEmitter<string>();
+  @Input() searchText!: string; // Search supplier from parent component
+  @Input() supplierList!: Suppliers[]; // Get supplier list from Supplier-list component
+  @Output() APICallAllSupplierList: EventEmitter<string> = new EventEmitter<string>(); // API call in parent component
   propChanges: any;
 
   isLoading = true;
@@ -89,6 +89,7 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
     this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
   }
 
+  //On change event when tab change from parent component
   ngOnChanges(changes: SimpleChanges) {
     this.propChanges = changes;
     if (this.propChanges.searchText) {
@@ -108,6 +109,7 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
     }
   }
 
+  // Search supplier from parent component
   searchSupplier(filterValue: any) {
     filterValue = filterValue;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -115,14 +117,16 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  //Supplier list pagination page change event
   pageChange(page: PageEvent) {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
 
+  // Modal popup for edit supplier
   openEditModelPopup(supplierId: number) {
-
     const dialogRef = this.dialog.open(AddSupplierForAdminComponent, {
       width: '60vw',
       panelClass: 'custom-modalbox',
@@ -133,11 +137,13 @@ export class AllSuplierListComponent implements OnInit, OnChanges {
     });
   }
 
+  //Open alert modal popup for delete supplier
   openDeleteModel(templateRef: TemplateRef<any>, supplierId: number) {
     this.selectedSupplierId = supplierId;
     this.dialog.open(templateRef);
   }
 
+  //API call delete supplier
   onClickDeleteSupplier() {
     if (this.selectedSupplierId == 0 || this.selectedSupplierId == undefined)
       throw this.toast.error('Something went wrong');

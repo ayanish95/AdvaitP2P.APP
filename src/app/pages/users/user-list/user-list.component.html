@@ -52,28 +52,34 @@
         </ng-container>
         <ng-container matColumnDef="isActive">
           <th mat-header-cell *matHeaderCellDef> Active </th>
-          <td mat-cell *matCellDef="let element">  <mat-checkbox color="primary" [checked]="element?.IsActive" (click)="IsActiveFlagUpdate(element,$event)"></mat-checkbox> </td>
+          <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                          [checked]="element?.IsActive"
+                          (click)="IsActiveFlagUpdate(element,$event)"></mat-checkbox> </td>
         </ng-container>
-        <ng-container matColumnDef="edit">
-          <th mat-header-cell *matHeaderCellDef> Edit </th>
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
           <td mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="openModelEditUser(editUser,element?.Id)"  matTooltip="Click to Edit">
-              <mat-icon>edit</mat-icon>
+            <button mat-icon-button [matMenuTriggerFor]="menu2" aria-label="Open Menu">
+              <mat-icon>more_vert</mat-icon>
             </button>
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="View">
-          <th mat-header-cell *matHeaderCellDef> View </th>
-          <td mat-cell *matCellDef="let element">
-           <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}" matTooltip="Click to View">   <mat-icon >remove_red_eye</mat-icon></button>
-           </td>
-      </ng-container>
-        <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef> Delete </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="openDeleteModel(deleteAlert,element?.Id)"  matTooltip="Click to Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
+
+            <mat-menu #menu2="matMenu">
+              <button mat-menu-item (click)="openModelEditUser(editUser,element?.Id)"
+                      matTooltip="Click to Edit">
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+              </button>
+              <button mat-menu-item [routerLink]="['view']" [queryParams]="{id: element.Id}"
+                      matTooltip="Click to View">
+                <mat-icon>remove_red_eye</mat-icon>
+                <span>View</span>
+              </button>
+              <button mat-menu-item (click)="openDeleteModel(deleteAlert,element?.Id)"
+                      matTooltip="Click to Delete">
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -137,19 +143,33 @@
         </div>
         <div class="col-sm-6">
           <label class="custom-label">
-            <h5>Role<small>*</small></h5>
+            <h5>Password<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
-                   [matAutocomplete]="roleAutocomplete"
-                   formControlName="Role"
-                   placeholder="Role">
-            <mat-autocomplete #roleAutocomplete="matAutocomplete" [displayWith]="roleDisplayFn">
+                   formControlName="Password"
+                   placeholder="Password">
+            <mat-error *ngIf="userForm.get('Password')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Role<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <mat-select formControlName="Role" placeholder="Role" #singleSelect>
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchRoleControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
               <mat-option *ngFor="let role of filteredRoles | async"
                           [value]="role">
                 <span>{{ role?.DisplayName }} </span>
               </mat-option>
-            </mat-autocomplete>
+            </mat-select>
             <mat-error *ngIf="userForm.get('Role')?.hasError('required')">
               This filed is required...
             </mat-error>
@@ -182,7 +202,28 @@
           </mat-form-field>
         </div>
 
-
+        <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Plant / Warehouse<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <mat-select formControlName="Plant" placeholder="Plant / Warehouse" #singleSelect
+                        [multiple]="true">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchPlantControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let plant of filteredPlants | async"
+                          [value]="plant">
+                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="userForm.get('Plant')?.hasError('required')">
+              Please select plant / warehouse...
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
 
     </form>
@@ -243,6 +284,19 @@
         </div>
         <div class="col-sm-6">
           <label class="custom-label">
+            <h5>Password<small>*</small></h5>
+          </label>
+          <mat-form-field class="demo-full-width">
+            <input matInput
+                   formControlName="Password"
+                   placeholder="Password">
+            <mat-error *ngIf="userForm.get('Password')?.hasError('required')">
+              This filed is required...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <label class="custom-label">
             <h5>Role<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
@@ -288,6 +342,28 @@
           </mat-form-field>
         </div>
         <div class="col-sm-6">
+          <label class="custom-label">
+            <h5>Plant / Warehouse<small>*</small></h5>
+          </label>
+          <mat-form-field appearance="outline" class="demo-full-width">
+            <mat-select formControlName="Plant" placeholder="Plant / Warehouse" #singleSelect
+                        [multiple]="true">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="searchPlantControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let plant of filteredPlants | async"
+                          [value]="plant">
+                <span>{{ plant.PlantCode }} - {{ plant.PlantName }}</span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="editUserForm.get('Plant')?.hasError('required')">
+              Please select plant / warehouse...
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
           <mat-checkbox color="primary" formControlName="IsActive">Active?</mat-checkbox>
         </div>
 
@@ -306,9 +382,9 @@
 
 <ng-template #deleteAlert>
   <h2 mat-dialog-title class="text-center">Delete User</h2>
-<div mat-dialog-content>Are you sure want to delete user?</div>
-<div mat-dialog-actions class="d-flex justify-content-center">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button  mat-raised-button color="warn" (click)="onClickDeleteUser()">Delete</button>
-</div>
+  <div mat-dialog-content>Are you sure want to delete user?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeleteUser()">Delete</button>
+  </div>
 </ng-template>

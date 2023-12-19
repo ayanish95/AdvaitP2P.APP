@@ -1,0 +1,172 @@
+<h2 mat-dialog-title> {{ !IsEdit ? 'Add' : 'Edit' }} Company</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="companyForm">
+        <div class="row mt-5">
+
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Company Name<small>*</small></h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="CompanyName"
+                           placeholder="Company Name">
+                    <mat-error
+                               *ngIf="companyForm.get('CompanyName')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Street1<small>*</small></h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="Street1"
+                           placeholder="Street1">
+                    <mat-error
+                               *ngIf="companyForm.get('Street1')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Street2</h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="Street2"
+                           placeholder="Street2">
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Street3</h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="Street3"
+                           placeholder="Street3">
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>City<small>*</small></h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="City"
+                           placeholder="City">
+                    <mat-error
+                               *ngIf="companyForm.get('City')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Pincode</h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="PostalCode"
+                           placeholder="Pincode">
+                    <!-- <mat-error
+                               *ngIf="companyForm.get('Pincode')?.hasError('required')">
+                        This filed is required...
+                    </mat-error> -->
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>State</h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <mat-select formControlName="State" placeholder="State" #singleSelect (selectionChange)="onChangeState($event.value)">
+                        <mat-option>
+                          <ngx-mat-select-search [formControl]="searchStateControl"
+                                                 noEntriesFoundLabel="No Record Found..."
+                                                 placeholderLabel="Search..."></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option *ngFor="let state of filteredStates | async"
+                                    [value]="state">
+                          <span>{{ state?.Name }} </span>
+                        </mat-option>
+                      </mat-select>
+                    <mat-error
+                               *ngIf="companyForm.get('State')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Country<small>*</small></h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <mat-select formControlName="Country" placeholder="Country" #singleSelect>
+                        <mat-option>
+                          <ngx-mat-select-search [formControl]="searchCountryControl"
+                                                 noEntriesFoundLabel="No Record Found..."
+                                                 placeholderLabel="Search..."></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option *ngFor="let country of filteredCountry | async"
+                                    [value]="country">
+                          <span>{{ country?.CountryWithCode }} </span>
+                        </mat-option>
+                      </mat-select>
+
+                    <mat-error
+                               *ngIf="companyForm.get('Country')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Mobile No.<small>*</small></h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="Mobile"
+                           placeholder="Mobile No">
+                    <mat-error
+                               *ngIf="companyForm.get('Mobile')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+                <label class="custom-label">
+                    <h5>Email Id<small>*</small></h5>
+                </label>
+                <mat-form-field class="demo-full-width">
+                    <input matInput
+                           formControlName="Email"
+                           placeholder="Email Id">
+                    <mat-error
+                               *ngIf="companyForm.get('Email')?.hasError('required')">
+                        This filed is required...
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <ng-container *ngIf="IsEdit">
+                <div class="col-sm-12">
+                    <mat-checkbox color="primary"
+                                  formControlName="IsActive">Active?</mat-checkbox>
+                </div>
+            </ng-container>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
+            [disabled]="companyForm.invalid" (click)="onClickAddPlant()">{{ !IsEdit ? 'Add' :
+        'Update' }}</button>
+</mat-dialog-actions>

@@ -103,14 +103,16 @@ export class ProductListComponent {
     //  Temporary comment
     // if (this.isSAPEnabled == 'false')
     //   this.displayedColumns = this.displayedColumns.filter(x => x != 'ERPProductCode');
-    this.apiInitialize();
+    this.apiInitialize(); //API initialize
 
   }
 
+  //All api initialize
   apiInitialize() {
     this.apiProductList();
   }
 
+  //API product list
   apiProductList() {
     this.productService
       .getProductList()
@@ -132,6 +134,7 @@ export class ProductListComponent {
       });
   }
 
+  //Search product
   searchSupplier(filterValue: any) {
     filterValue = filterValue.target.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -139,17 +142,21 @@ export class ProductListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  //On page change event
   pageChange(page: PageEvent) {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
 
+  //Open delete alert modal popup
   openDeleteModel(templateRef: TemplateRef<any>, productId: number) {
     this.selectedProductId = productId;
     this.dialog.open(templateRef);
   }
 
+  //On button click delete product and API call
   onClickDeleteProduct() {
     if (this.selectedProductId == 0 || this.selectedProductId == undefined)
       throw this.toaster.error('Something went wrong');
@@ -184,6 +191,7 @@ export class ProductListComponent {
     }
   }
 
+  //API for update product
   updateProductService(product:any){
     this.productService.updateProduct(product).subscribe({
       next: (res: any) => {
@@ -204,6 +212,7 @@ export class ProductListComponent {
     });
   }
 
+  //On change update product API call for the active or inactive
   IsActiveFlagUpdate(element:any,e:any){    
     element.IsActive = e.srcElement.checked;
     this.updateProductService(element);

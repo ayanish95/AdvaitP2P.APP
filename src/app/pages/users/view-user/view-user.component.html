@@ -2,47 +2,85 @@
 
 
 <mat-card>
-    <mat-card-header>
-      <div class="col-md-9">
-        <mat-card-title>User Detail</mat-card-title>
+  <mat-card-header>
+    <div class="col-md-9">
+      <mat-card-title>User Detail</mat-card-title>
+    </div>
+    <div class="col-md-3 d-flex justify-content-end">
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()"> Back</button>
+    </div>
+  </mat-card-header>
+  <mat-card-content *ngIf="userList">
+    <div class="row">
+      <div class="col-md-2">
+        <h5 class="mb-0">User Name</h5>
+        <p class="mt-5">{{userList.UserName}}</p>
       </div>
-      <div class="col-md-3 d-flex justify-content-end">
-        <button mat-button mat-raised-button color="primary" (click)="onClickBack()" > Back</button>
+      <div class="col-md-2">
+        <h5 class="mb-0" style="color: rgb(30, 24, 24);">Fist Name</h5>
+        <p class="mt-5">{{userList.FirstName}}</p>
       </div>
-    </mat-card-header>
-    <mat-card-content *ngIf="userList">
-      <div class="row">
-        <div class="col-md-2">
-          <h5 class="mb-0">User Name</h5>
-          <p class="mt-0">{{userList.UserName}}</p>
-       </div>
-        <div class="col-md-2">
-          <h5 class="mb-0" style="color: rgb(30, 24, 24);">Fist Name</h5>
-          <p class="mt-0">{{userList.FirstName}}</p>
-       </div>
-           <div class="col-md-2">
-            <h5 class="mb-0">Lest Name</h5>
-            <p class="mt-0">{{userList.LastName}}</p>
-         </div>
-        <div class="col-md-2">
-           <h5 class="mb-0">Contact Number</h5>
-           <p class="mt-0">{{userList.Mobile}}</p>
-        </div>
-        <div class="col-md-2">
-            <h5 class="mb-0">Email Id</h5>
-            <p class="mt-0">{{userList.Email}}</p>
-         </div>
-         <div class="col-md-2">
-          <h5 class="mb-0">User Id</h5>
-          <p class="mt-0">{{userList.Id}}</p>
-       </div>
-       <div class="col-md-2">
+      <div class="col-md-2">
+        <h5 class="mb-0">Lest Name</h5>
+        <p class="mt-5">{{userList.LastName}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Contact Number</h5>
+        <p class="mt-5">{{userList.Mobile}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Email Id</h5>
+        <p class="mt-5">{{userList.Email}}</p>
+      </div>
+
+      <div class="col-md-2">
         <h5 class="mb-0">Role Name</h5>
-        <p class="mt-0">{{userList.RoleName}}</p>
-     </div>
+        <p class="mt-5">{{userList.RoleName}}</p>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <div class="col-md-12">
+        <h5 class="mb-0">Plants</h5>
+        <ng-container *ngIf="userList?.Plants">
+          <p  class="mt-5" >Plants (<a (click)="openModelViewPlant(viewPlant,userList.Plants)">{{userList.Plants?.length}}</a>) </p> 
+        </ng-container>
+        <ng-container *ngIf="!userList?.Plants">
+          <p  class="mt-5" >No Plant Assigned</p>
+        </ng-container>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
 
+<ng-template #viewPlant style="width: 56vw;">
+  <h2 mat-dialog-title>Plant List</h2>
 
+  <mat-dialog-content>
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="srNo">
+        <th mat-header-cell *matHeaderCellDef># </th>
+        <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+      </ng-container>
+      <ng-container matColumnDef="PlantCode">
+        <th mat-header-cell *matHeaderCellDef> Plant Code </th>
+        <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} </td>
+      </ng-container>
+      <ng-container matColumnDef="PlantName">
+        <th mat-header-cell *matHeaderCellDef>Plant Name </th>
+        <td mat-cell *matCellDef="let element"> {{element?.PlantName}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="CompanyCode">
+        <th mat-header-cell *matHeaderCellDef> Company Code </th>
+        <td mat-cell *matCellDef="let element"> {{element?.CompanyCode}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                         [columnCount]="displayedColumns.length"></app-no-record-found>
+  </mat-dialog-content>
 
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+
+</ng-template>

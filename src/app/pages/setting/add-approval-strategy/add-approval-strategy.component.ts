@@ -86,6 +86,7 @@ export class AddApprovalStrategyComponent implements OnInit {
   constructor(private fb: FormBuilder, private location: Location, private router: Router, private roleService: RoleService, private authService: AuthService,
     private toaster: ToastrService, private approvalTypeService: ApprovalTypeService, private approvalStrategyService: ApprovalStrategyService, private route: ActivatedRoute, private userService: UserService, private dialog: MatDialog,) {
 
+      //Get query param values
     this.route.queryParams.subscribe((params: any) => {
       this.selectedIdATId = params.atid;
     });
@@ -94,18 +95,22 @@ export class AddApprovalStrategyComponent implements OnInit {
   ngOnInit() {
     this.IsSAPEnable = this.authService.isSAPEnable() == 'true' ? true : false;
     this.roleList = [];
-    this.apiRoleList();
+    this.apiRoleList(); // API role
     // this.apiUsersList();
     if (this.selectedIdATId && this.selectedIdATId > 0)
       this.apiApprovalStrategyDetailsById();
 
+      // search funcation for apprival type list
     this.filteredApprovalType = this.configForm.get('ApprovalType')!.valueChanges.pipe(
       startWith(''),
       map(value => this.filterApprovalType(value || ''))
     );
+
+    // set sequence for approval list
     this.configForm.get('Sequence')?.setValue(this.approvalItems?.length + 1);
   }
 
+  // API call for load approval strategy details by Id
   apiApprovalStrategyDetailsById() {
     this.approvalStrategyService
       .getStrategyDetailsByApprovalTypeId(this.selectedIdATId)
@@ -152,6 +157,8 @@ export class AddApprovalStrategyComponent implements OnInit {
         }
       });
   }
+
+  //Get approval type by Id
   apiApprovalTypeById() {
     this.approvalTypeService.getApprovalTypeDetailsById(this.selectedIdATId)
       .subscribe(res => {
@@ -171,6 +178,7 @@ export class AddApprovalStrategyComponent implements OnInit {
       });
   }
 
+  //API role list
   apiRoleList() {
     this.roleService.getAllRoleList()
       .subscribe(res => {
@@ -187,6 +195,7 @@ export class AddApprovalStrategyComponent implements OnInit {
       });
   }
 
+  //API user list
   apiUsersList(roleId: number, IsForItem = false) {
     this.userList = [];
     this.userService.getUserListByRole(roleId)
@@ -369,6 +378,7 @@ export class AddApprovalStrategyComponent implements OnInit {
       return;
   }
 
+  //Click event for add approval item
   onClickAddItem() {
     if (this.configForm.invalid) {
       this.configForm.markAllAsTouched();
@@ -398,6 +408,7 @@ export class AddApprovalStrategyComponent implements OnInit {
     this.configForm.markAsUntouched();
   }
 
+  //Click event for update item
   onClickUpdateItem() {
     const updatedData = this.configEditForm.value;
     this.approvalItems.filter(x => x.Sequence == updatedData.Sequence).map(x => {
@@ -407,11 +418,13 @@ export class AddApprovalStrategyComponent implements OnInit {
     this.dataSource.data = this.approvalItems;
   }
 
+  //Open alert modal popup for delete 
   openDeleteModel(templateRef: TemplateRef<any>, sequence: number) {
     this.selectedSequence = sequence;
     this.dialog.open(templateRef);
   }
 
+  //Delete API call
   onClickDeleteItem() {
     if (!this.selectedSequence)
       throw this.toaster.error('Something went wrong...');
@@ -424,6 +437,7 @@ export class AddApprovalStrategyComponent implements OnInit {
     this.dataSource.data = this.approvalItems;
   }
 
+  //Open modal popup for edit item and API call for user list based on selected role
   editApprovalItem(templateRef: TemplateRef<any>, sequence: any) {
     const data = this.approvalItems.find(x => x.Sequence == sequence);
     this.configEditForm.patchValue({
@@ -435,6 +449,7 @@ export class AddApprovalStrategyComponent implements OnInit {
     this.dialog.open(templateRef);
   }
 
+  //API call add approval config
   onClickAddAprovalConfig() {
     if (this.approvalItems.length <= 0)
       throw this.toaster.error('Please add atleast one strategy...');

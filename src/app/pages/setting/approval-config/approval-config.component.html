@@ -8,7 +8,7 @@
         <div class="col-md-3">
             <mat-form-field appearance="outline">
                 <mat-label>Search</mat-label>
-                <input matInput type="text" name="supplier" (keyup)="searchSupplier($event)"
+                <input matInput type="text" name="supplier" (keyup)="searchApprovalConfig($event)"
                        placeholder="Search">
             </mat-form-field>
         </div>
@@ -92,6 +92,6 @@
     <div mat-dialog-content>Are you sure want to delete this config?</div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="warn" (click)="onClickDeletePlant()">Delete</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteApprovalConfig()">Delete</button>
     </div>
 </ng-template>

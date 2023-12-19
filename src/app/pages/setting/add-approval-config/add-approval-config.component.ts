@@ -1,15 +1,13 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
 import { ApprovalTypes } from '@core/models/approval-type';
-import { Filter, OrderBy } from '@core/models/base-filter';
-import { Country } from '@core/models/country';
+import { Filter } from '@core/models/base-filter';
 import { DocTypes } from '@core/models/doc-type';
 import { Plants } from '@core/models/plants';
-import { States } from '@core/models/states';
 import { ApprovalTypeService } from '@core/services/approval-type.service';
 import { DocTypeService } from '@core/services/doc-type.service';
 import { ToastrService } from 'ngx-toastr';
@@ -52,6 +50,7 @@ export class AddApprovalConfigComponent implements OnInit {
   constructor(private fb: FormBuilder, private location: Location, private router: Router,
     private toaster: ToastrService, private docTypeService: DocTypeService, private approvalTypeService: ApprovalTypeService, private route: ActivatedRoute) {
 
+    //Get query param value
     this.route.queryParams.subscribe((params: any) => {
       this.selectedId = params.id;
     });
@@ -68,6 +67,7 @@ export class AddApprovalConfigComponent implements OnInit {
     );
   }
 
+  //API approval type details by ID
   apiApprovalTypeDetailsById() {
     this.approvalTypeService
       .getApprovalTypeDetailsById(this.selectedId)
@@ -95,6 +95,7 @@ export class AddApprovalConfigComponent implements OnInit {
       });
   }
 
+  //API document type list
   apiDocTypeList() {
     this.docTypeService.getAllDocType()
       .subscribe(res => {
@@ -111,7 +112,7 @@ export class AddApprovalConfigComponent implements OnInit {
       });
   }
 
-
+//Searcg document type
   filterDocType(name: any) {
     if (name?.Type) {
       return this.docTypeList?.filter(role =>
@@ -123,6 +124,7 @@ export class AddApprovalConfigComponent implements OnInit {
     }
   }
 
+  //Search approval type
   filterApprovalType(name: any) {
     if (name?.name) {
       return this.approvalFor?.filter(role =>
@@ -134,6 +136,7 @@ export class AddApprovalConfigComponent implements OnInit {
     }
   }
 
+  //Display funcation document type
   docTypeDisplayFn(docType: DocTypes) {
     return docType ? docType.Type! : '';
   }
@@ -141,10 +144,12 @@ export class AddApprovalConfigComponent implements OnInit {
     return approvalFor ? approvalFor.name! : '';
   }
 
+  //Click event for back button
   onClickBack() {
     this.location.back();
   }
 
+  // On click approval config and API call for add and update
   onClickAddAprovalConfig() {
     this.configForm.markAllAsTouched();
     if (this.configForm.invalid)
@@ -162,6 +167,7 @@ export class AddApprovalConfigComponent implements OnInit {
     } as ApprovalTypes;
 
     if (!this.selectedId) {
+      //Add approval config API call
       this.approvalTypeService.addApprovalType(config).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
@@ -180,6 +186,7 @@ export class AddApprovalConfigComponent implements OnInit {
       });
     }
     else {
+      //Update approval confign API call
       this.approvalTypeService.updateApprovalType(config).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {

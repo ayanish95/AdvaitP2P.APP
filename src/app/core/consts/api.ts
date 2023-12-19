@@ -20,5 +20,6 @@ export class Api {
   static PurchaseOrder = `PurchaseOrder`;
   static AdvancedShipmentNotification = `AdvancedShipmentNotification`;
   static GoodsReceiptNotification = `GoodsReceiptNotification`;
+  static Company = `Company`;
 
 }

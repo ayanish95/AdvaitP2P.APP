@@ -457,8 +457,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
   }
 
   getPRNUmberList() {
-    let docType = this.POHeaderForm.get('DocType')?.value;
-    let plant = this.POHeaderForm.get('Plant')?.value as any;
+    const docType = this.POHeaderForm.get('DocType')?.value;
+    const plant = this.POHeaderForm.get('Plant')?.value as any;
     if (docType && plant) {
       this.apiPRNoList(docType, plant?.Id);
     }
@@ -605,7 +605,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
             netPrice = this.POLineForm.get('NetPrice')?.getRawValue();
           const qty = POline.Qty as unknown as number;
           const totalNetPrice = Math.round(qty * netPrice);
-          let tax = POline?.Tax as unknown as number;;
+          const tax = POline?.Tax as unknown as number;
           let taxAmount = 0;
           if (totalNetPrice) {
             taxAmount = Math.round((totalNetPrice * (tax ? tax : 0)) / 100);

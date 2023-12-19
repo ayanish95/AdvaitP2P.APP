@@ -14,6 +14,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./approved-suplier-list.component.scss']
 })
 export class ApprovedSuplierListComponent implements OnInit,OnChanges {
+  //This component is for approved supplier list 
 
   @Input() searchText!:string;
   @Input() supplierList!:Suppliers[];
@@ -57,6 +58,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
     this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
   }
 
+  //On change event when tab change from parent component
   ngOnChanges(changes: SimpleChanges){
     this.propChanges = changes;
     if(this.propChanges.searchText){
@@ -76,6 +78,7 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
     }
   }
 
+  // Search supplier from parent component
   searchSupplier(filterValue: any) {
     filterValue = filterValue;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -83,12 +86,15 @@ export class ApprovedSuplierListComponent implements OnInit,OnChanges {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  //Supplier list pagination page change event
   pageChange(page: PageEvent) {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
 
+  //API call for active/inactive supplier
   updateSupplierr(element: any,e:any) {    
     element.IsActive = e.srcElement.checked;
     this.supplierService.updateSupplier(element)

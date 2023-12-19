@@ -1,13 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
-import { Suppliers } from '@core/models/suppliers';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { Location } from '@angular/common';
-import { UsersVM } from '@core/models/users';
-import { UserService } from '@core/services/user.service';
 import { ProductService } from '@core/services/product.service';
 import { Products } from '@core/models/products';
 
@@ -42,6 +39,7 @@ export class ViewProductComponent {
   }
 
   ngOnInit(): void {
+    //API product details by product id
     this.productService
       .getProductDetailsById(this.productid)
       .pipe(
@@ -63,6 +61,8 @@ export class ViewProductComponent {
           this.toaster.error(res[ResultEnum.Message]);
       });
   }
+
+  //On click back button
   onClickBack() {
     this.location.back();
   }

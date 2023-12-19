@@ -103,6 +103,7 @@ export class AddProductComponent implements OnInit {
     this.apiInitialize();
   }
 
+  // All api list
   apiInitialize() {
     this.apiUnitList();
     this.apiProductGroup();
@@ -115,6 +116,7 @@ export class AddProductComponent implements OnInit {
 
   }
 
+  //API unit list
   apiUnitList() {
     this.unitService
       .getAllUnit().subscribe(res => {
@@ -138,6 +140,7 @@ export class AddProductComponent implements OnInit {
       });
   }
 
+  //API product group list
   apiProductGroup() {
     this.productGroupService
       .getProductGroupList().subscribe(res => {
@@ -155,6 +158,7 @@ export class AddProductComponent implements OnInit {
 
   }
 
+  //API plant list
   apiPlantList() {
     this.plantService
       .getPlantList()
@@ -172,6 +176,7 @@ export class AddProductComponent implements OnInit {
 
   }
 
+  //Search unit dropdown
   filterUnit(name: any) {
     if (name?.UOM) {
       return this.unitList?.filter(role =>
@@ -202,6 +207,7 @@ export class AddProductComponent implements OnInit {
       productgroup?.PlantName?.toLowerCase().includes(name.toLowerCase()));
   }
 
+  //Funcation for allow only digit in input text filed
   onKeyPress(evt: any) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57))
@@ -218,11 +224,20 @@ export class AddProductComponent implements OnInit {
     return true;
   }
 
+  //Modal popup for add plant
+  openModelForAddPlant(templateRef: TemplateRef<any>) {
+    this.dialog.open(templateRef, {
+      width: '56vw',
+      panelClass: 'custom-modalbox'
+    });
+  }
+
+  //Add or Update plant in line item
   addPlant() {
     this.productPlantForm.markAllAsTouched();
     if (!this.productPlantForm.valid)
       return;
-    let plantDetails = this.productPlantForm.value as any;
+    const plantDetails = this.productPlantForm.value as any;
     if (this.productPlantForm.value) {
       if (plantDetails?.Id > 0) {
         this.productPlantMappingList.forEach(element => {
@@ -235,7 +250,7 @@ export class AddProductComponent implements OnInit {
               element.MovingAvgPrice = plantDetails?.MovingAvgPrice,
               element.HSNCode = plantDetails?.HSNCode,
               element.IsBatchNo = plantDetails?.IsBatchNo,
-              element.IsSerialNo = plantDetails?.IsSerialNo
+              element.IsSerialNo = plantDetails?.IsSerialNo;
           }
         });
       }
@@ -257,9 +272,11 @@ export class AddProductComponent implements OnInit {
     this.dataSource.data = this.productPlantMappingList;
     this.productPlantForm.reset();
     this.isEdit = false;
+    this.dialog.closeAll();
   }
 
-  editPlantDetials(event: any) {
+  //Open modal popup for edit plant details and bind it
+  editPlantDetials(templateRef: TemplateRef<any>,event: any) {
     this.isEdit = true;
     if (event) {
       this.productPlantForm.patchValue({
@@ -271,15 +288,21 @@ export class AddProductComponent implements OnInit {
         HSNCode: event?.HSNCode,
         IsBatchNo: event?.IsBatchNo,
         IsSerialNo: event?.IsSerialNo,
-      })
+      });
     }
+    this.dialog.open(templateRef, {
+      width: '56vw',
+      panelClass: 'custom-modalbox'
+    });
   }
 
+  //Open delete alert modal popup
   openDeleteModel(templateRef: TemplateRef<any>, productId: number) {
     this.selectedProductId = productId;
     this.dialog.open(templateRef);
   }
 
+  //Click event delete plant from line item
   onClickDeleteItem() {
     const index: number = this.productPlantMappingList.findIndex(x => x.Id == this.selectedProductId);
     if (index !== -1) {
@@ -290,15 +313,14 @@ export class AddProductComponent implements OnInit {
     this.dialog.closeAll();
   }
 
-
-
+//API call add product
   onClickAddProduct() {
     const productData = this.productForm.value as any;
     this.productForm.markAllAsTouched();
     if (!this.productForm.valid)
       return;
     if (this.productPlantMappingList.length <= 0)
-      throw this.toaster.error("Please add at least one plant for this product...")
+      throw this.toaster.error('Please add at least one plant for this product...');
     const product = {
       Id: this.isEdit ? this.selectedProductId : 0,
       ProductCode: '',
@@ -338,6 +360,7 @@ export class AddProductComponent implements OnInit {
     }
   }
 
+  //Update product API
   updateProductService(product: any) {
     this.productService.updateProduct(product).subscribe({
       next: (res: any) => {

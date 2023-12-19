@@ -182,7 +182,14 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-
+                <div class="col-sm-12 d-flex align-items-center mt-15">
+                    <button mat-button mat-raised-button color="primary"
+                            (click)="openModelForAddPlant(addPlantDetails)">
+                      <mat-icon>add</mat-icon>
+                      Add Item
+                    </button>
+          
+                  </div>
                 <div class="col-sm-12">
                     <mat-list role="list">
                         <mat-divider></mat-divider>
@@ -190,13 +197,88 @@
                 </div>
             </div>
         </form>
-        
+
+        <div class="mt-20">
+            <h4>Plant List</h4>
+            <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="srNo">
+                    <th mat-header-cell *matHeaderCellDef># </th>
+                    <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Plant">
+                    <th mat-header-cell *matHeaderCellDef> Plant </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} -
+                        {{element?.PlantName}}</td>
+                </ng-container>
+                <ng-container matColumnDef="PriceIndicator">
+                    <th mat-header-cell *matHeaderCellDef> Price Indicator </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.PriceIndicator == 'S' ?
+                        'Standard Price' : 'Moving Avg. Price' }} </td>
+                </ng-container>
+                <ng-container matColumnDef="StandardPrice">
+                    <th mat-header-cell *matHeaderCellDef> Standard Price </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.StandardPrice}} </td>
+                </ng-container>
+                <ng-container matColumnDef="MovingAvgPrice">
+                    <th mat-header-cell *matHeaderCellDef> Moving Avg. Price </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.MovingAvgPrice}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="HSNCode">
+                    <th mat-header-cell *matHeaderCellDef> HSN Code </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.HSNCode}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="IsBatchNo">
+                    <th mat-header-cell *matHeaderCellDef> Is BatchNo </th>
+                    <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsBatchNo"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="IsSerialNo">
+                    <th mat-header-cell *matHeaderCellDef> IsSerialNo </th>
+                    <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsSerialNo"></mat-checkbox> </td>
+                </ng-container>
+                <ng-container matColumnDef="Edit">
+                    <th mat-header-cell *matHeaderCellDef> Edit </th>
+                    <td mat-cell *matCellDef="let element" (click)="editPlantDetials(addPlantDetails,element)">
+                        <button mat-icon-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="Delete">
+                    <th mat-header-cell *matHeaderCellDef> Delete </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button (click)="openDeleteModel(deleteAlert,element.Id)">
+                            <!-- -->
+                            <mat-icon>delete</mat-icon></button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                                 [columnCount]="displayedColumns.length"></app-no-record-found>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button mat-button mat-raised-button color="primary" (click)="onClickAddProduct()">
+                Save
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<!-- Modal popup add plant details -->
+<ng-template #addPlantDetails style="width: 56vw;">
+    <h2 mat-dialog-title>Add Plant Details</h2>
+
+    <mat-dialog-content>
         <form [formGroup]="productPlantForm">
             <div class="row mt-5">
-                <div class="col-md-12">
-                    <h3>Add Plant Details</h3>
-                </div>
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <label class="custom-label">
                         <h5>Plant<small>*</small></h5>
                     </label>
@@ -220,7 +302,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <label class="custom-label">
                         <h5>Price Indicator<small>*</small></h5>
                     </label>
@@ -244,7 +326,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <label class="custom-label">
                         <h5>Standard Price<small>*</small></h5>
                     </label>
@@ -259,7 +341,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <label class="custom-label">
                         <h5>Moving Avg. Price<small>*</small></h5>
                     </label>
@@ -275,7 +357,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <label class="custom-label">
                         <h5>HSN Code<small>*</small></h5>
                     </label>
@@ -289,99 +371,32 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-sm-3 d-flex align-items-center">
+                <div class="col-sm-6 d-flex align-items-center">
                     <mat-checkbox color="primary"
                                   formControlName="IsBatchNo">Batch No</mat-checkbox>
                     <mat-checkbox color="primary"
                                   formControlName="IsSerialNo">Serial No</mat-checkbox>
                 </div>
-                <div class="col-sm-12">
-                    <button mat-button mat-raised-button color="primary" (click)="addPlant()">
-                        <mat-icon>add</mat-icon>
-                        {{isEdit ?'Update' :  'Add'}} Plant
-                    </button>
-                </div>
-               
             </div>
         </form>
 
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-raised-button mat-dialog-close>Close</button>
+        <button mat-button mat-raised-button color="primary" (click)="addPlant()">
+            <mat-icon>add</mat-icon>
+            {{isEdit ?'Update' : 'Add'}} Plant
+        </button>
+    </mat-dialog-actions>
+</ng-template>
 
-        <div class="mt-20">
-            <h4>Plant List</h4>
-            <table mat-table [dataSource]="dataSource">
-                <ng-container matColumnDef="srNo">
-                    <th mat-header-cell *matHeaderCellDef># </th>
-                    <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
-                </ng-container>
-                <ng-container matColumnDef="Plant">
-                    <th mat-header-cell *matHeaderCellDef> Plant </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} - {{element?.PlantName}}</td>
-                </ng-container>
-                <ng-container matColumnDef="PriceIndicator">
-                    <th mat-header-cell *matHeaderCellDef> Price Indicator </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.PriceIndicator == 'S' ? 'Standard Price' : 'Moving Avg. Price' }} </td>
-                </ng-container>
-                <ng-container matColumnDef="StandardPrice">
-                    <th mat-header-cell *matHeaderCellDef> Standard Price </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.StandardPrice}} </td>
-                </ng-container>
-                <ng-container matColumnDef="MovingAvgPrice">
-                    <th mat-header-cell *matHeaderCellDef> Moving Avg. Price </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.MovingAvgPrice}} </td>
-                </ng-container>
-               
-                <ng-container matColumnDef="HSNCode">
-                    <th mat-header-cell *matHeaderCellDef> HSN Code </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.HSNCode}}
-                    </td>
-                </ng-container>
-                <ng-container matColumnDef="IsBatchNo">
-                    <th mat-header-cell *matHeaderCellDef> Is BatchNo </th>
-                    <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
-                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
-                                      [checked]="element?.IsBatchNo"></mat-checkbox> </td>
-                </ng-container>
-                <ng-container matColumnDef="IsSerialNo">
-                    <th mat-header-cell *matHeaderCellDef> IsSerialNo </th>
-                    <!-- (click)="IsActiveFlagUpdate(element,$event)" -->
-                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
-                                      [checked]="element?.IsSerialNo"></mat-checkbox> </td>
-                </ng-container>
-                <ng-container matColumnDef="Edit">
-                    <th mat-header-cell *matHeaderCellDef> Edit </th>
-                    <td mat-cell *matCellDef="let element" (click)="editPlantDetials(element)">
-                        <button mat-icon-button>
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                    </td>
-                </ng-container>
-                <ng-container matColumnDef="Delete">
-                    <th mat-header-cell *matHeaderCellDef> Delete </th>
-                    <td mat-cell *matCellDef="let element">
-                        <button mat-icon-button  (click)="openDeleteModel(deleteAlert,element.Id)">
-                            <!-- -->
-                            <mat-icon>delete</mat-icon></button>
-                    </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-            <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
-                                 [columnCount]="displayedColumns.length"></app-no-record-found>
-        </div>
-        <div class="d-flex justify-content-end">
-            <button mat-button mat-raised-button color="primary" (click)="onClickAddProduct()">
-              Save
-            </button>
-        </div>
-    </mat-card-content>
-</mat-card>
-
+<!-- Modal popup delete plant details -->
 <ng-template #deleteAlert>
     <h2 mat-dialog-title class="text-center">Delete Plant Details</h2>
     <div mat-dialog-content>Are you sure want to delete this plant?</div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="warn" (click)="onClickDeleteItem()"  matTooltip="Click to Delete">Delete</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteItem()"
+                matTooltip="Click to Delete">Delete</button>
     </div>
 </ng-template>

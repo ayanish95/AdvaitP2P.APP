@@ -144,9 +144,17 @@
               "MasterUser"
             ]
           }
+        },
+        {
+          "route": "company",
+          "name": "company",
+          "type": "link",
+          "permissions": {
+            "only": [
+              "Admin"
+            ]
+          }
         }
-
-
       ],
       "permissions": {
         "only": [

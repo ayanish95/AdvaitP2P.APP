@@ -1,0 +1,47 @@
+<breadcrumb></breadcrumb>
+<mat-card>
+  <mat-card-header>
+    <div class="col-md-9">
+      <mat-card-title>Company Details</mat-card-title>
+    </div>
+    <div class="col-md-3 d-flex justify-content-end">
+      <button mat-button mat-raised-button color="primary" (click)="onClickBack()"> Back</button>
+    </div>
+  </mat-card-header>
+  <mat-card-content *ngIf="companyDetails">
+    <div class="row">
+      <div class="col-md-2">
+        <h5 class="mb-0">Company Code</h5>
+        <p class="mt-5">{{companyDetails.CompanyCode}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Company Name</h5>
+        <p class="mt-5">{{companyDetails.CompanyName}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Street1</h5>
+        <p class="mt-5">{{companyDetails.Street1}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Street2</h5>
+        <p class="mt-5">{{companyDetails.Street2}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">City</h5>
+        <p class="mt-5">{{companyDetails.City}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Postal Code</h5>
+        <p class="mt-5">{{companyDetails.PostalCode}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">State</h5>
+        <p class="mt-5">{{companyDetails.State?.Name}}</p>
+      </div>
+      <div class="col-md-2">
+        <h5 class="mb-0">Country</h5>
+        <p class="mt-5">{{companyDetails.Country?.CountryCode}} - {{companyDetails.Country?.Name}}</p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

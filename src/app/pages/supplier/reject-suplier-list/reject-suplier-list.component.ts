@@ -14,6 +14,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./reject-suplier-list.component.scss']
 })
 export class RejectSuplierListComponent {
+  //This component show rejected supplier list
   @Input() searchText!:string;
   @Input() supplierList!:Suppliers[];
   propChanges: any;
@@ -55,6 +56,7 @@ export class RejectSuplierListComponent {
     this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
   }
 
+  //On change event when tab change from parent component
   ngOnChanges(changes: SimpleChanges){
     this.propChanges = changes;
     if(this.propChanges.searchText){
@@ -74,6 +76,7 @@ export class RejectSuplierListComponent {
     }
   }
 
+  // Search supplier from parent component
   searchSupplier(filterValue: any) {
     filterValue = filterValue;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -81,6 +84,7 @@ export class RejectSuplierListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
+  //Supplier list pagination page change event
   pageChange(page: PageEvent) {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;

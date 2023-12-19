@@ -20,7 +20,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./approval-config.component.scss']
 })
 export class ApprovalConfigComponent implements OnInit {
-
+// Component shows approval configuration lists
   isLoading = true;
   displayedColumns: string[] = [
     'srNo',
@@ -57,6 +57,7 @@ export class ApprovalConfigComponent implements OnInit {
     this.apiApprovalTypeList();
   }
 
+  // API call for approval type list
   apiApprovalTypeList() {
     this.approvalTypeService
       .getAllApprovalTypeList()
@@ -77,33 +78,40 @@ export class ApprovalConfigComponent implements OnInit {
         }
       });
   }
-
-  searchSupplier(filterValue: any) {
+  //Saerch approval config
+  searchApprovalConfig(filterValue: any) {
     filterValue = filterValue.target.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  //On page change event for approval config pagination
   pageChange(page: PageEvent) {
     this.index = page.pageIndex * page.pageSize;
     this.filter.PageSize = page.pageSize;
     this.filter.Page = page.pageIndex + 1;
   }
+
+  //Redirect for add config
   onClickAddConfig() {
     this.router.navigateByUrl('/config/approval-config/add-approval');
   }
 
+  //Redirect for edit approval config
   openEditModelPopup(templateRef: TemplateRef<any>, plantId: number) {
     this.router.navigateByUrl('/config/approval-config/edit-approval');
   }
 
+  //Open modal popup for delete approval config
   openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
     this.selectedPlantId = plantId;
     this.dialog.open(templateRef);
   }
 
-  onClickDeletePlant() {
+  //API call delete approval config
+  onClickDeleteApprovalConfig() {
     if (this.selectedPlantId == 0 || this.selectedPlantId == undefined)
       throw this.toaster.error('Something went wrong');
     this.approvalTypeService
