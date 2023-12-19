@@ -39,10 +39,6 @@
                     <td mat-cell *matCellDef="let element"> {{element?.Street1}}
                         {{element?.Street2}} </td>
                 </ng-container>
-                <ng-container matColumnDef="Country">
-                    <th mat-header-cell *matHeaderCellDef> Country </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.CountryCode}} </td>
-                </ng-container>
                 <ng-container matColumnDef="City">
                     <th mat-header-cell *matHeaderCellDef> City </th>
                     <td mat-cell *matCellDef="let element"> {{element?.City}} </td>
@@ -50,6 +46,10 @@
                 <ng-container matColumnDef="PostalCode">
                     <th mat-header-cell *matHeaderCellDef> Postal Code </th>
                     <td mat-cell *matCellDef="let element"> {{element?.PostalCode}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Country">
+                    <th mat-header-cell *matHeaderCellDef> Country </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.CountryCode}} </td>
                 </ng-container>
                 <ng-container matColumnDef="Telephone">
                     <th mat-header-cell *matHeaderCellDef> Telephone </th>
@@ -109,10 +109,10 @@
 </mat-card>
 
 <ng-template #deleteAlert>
-    <h2 mat-dialog-title class="text-center">Delete Plant</h2>
-    <div mat-dialog-content>Are you sure want to delete this plant?</div>
+    <h2 mat-dialog-title class="text-center">Delete Company</h2>
+    <div mat-dialog-content>Are you sure want to delete this company?</div>
     <div mat-dialog-actions class="d-flex justify-content-center">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button color="warn" (click)="onClickDeletePlant()">Delete</button>
+        <button mat-raised-button color="warn" (click)="onClickDeleteCompany()">Delete</button>
     </div>
 </ng-template>

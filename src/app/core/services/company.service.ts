@@ -11,17 +11,25 @@ export class CompanyService {
 
   constructor(
     private httpclient: HttpClientService
-  ) {}
+  ) { }
 
   getCompanyList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Company + Method.GetAllCompanyList}`);
   }
 
-  getCompanyDetailsById(companyId:number): Observable<any> {
+  getCompanyDetailsById(companyId: number): Observable<any> {
     return this.httpclient.authGet(`${Api.Company + Method.GetCompanyDetailsById}/${companyId}`);
   }
 
-  addCompany(company:any): Observable<any> {
-    return this.httpclient.authPost(`${Api.Company + Method.AddCompany}`,company);
+  addCompany(company: any): Observable<any> {
+    return this.httpclient.authPost(`${Api.Company + Method.AddCompany}`, company);
+  }
+
+  updateCompany(company: any): Observable<any> {
+    return this.httpclient.authPost(`${Api.Company + Method.UpdateCompany}`, company);
+  }
+  
+  deleteCompany(companyId: number): Observable<any> {
+    return this.httpclient.authGet(`${Api.Company + Method.DeleteCompany}/${companyId}`);
   }
 }

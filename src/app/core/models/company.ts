@@ -1,5 +1,5 @@
-import { State } from "@popperjs/core";
 import { Country } from "./country";
+import { States } from "./states";
 
 export interface Company {
     Id: number;
@@ -13,7 +13,7 @@ export interface Company {
     PostalCode?: string;
     Country?: Country;
     CountryCode?: string;
-    State?: State;
+    State?: States;
     StateCode?: string;
     Telephone?: string;
     Email?: string;

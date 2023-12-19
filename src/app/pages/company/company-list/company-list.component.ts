@@ -6,9 +6,7 @@ import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Company } from '@core/models/company';
-import { Plants } from '@core/models/plants';
 import { CompanyService } from '@core/services/company.service';
-import { PlantService } from '@core/services/plant.service';
 import { ToastrService } from 'ngx-toastr';
 import { AddCompanyComponent } from '../add-company/add-company.component';
 
@@ -23,9 +21,9 @@ export class CompanyListComponent {
     'CompanyCode',
     'CompanyName',
     'Street1',
-    'Country',
     'City',
     'PostalCode',
+    'Country',
     'Telephone',
     'Email',
     'IsActive',
@@ -44,11 +42,11 @@ export class CompanyListComponent {
   filter: Filter = new Filter();
   index = 0;
   isEdit = false;
-  selectedPlantId!: number;
-  plantDetails!: Plants;
+  selectedCompanyId!: number;
+  companyDetails!:Company;
   Role = Role;
 
-  constructor(private plantService: PlantService, private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
     private toaster: ToastrService, private companyService: CompanyService) { }
 
   ngOnInit() {
@@ -91,7 +89,6 @@ export class CompanyListComponent {
       panelClass: 'custom-modalbox'
     });
     dialogRef.afterClosed().subscribe((result: any) => {
-      console.log('company data', result);
       if (result != '' && result != undefined && result?.data) {
         this.apiAddCompany(result.data);
       }
@@ -99,23 +96,29 @@ export class CompanyListComponent {
   }
 
   openEditModelPopup(companyId: number) {
+    if(!companyId)
+    throw this.toaster.error('Company id is not found...')
     this.isEdit = true;
-    this.selectedPlantId = companyId;
+    this.selectedCompanyId = companyId;
     this.companyService
       .getCompanyDetailsById(companyId).subscribe(async res => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log('company details',res);
-          
-          this.plantDetails = res[ResultEnum.Model];
-          if (this.plantDetails) {
-
-            this.dialog.open(AddCompanyComponent, {
+          this.companyDetails = res[ResultEnum.Model];
+          if (this.companyDetails) {
+            this.isEdit=true;
+            const dialogRef =  this.dialog.open(AddCompanyComponent, {
               width: '56vw',
-              panelClass: 'custom-modalbox'
+              panelClass: 'custom-modalbox',
+              data:{Company:this.companyDetails,IsEdit:true}
+            });
+            dialogRef.afterClosed().subscribe((result: any) => {
+              if (result != '' && result != undefined && result?.data) {
+                this.apiAddCompany(result.data);
+              }
             });
           }
           else {
-            this.toaster.error('User not found');
+            this.toaster.error('Company details not found...');
           }
         }
         else {
@@ -125,15 +128,14 @@ export class CompanyListComponent {
    
   }
 
-  openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {
-    this.selectedPlantId = plantId;
+  openDeleteModel(templateRef: TemplateRef<any>, companyId: number) {
+    this.selectedCompanyId = companyId;
     this.dialog.open(templateRef);
   }
 
   apiAddCompany(company: Company) {
-    debugger
     const companyData = {
-      Id: this.isEdit ? this.selectedPlantId : 0,
+      Id: this.isEdit ? company.Id : 0,
       CompanyCode: '',
       CompanyName: company.CompanyName,
       Street1: company.Street1,
@@ -160,37 +162,10 @@ export class CompanyListComponent {
           }
         },
         error: (e) => { this.toaster.error(e.Message); },
-        complete() {
-
-        },
       });
     }
-  }
-
-  onClickAddPlant() {
-    let plantdata: any;
-    const plant = {
-      Id: this.isEdit ? this.selectedPlantId : 0,
-      PlantCode: '',
-      PlantName: plantdata.PlantName,
-      Email: plantdata.Email,
-      Mobile: plantdata.Mobile,
-      Street1: plantdata.Street1,
-      Street2: plantdata.Street2,
-      Country: plantdata.Country?.CountryCode,
-      // StateId: this.isSAPEnabled == 'false' ? plantdata.State?.Id.toString() : plantdata.State?.GSTStateCode,
-      GSTStateCode: plantdata.State?.GSTStateCode,
-      City: plantdata.City,
-      Pincode: plantdata.PostalCode,
-      GST: plantdata.GSTNumber,
-      TaxNumber: plantdata.TaxNumber,
-      BusinessPlace: plantdata.BusinessPlace,
-      CompanyCode: plantdata.CompanyCode,
-      IsActive: this.isEdit ? plantdata.IsActive : true,
-    } as Plants;
-
-    if (!this.isEdit) {
-      this.companyService.addCompany(plant).subscribe({
+    else{
+      this.companyService.updateCompany(companyData).subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.toaster.success(res.Message);
@@ -201,41 +176,20 @@ export class CompanyListComponent {
           }
         },
         error: (e) => { this.toaster.error(e.Message); },
-        complete() {
-
-        },
       });
     }
-    else {
-      this.plantService.updatePlant(plant).subscribe({
-        next: (res: any) => {
-          if (res[ResultEnum.IsSuccess]) {
-            this.toaster.success(res.Message);
-            this.apiCompanyList();
-            this.selectedPlantId = 0;
-          }
-          else {
-            this.toaster.error(res.Message);
-          }
-        },
-        error: (e) => { this.toaster.error(e.Message); },
-        complete() {
-
-        },
-      });
-    }
-
+    this.isEdit=false;
   }
 
-  onClickDeletePlant() {
-    if (this.selectedPlantId == 0 || this.selectedPlantId == undefined)
+  onClickDeleteCompany() {
+    if (this.selectedCompanyId == 0 || this.selectedCompanyId == undefined)
       throw this.toaster.error('Something went wrong');
-    this.plantService
-      .deletePlant(this.selectedPlantId).subscribe(res => {
+    this.companyService
+      .deleteCompany(this.selectedCompanyId).subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.toaster.success(res[ResultEnum.Message]);
           this.apiCompanyList();
-          this.selectedPlantId = 0;
+          this.selectedCompanyId = 0;
         }
         else
           this.toaster.error(res[ResultEnum.Message]);
@@ -245,11 +199,16 @@ export class CompanyListComponent {
   }
   IsActiveFlagUpdate(element: any, e: any) {
     element.IsActive = e.srcElement.checked;
-    this.plantService.updatePlant(element)
-      .subscribe(response => {
-        console.log('Update successful', response);
-      }, error => {
-        console.error('Error updating', error);
-      });
+    this.companyService.updateCompany(element).subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.toaster.success(res.Message);
+        }
+        else {
+          this.toaster.error(res.Message);
+        }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+    });
   }
 }

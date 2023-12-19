@@ -140,12 +140,7 @@ export class PendingSuplierListComponent implements OnInit, OnChanges {
 
   //Open dialog for approve supplier and call api for approve supplier
   openDialog(event: any) {
-    this.supplierService.getSupplierDetailById(event.Id).pipe(
-      finalize(() => {
-        this.isLoading = false;
-      })
-    )
-      .subscribe(res => {
+    this.supplierService.getSupplierDetailById(event.Id).subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           const supplierDetails = res[ResultEnum.Model];
           if (supplierDetails) {

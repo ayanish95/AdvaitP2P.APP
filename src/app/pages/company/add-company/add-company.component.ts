@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { Company } from '@core/models/company';
@@ -20,7 +20,6 @@ import { Observable, map, startWith } from 'rxjs';
 export class AddCompanyComponent {
   plantList!: Plants[];
   companyList!: Company[];
-  isEdit = false;
   countryList!: Country[];
   filteredCountry!: Observable<Country[]>;
   stateList!: States[];
@@ -35,18 +34,25 @@ export class AddCompanyComponent {
     Street3: [''],
     City: ['', [Validators.required]],
     PostalCode: [''],
-    State: ['', [Validators.required]],
+    State: [null, [Validators.required]],
     Country: [null, [Validators.required]],
     Mobile: ['', [Validators.required]],
     Email: ['', [Validators.required]],
     IsActive: [true],
   });
   Role = Role;
-  searchStateControl = new FormControl();;
-  searchCountryControl = new FormControl();;
+  searchStateControl = new FormControl();
+  searchCountryControl = new FormControl();
+  IsEdit = false;
+  selectedCompanyDetails!: Company;
 
   constructor(private fb: FormBuilder, private countryService: CountryService, private stateService: StateService,
-    private toaster: ToastrService, private dialogRef: MatDialogRef<AddCompanyComponent>) { }
+    private toaster: ToastrService, private dialogRef: MatDialogRef<AddCompanyComponent>, @Inject(MAT_DIALOG_DATA) private companyData: any) {
+    if (this.companyData && this.companyData?.Company) {
+      this.IsEdit = true;
+      this.selectedCompanyDetails = this.companyData?.Company;
+    }
+  }
 
   ngOnInit() {
     this.apiCountryList();
@@ -78,6 +84,23 @@ export class AddCompanyComponent {
             startWith(''),
             map(value => this.filterStates(value || ''))
           );
+          if (this.selectedCompanyDetails) {
+            this.companyForm.patchValue({
+              CompanyName: this.selectedCompanyDetails.CompanyName,
+              Street1: this.selectedCompanyDetails.Street1,
+              Street2: this.selectedCompanyDetails.Street2,
+              Street3: this.selectedCompanyDetails.Street3,
+              City: this.selectedCompanyDetails.City,
+              PostalCode: this.selectedCompanyDetails.PostalCode,
+              State: this.stateList?.find(x => x.ERPStateCode == this.selectedCompanyDetails?.State?.ERPStateCode && x.CountryCode == this.selectedCompanyDetails.Country?.CountryCode) as any,
+              Country: this.countryList?.find(x => x.CountryCode == this.selectedCompanyDetails?.Country?.CountryCode) as any,
+              Mobile: this.selectedCompanyDetails.Telephone,
+              Email: this.selectedCompanyDetails.Email,
+              IsActive: this.selectedCompanyDetails.IsActive,
+            });
+
+          }
+
         }
         else {
           this.toaster.error(res[ResultEnum.Message]);
@@ -98,15 +121,14 @@ export class AddCompanyComponent {
   }
 
   onChangeState(event: any) {
-    console.log('state',event);
-    let country = this.countryList?.find(x=>x.CountryCode == event?.CountryCode) as any;
+    let country = this.countryList?.find(x => x.CountryCode == event?.CountryCode) as any;
     this.companyForm.get('Country')?.setValue(country);
   }
 
   onClickAddPlant() {
     const companyData = this.companyForm.value as any;
     const company = {
-      Id: this.isEdit ? this.selectedCompantId : 0,
+      Id: this.IsEdit ? this.selectedCompanyDetails.Id : 0,
       CompanyCode: '',
       CompanyName: companyData.CompanyName,
       Email: companyData.Email,
@@ -120,7 +142,7 @@ export class AddCompanyComponent {
       CountryCode: companyData.Country?.CountryCode,
       City: companyData.City,
       PostalCode: companyData.PostalCode,
-      IsActive: this.isEdit ? companyData.IsActive : true,
+      IsActive: this.IsEdit ? companyData.IsActive : true,
     } as Company;
     debugger
     this.dialogRef.close({ data: company });

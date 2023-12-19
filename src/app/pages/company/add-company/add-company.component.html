@@ -1,4 +1,4 @@
-<h2 mat-dialog-title> {{ !isEdit ? 'Add' : 'Edit' }} Company</h2>
+<h2 mat-dialog-title> {{ !IsEdit ? 'Add' : 'Edit' }} Company</h2>
 
 <mat-dialog-content>
     <form [formGroup]="companyForm">
@@ -154,7 +154,7 @@
                     </mat-error>
                 </mat-form-field>
             </div>
-            <ng-container *ngIf="isEdit">
+            <ng-container *ngIf="IsEdit">
                 <div class="col-sm-12">
                     <mat-checkbox color="primary"
                                   formControlName="IsActive">Active?</mat-checkbox>
@@ -167,6 +167,6 @@
 <mat-dialog-actions align="end">
     <button mat-raised-button mat-dialog-close>Close</button>
     <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-            [disabled]="companyForm.invalid" (click)="onClickAddPlant()">{{ !isEdit ? 'Add' :
+            [disabled]="companyForm.invalid" (click)="onClickAddPlant()">{{ !IsEdit ? 'Add' :
         'Update' }}</button>
 </mat-dialog-actions>
