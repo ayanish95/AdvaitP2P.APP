@@ -25,7 +25,7 @@ import { Observable, map, startWith } from 'rxjs';
 export class AddProductComponent implements OnInit {
   productForm = this.fb.group({
     ProductGroup: ['', [Validators.required]],
-    ProductDescription: ['', [Validators.required]],
+    ProductDescription: ['', [Validators.required, Validators.minLength(4)]],
     BaseUnit: ['', [Validators.required]],
     PurchaseUnit: ['', [Validators.required]],
     SalesUnit: ['', [Validators.required]],

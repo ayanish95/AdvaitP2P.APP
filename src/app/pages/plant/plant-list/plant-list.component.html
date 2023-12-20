@@ -40,7 +40,8 @@
                 </ng-container>
                 <ng-container matColumnDef="Street1">
                     <th mat-header-cell *matHeaderCellDef> Address </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.Street1}} {{element?.Street2}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element?.Street1}}
+                        {{element?.Street2}} </td>
                 </ng-container>
                 <ng-container matColumnDef="City">
                     <th mat-header-cell *matHeaderCellDef> City </th>
@@ -59,20 +60,26 @@
                     <td mat-cell *matCellDef="let element"> {{element?.GSTRegionCode}} </td>
                 </ng-container> -->
                 <ng-container matColumnDef="IsActive">
-                  <th mat-header-cell *matHeaderCellDef> Active </th>
-                  <td mat-cell *matCellDef="let element">  <mat-checkbox color="primary" [checked]="element?.IsActive" (click)="IsActiveFlagUpdate(element,$event)"></mat-checkbox> </td>
+                    <th mat-header-cell *matHeaderCellDef> Active </th>
+                    <td mat-cell *matCellDef="let element"> <mat-checkbox color="primary"
+                                      [checked]="element?.IsActive"
+                                      (click)="IsActiveFlagUpdate(element,$event)"></mat-checkbox>
+                    </td>
                 </ng-container>
                 <ng-container matColumnDef="View">
-                  <th mat-header-cell *matHeaderCellDef> View </th>
-                  <td mat-cell *matCellDef="let element">
-                   <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}" matTooltip="Click to View">   <mat-icon >remove_red_eye</mat-icon></button>
-                   </td>
-              </ng-container>
+                    <th mat-header-cell *matHeaderCellDef> View </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button [routerLink]="['view']"
+                                [queryParams]="{id: element.Id}" matTooltip="Click to View">
+                            <mat-icon>remove_red_eye</mat-icon></button>
+                    </td>
+                </ng-container>
                 <ng-container matColumnDef="Edit">
                     <th mat-header-cell *matHeaderCellDef> Edit </th>
                     <td mat-cell *matCellDef="let element">
                         <button mat-icon-button
-                                (click)="openEditModelPopup(addPlant,element?.Id)" matTooltip="Click to Edit">
+                                (click)="openEditModelPopup(addPlant,element?.Id)"
+                                matTooltip="Click to Edit">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </td>
@@ -81,7 +88,8 @@
                     <th mat-header-cell *matHeaderCellDef> Delete </th>
                     <td mat-cell *matCellDef="let element">
                         <button mat-icon-button
-                                (click)="openDeleteModel(deleteAlert,element?.Id)"  matTooltip="Click to Delete">
+                                (click)="openDeleteModel(deleteAlert,element?.Id)"
+                                matTooltip="Click to Delete">
                             <mat-icon>delete</mat-icon>
                         </button>
                     </td>
@@ -120,6 +128,9 @@
                                    *ngIf="plantForm.get('PlantName')?.hasError('required')">
                             This filed is required...
                         </mat-error>
+                        <mat-error *ngIf="plantForm.get('PlantName')?.hasError('minlength')">
+                            Plant Name must be 4 character...
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-sm-6">
@@ -134,6 +145,10 @@
                                    *ngIf="plantForm.get('Email')?.hasError('required')">
                             This filed is required...
                         </mat-error>
+                        <mat-error
+                                   *ngIf="plantForm.get('Email')?.hasError('email') || plantForm.get('Email')?.hasError('pattern')">
+                            Email must be a valid email address
+                        </mat-error>
                     </mat-form-field>
                 </div>
                 <div class="col-sm-6">
@@ -147,6 +162,9 @@
                         <mat-error
                                    *ngIf="plantForm.get('Mobile')?.hasError('required')">
                             This filed is required...
+                        </mat-error>
+                        <mat-error *ngIf="plantForm.get('Mobile')?.hasError('pattern')">
+                            Please enter valid mobile number
                         </mat-error>
                     </mat-form-field>
                 </div>
@@ -324,8 +342,8 @@
 
     <mat-dialog-actions align="end">
         <button mat-raised-button mat-dialog-close>Close</button>
-        <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial
-                [disabled]="plantForm.invalid" (click)="onClickAddPlant()">{{ !isEdit ? 'Add' :
+        <button mat-raised-button color="primary" cdkFocusInitial
+                (click)="onClickAddPlant()">{{ !isEdit ? 'Add' :
             'Update' }}</button>
     </mat-dialog-actions>
 

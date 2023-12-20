@@ -23,8 +23,10 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{'password' | translate}}</mat-label>
-          <input matInput placeholder="Password" type="password"
+          <input matInput placeholder="Password" [type]="hide ? 'password' : 'text'"
                  formControlName="password" required>
+                 <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' :
+                  'visibility'}}</mat-icon>
           <mat-error *ngIf="password.invalid">
             <span *ngIf="password.errors?.required">{{'please_enter' | translate}}
               <strong>password</strong>
@@ -33,8 +35,8 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-checkbox formControlName="rememberMe">{{'remember_me' | translate}}
-        </mat-checkbox>
+        <!-- <mat-checkbox formControlName="rememberMe">{{'remember_me' | translate}}
+        </mat-checkbox> -->
 
         <button class="w-full m-y-16" mat-raised-button color="primary"
                 [disabled]="!!loginForm.invalid" [loading]="isSubmitting"

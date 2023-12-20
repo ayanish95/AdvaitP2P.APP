@@ -6,6 +6,7 @@ import { MatAutocompleteTrigger, MatAutocompleteSelectedEvent } from '@angular/m
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { RegexEnum } from '@core/enums/common-enum';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Country } from '@core/models/country';
 import { ProductGroup } from '@core/models/products';
@@ -32,10 +33,10 @@ export class AddSupplierForAdminComponent implements OnInit {
 
   basicInfoFrom = this.fb.nonNullable.group(
     {
-      firstName: ['', [Validators.required]],
+      firstName: ['', [Validators.required,Validators.minLength(4)]],
       lastName: [''],
-      telePhone: ['', [Validators.required]],
-      emailId: ['', [Validators.required]],
+      telePhone: ['', [Validators.required,Validators.pattern(RegexEnum.MobileNumberRegex)]],
+      emailId: ['', [Validators.required, Validators.email,Validators.pattern(RegexEnum.EmailRegex)]],
       gstNumber: [''],
       panNumber: [''],
       taxNumber: [''],
@@ -344,8 +345,8 @@ export class AddSupplierForAdminComponent implements OnInit {
     this.addressForm.get('city')?.setValue(null);
     this.addressForm.get('state')?.setValue(null);
     if (event.source?.value?.CountryCode == 'IN') {
-      this.basicInfoFrom.controls.gstNumber.setValidators([Validators.required]);
-      this.basicInfoFrom.controls.panNumber.setValidators([Validators.required]);
+      this.basicInfoFrom.controls.gstNumber.setValidators([Validators.required,Validators.pattern(RegexEnum.GSTNumberRegex)]);
+      this.basicInfoFrom.controls.panNumber.setValidators([Validators.required,Validators.pattern(RegexEnum.PANNumberRegex)]);
       this.basicInfoFrom.controls.taxNumber.setValidators(null);
       this.bankDetailsFrom.controls.swiftCode.setValidators(null);
       this.bankDetailsFrom.controls.ifscCode.setValidators([Validators.required]);
@@ -459,6 +460,13 @@ export class AddSupplierForAdminComponent implements OnInit {
       this.selectedIndex = this.selectedIndex + 1;
     else
       this.selectedIndex = this.selectedIndex - 1;
+  }
+
+  onKeyPress(evt: any) {
+    const charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+      return false;
+    return true;
   }
 
 // Api call supplier register

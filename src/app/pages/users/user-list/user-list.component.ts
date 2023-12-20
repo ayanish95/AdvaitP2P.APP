@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { RegexEnum } from '@core/enums/common-enum';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Plants } from '@core/models/plants';
@@ -43,23 +44,23 @@ export class UserListComponent {
   filteredRoles!: Observable<Roles[]>;
   selectedUserId = 0;
   userForm = this.fb.group({
-    FirstName: ['', [Validators.required]],
+    FirstName: ['', [Validators.required,Validators.minLength(4)]],
     LastName: [''],
-    UserName: ['', [Validators.required]],
-    Password: ['', [Validators.required]],
+    UserName: ['', [Validators.required,Validators.minLength(4),Validators.maxLength(30)]],
+    Password: ['', [Validators.required,Validators.minLength(6),Validators.maxLength(14)]],
     Role: ['', [Validators.required]],
-    Email: ['', [Validators.required]],
-    Mobile: ['', [Validators.required]],
+    Email: ['', [Validators.required, Validators.email,Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required,Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Plant: ['', [Validators.required]],
   });
   editUserForm = this.fb.group({
-    FirstName: ['', [Validators.required]],
+    FirstName: ['', [Validators.required,Validators.minLength(4)]],
     LastName: [''],
-    UserName: ['', [Validators.required]],
-    Password: ['', [Validators.required]],
+    UserName: ['', [Validators.required,Validators.minLength(4),Validators.maxLength(30)]],
+    Password: ['', [Validators.required,Validators.minLength(6),Validators.maxLength(14)]],
     Role: ['', [Validators.required]],
-    Email: ['', [Validators.required]],
-    Mobile: ['', [Validators.required]],
+    Email: ['', [Validators.required, Validators.email,Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required,Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Plant: ['', [Validators.required]],
     IsActive: [false]
   });
@@ -68,7 +69,7 @@ export class UserListComponent {
   filteredPlants!: Observable<any>;
   searchPlantControl = new FormControl();
   searchRoleControl = new FormControl();
-
+  hide = true;
   constructor(
     private dataSrv: TablesDataService,
     private dialog: MatDialog,
@@ -181,6 +182,7 @@ export class UserListComponent {
 
   // Modal popup for create user
   openModelAddUser(templateRef: TemplateRef<any>) {
+    this.hide=true;
     this.userForm.reset();
     this.userForm.updateValueAndValidity();
     this.dialog.open(templateRef, {
@@ -191,6 +193,7 @@ export class UserListComponent {
 
   // Model popup for edit user details
   openModelEditUser(templateRef: TemplateRef<any>, userId: number) {
+    this.hide=true;
     this.editUserForm.reset();
     this.editUserForm.updateValueAndValidity();
     this.userService

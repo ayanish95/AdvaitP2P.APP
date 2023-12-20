@@ -50,10 +50,19 @@
             <h5> Company Code</h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
-                   formControlName="CompanyCode"
-                   placeholder="Company Code" readonly>
-
+            <mat-select formControlName="CompanyCode" placeholder="Company Code" #singleSelect
+            (selectionChange)="onChangeCompanyCode($event.value)" >
+                        <!-- (selectionChange)="getPRNUmberList();onChangePlant($event.value)"  -->
+              <mat-option>
+                <ngx-mat-select-search [formControl]="companyCodeControl"
+                                       noEntriesFoundLabel="No Record Found..."
+                                       placeholderLabel="Search..."></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let company of filteredCompanyCode | async"
+                          [value]="company">
+                <span>{{ company.CompanyCode }} - {{ company.CompanyName }}</span>
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="POHeaderForm.get('CompanyCode')?.hasError('required')">
               Please select Company Code...
             </mat-error>

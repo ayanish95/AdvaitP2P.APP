@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -24,10 +24,10 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { AuthService } from '@core';
 import { Role } from '@core/enums/role';
-import { PurchaseOrderDataVM, PurchaseOrderHeader, PurchaseOrderLine } from '@core/models/purchase-order';
-import { States } from '@core/models/states';
-import { StateService } from '@core/services/state.service';
+import { PurchaseOrderDataVM, PurchaseOrderLine } from '@core/models/purchase-order';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
+import { CompanyService } from '@core/services/company.service';
+import { Company } from '@core/models/company';
 
 
 @Component({
@@ -75,6 +75,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
   filtersupplierCode!: Observable<Suppliers[]>;
   docTypeList!: DocTypes[];
   filteredDocType!: Observable<DocTypes[]>;
+  companyCodeList!: Company[];
+  filteredCompanyCode!: Observable<Company[]>;
   productList!: Products[];
   filteredProducts!: Observable<Products[]>;
   locationList!: StorageLocations[];
@@ -108,10 +110,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
     'Edit',
     'Delete',
   ];
-  stockTypeList= [
-    {Id:'Unrestricted Stock', Type:'Unrestricted Stock'},
-    {Id:'Blocked Stock', Type:'Blocked Stock'},
-    {Id:'Quality Stock', Type:'Quality Stock'},
+  stockTypeList = [
+    { Id: 'Unrestricted Stock', Type: 'Unrestricted Stock' },
+    { Id: 'Blocked Stock', Type: 'Blocked Stock' },
+    { Id: 'Quality Stock', Type: 'Quality Stock' },
   ];
   filteredStockType!: Observable<any>;
   currentDate: Date = new Date();
@@ -128,17 +130,19 @@ export class CreatePurchaseOrderComponent implements OnInit {
   selectedSupplier!: Suppliers;
   selectedLineId!: number;
   minDate!: Date;
-  companyCode!:string;
+  companyCode!: string;
   PRNoControl = new FormControl();
 
   supplierControl = new FormControl();
   docTypeControl = new FormControl();
+  companyCodeControl = new FormControl();
   searchPlantControl = new FormControl();
   searchProductControl = new FormControl();
 
-  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService, private stateService: StateService,
-    private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private supplierService: SupplierService, private prService: PurchaseRequistionService,
-    private router: Router, private authService: AuthService,private purchaseOrderService:PurchaseOrderService) {
+  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
+    private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService,
+    private supplierService: SupplierService, private prService: PurchaseRequistionService, private companyService: CompanyService,
+    private router: Router, private authService: AuthService, private purchaseOrderService: PurchaseOrderService) {
     this.dateAdapter.setLocale('en-GB');
     // DD/MM/YYYY
   }
@@ -159,6 +163,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
 
   apiInitialize() {
     this.apiDocType();
+    this.apiCompanyCode();
     this.apiSupplier();
     // this.apiPRNoList();
     this.apiUnit();
@@ -167,13 +172,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
   }
 
   apiDocType() {
-    this.docTypeSerivce
-      .getAllDocType()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+    this.docTypeSerivce.getAllDocType().subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.docTypeList = res[ResultEnum.Model];
           this.filteredDocType = this.docTypeControl!.valueChanges.pipe(
@@ -183,28 +183,44 @@ export class CreatePurchaseOrderComponent implements OnInit {
         }
         else
           this.toaster.error(res[ResultEnum.Message]);
-
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); }
+    });
   }
 
-  apiSupplier() {
-    this.supplierService
-      .getSupplierList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+  apiCompanyCode() {
+    this.companyService.getCompanyList().subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
-          this.suppliercodelist = res[ResultEnum.Model];
-          this.suppliercodelist.map(x => x.ShortName = x.SupplierCode + (x.FirstName ? ' - ' + x.FirstName : ''));
-          this.filtersupplierCode = this.supplierControl!.valueChanges.pipe(
+          this.companyCodeList = res[ResultEnum.Model];
+          this.filteredCompanyCode = this.companyCodeControl!.valueChanges.pipe(
             startWith(''),
-            map(value => this.filterSupplier(value || ''))
+            map(value => this.filterCompanyCode(value || ''))
           );
         }
         else
           this.toaster.error(res[ResultEnum.Message]);
+      },
+      error: (e) => { this.toaster.error(e.Message); }
+    });
+  }
+
+  apiSupplier() {
+    this.supplierService
+      .getSupplierList().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.suppliercodelist = res[ResultEnum.Model];
+            this.suppliercodelist.map(x => x.ShortName = x.SupplierCode + (x.FirstName ? ' - ' + x.FirstName : ''));
+            this.filtersupplierCode = this.supplierControl!.valueChanges.pipe(
+              startWith(''),
+              map(value => this.filterSupplier(value || ''))
+            );
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+        },
+        error: (e) => { this.toaster.error(e.Message); }
       });
   }
 
@@ -231,21 +247,19 @@ export class CreatePurchaseOrderComponent implements OnInit {
 
   apiUnit() {
     this.unitService
-      .getAllUnit()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.unitList = res[ResultEnum.Model];
-          this.filteredUnits = this.POLineForm.get('Unit')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterUnit(value || ''))
-          );
-        }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
+      .getAllUnit().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.unitList = res[ResultEnum.Model];
+            this.filteredUnits = this.POLineForm.get('Unit')!.valueChanges.pipe(
+              startWith(''),
+              map(value => this.filterUnit(value || ''))
+            );
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+        },
+        error: (e) => { this.toaster.error(e.Message); },
       });
   }
 
@@ -268,25 +282,42 @@ export class CreatePurchaseOrderComponent implements OnInit {
     });
   }
 
-  apiPlantList() {
-    this.plantService
-      .getPlantList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.plantList = res[ResultEnum.Model];
-          this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterPlant(value || ''))
-          );
-        }
-        else {
-          this.toaster.error(res[ResultEnum.Message]);
-        }
-      });
+  apiPlantList(companyCode?: string) {
+    if (!companyCode) {
+      this.plantService
+        .getPlantList().subscribe({
+          next: (res: any) => {
+            if (res[ResultEnum.IsSuccess]) {
+              this.plantList = res[ResultEnum.Model];
+              this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterPlant(value || ''))
+              );
+            }
+            else {
+              this.toaster.error(res[ResultEnum.Message]);
+            }
+          },
+          error: (e) => { this.toaster.error(e.Message) }
+        });
+    }else{
+      this.plantService
+        .getPlantListByCompanyCode(companyCode).subscribe({
+          next: (res: any) => {
+            if (res[ResultEnum.IsSuccess]) {
+              this.plantList = res[ResultEnum.Model];
+              this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterPlant(value || ''))
+              );
+            }
+            else {
+              this.toaster.error(res[ResultEnum.Message]);
+            }
+          },
+          error: (e) => { this.toaster.error(e.Message) }
+        });
+    }
   }
 
   apiStorageLocationList(plantCode: string) {
@@ -312,6 +343,12 @@ export class CreatePurchaseOrderComponent implements OnInit {
       return this.docTypeList.filter(doctype =>
         doctype?.Type?.toLowerCase().includes(name.toLowerCase()));
     }
+  }
+
+  filterCompanyCode(name: any) {
+    return this.companyCodeList.filter(company =>
+      company?.CompanyCode?.toLowerCase().includes(name.toLowerCase()) ||
+      company?.CompanyName?.toLowerCase().includes(name.toLowerCase()));
   }
 
   filterPrno(name: any) {
@@ -464,11 +501,20 @@ export class CreatePurchaseOrderComponent implements OnInit {
     }
   }
 
+  onChangeCompanyCode(event: any) {
+    console.log('companycode', event);
+    this.POHeaderForm.get('Plant')?.setValue(null);
+    this.plantList=[];
+    if(event && event?.CompanyCode){
+      this.apiPlantList(event?.CompanyCode);
+    }
+  }
+
   onChangePlant(event: any) {
     this.locationList = [];
     this.POLineForm.get('StorageLocation')?.setValue(null);
     if (event) {
-      this.POHeaderForm.get('CompanyCode')?.setValue(event?.CompanyCode);
+      this.POHeaderForm.get('CompanyCode')?.setValue(this.companyCodeList.find(x=>x.CompanyCode == event?.CompanyCode) as any);
       this.apiProductByPlantCode(event?.PlantCode);
       this.apiStorageLocationList(event?.PlantCode);
     }
@@ -489,7 +535,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     PRId = selectedPRNumber.map((x: any) => x.Id);
     this.POLineItem = [];
     this.dataSource.data = [];
-    if (!PRId || PRId?.length==0)
+    if (!PRId || PRId?.length == 0)
       return;
     this.prService.getPRDetailsForPO(PRId).subscribe(res => {
       if (res[ResultEnum.IsSuccess]) {
@@ -536,7 +582,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         });
         this.dataSource.data = this.POLineItem;
       }
-      else{
+      else {
         this.POHeaderForm.get('DocType')?.setValue(null);
         this.POHeaderForm.get('CompanyCode')?.setValue(null);
         // this.POHeaderForm.reset();
@@ -546,7 +592,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     });
   }
 
-  calculateTotalForFooter(columnName:string) {
+  calculateTotalForFooter(columnName: string) {
     return this.dataSource?.data?.map((element) => element[columnName])
       .reduce((acc, current) => acc + current, 0);
   }
@@ -583,12 +629,12 @@ export class CreatePurchaseOrderComponent implements OnInit {
     });
   }
 
-  onCheckChangeFreeOfCharge(event:any){
-    if(event?.checked){
+  onCheckChangeFreeOfCharge(event: any) {
+    if (event?.checked) {
       this.POLineForm.get('NetPrice')?.setValue('0');
       this.POLineForm.get('NetPrice')?.disable();
     }
-    else{
+    else {
       this.POLineForm.get('NetPrice')?.enable();
     }
   }
@@ -653,9 +699,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
     }
     this.dialog.closeAll();
   }
-  onClickCreatePO(){
+  onClickCreatePO() {
     if (this.POLineItem?.length == 0)
-    throw this.toaster.error('Please select alteast one product for create purchase order...');
+      throw this.toaster.error('Please select alteast one product for create purchase order...');
     this.POHeaderForm.touched;
     if (this.POHeaderForm.valid) {
       const PRHeaderData = this.POHeaderForm.value as any;
@@ -664,7 +710,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData.SupplierCode?.Id as any,
         SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-       SupplierName: PRHeaderData.SupplierCode?.FirstName +' ' + PRHeaderData.SupplierCode?.LastName as any,
+        SupplierName: PRHeaderData.SupplierCode?.FirstName + ' ' + PRHeaderData.SupplierCode?.LastName as any,
         PRHeaderId: PRHeaderData.PRno?.Id,
         ContractNumber: PRHeaderData.ContractNumber,
         RFQHeaderId: PRHeaderData.RFQNumber,
@@ -677,22 +723,23 @@ export class CreatePurchaseOrderComponent implements OnInit {
         POLineItems: this.POLineItem
       };
 
-    this.purchaseOrderService.createPO(PODetails).subscribe({
-      next: (res: any) => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.toaster.success(res.Message);
-          this.POHeaderForm.reset();
-          this.POLineForm.reset();
-          this.router.navigateByUrl('/pages/purchase-order');
-        }
-        else {
-          this.toaster.error(res.Message);
-        }
-      },
-      error: (e) => { this.toaster.error(e.Message); },
-      complete() {
+      this.purchaseOrderService.createPO(PODetails).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res.Message);
+            this.POHeaderForm.reset();
+            this.POLineForm.reset();
+            this.router.navigateByUrl('/pages/purchase-order');
+          }
+          else {
+            this.toaster.error(res.Message);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); },
+        complete() {
 
-      },
-    });
-  }}
+        },
+      });
+    }
+  }
 }

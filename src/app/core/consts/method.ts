@@ -6,6 +6,7 @@ export class Method {
   static GetProductList = `/GetProductList`;
   static GetPlantList = `/GetPlantList`;
   static GetPlantListByPlantCode = `/GetPlantListByPlantCode`;
+  static GetPlantListByCompanyCode = `/GetPlantListByCompanyCode`;
   static GetStateList = `/GetStateList`;
   static GetStateListByCountryCode = `/GetStateListByCountryCode`;
   static GetProductGroupList = `/GetProductGroupList`;

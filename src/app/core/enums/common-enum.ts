@@ -6,3 +6,10 @@ export enum CommonEnum{
     All = 'All',
     None = 'None'
 }
+
+export enum RegexEnum{
+    GSTNumberRegex='^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+    PANNumberRegex='^[A-Z]{5}[0-9]{4}[A-Z]{1}$',
+    EmailRegex='^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$',
+    MobileNumberRegex='^[0-9]{10}$'
+}

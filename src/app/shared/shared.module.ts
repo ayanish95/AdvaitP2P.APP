@@ -27,6 +27,7 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { ApproveSupplierComponent } from './dialog/approve-supplier/approve-supplier.component';
 import { NoRecordFoundComponent } from './components/no-record-found/no-record-found.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { ToUppercaseDirective } from './directives/to-uppercase.directive';
 
 const MODULES: any[] = [
   CommonModule,
@@ -48,12 +49,12 @@ const MODULES: any[] = [
 ];
 const COMPONENTS: any[] = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent,LoadingComponent,ApproveSupplierComponent,NoRecordFoundComponent];
 const COMPONENTS_DYNAMIC: any[] = [];
-const DIRECTIVES: any[] = [DisableControlDirective];
+const DIRECTIVES: any[] = [DisableControlDirective,ToUppercaseDirective];
 const PIPES: any[] = [SafeUrlPipe, ToObservablePipe];
 
 @NgModule({
   imports: [...MODULES],
   exports: [...MODULES, ...COMPONENTS, ...DIRECTIVES, ...PIPES],
-  declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, ...DIRECTIVES, ...PIPES ],
+  declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, ...DIRECTIVES, ...PIPES, ToUppercaseDirective ],
 })
 export class SharedModule {}

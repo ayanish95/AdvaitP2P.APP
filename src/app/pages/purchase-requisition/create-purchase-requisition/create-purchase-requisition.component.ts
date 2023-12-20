@@ -347,7 +347,7 @@ export class CreatePurchaseRequisitionComponent implements OnInit {
     if (product) {
       this.PRLineForm.get('Description')?.setValue(product?.Description ? product?.Description : null);
       this.PRLineForm.get('ProductGroup')?.setValue(product?.ProductGroup ? product?.ProductGroup : '');
-      this.PRLineForm.get('Unit')?.setValue(product?.PurchaseUnit ? product?.PurchaseUnit : '');
+      this.PRLineForm.get('Unit')?.setValue(product?.PurchaseUnit ? product?.PurchaseUnit : null);
     }
   }
 

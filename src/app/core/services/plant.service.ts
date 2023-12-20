@@ -21,6 +21,10 @@ export class PlantService {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantListByPlantCode}/${plantCode}`);
   }
 
+  getPlantListByCompanyCode(companyCode:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.Plant + Method.GetPlantListByCompanyCode}/${companyCode}`);
+  }
+
   getPlantDetailsById(plantId:number): Observable<any> {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantDetailsById}/${plantId}`);
   }
