@@ -122,7 +122,7 @@ export class AddCompanyComponent {
   }
 
   onChangeState(event: any) {
-    let country = this.countryList?.find(x => x.CountryCode == event?.CountryCode) as any;
+    const country = this.countryList?.find(x => x.CountryCode == event?.CountryCode) as any;
     this.companyForm.get('Country')?.setValue(country);
   }
 
@@ -145,7 +145,6 @@ export class AddCompanyComponent {
       PostalCode: companyData.PostalCode,
       IsActive: this.IsEdit ? companyData.IsActive : true,
     } as Company;
-    debugger
     this.dialogRef.close({ data: company });
 
   }

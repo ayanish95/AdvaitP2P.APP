@@ -97,7 +97,7 @@ export class CompanyListComponent {
 
   openEditModelPopup(companyId: number) {
     if(!companyId)
-    throw this.toaster.error('Company id is not found...')
+    throw this.toaster.error('Company id is not found...');
     this.isEdit = true;
     this.selectedCompanyId = companyId;
     this.companyService

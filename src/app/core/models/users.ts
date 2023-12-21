@@ -1,4 +1,4 @@
-import { Plants } from "./plants";
+import { Plants } from './plants';
 
 export interface Users {
     Id: number;

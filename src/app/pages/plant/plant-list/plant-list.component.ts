@@ -252,7 +252,7 @@ export class PlantListComponent implements OnInit {
           if (this.plantDetails) {
             await this.apiStateListByCountryCode(this.plantDetails.Country ? this.plantDetails.Country : '');
             this.selectedCountryCode = this.plantDetails.Country ? this.plantDetails.Country : '';
-            if (this.plantDetails.Country == "IN")
+            if (this.plantDetails.Country == 'IN')
               this.plantForm.controls.GSTNumber.setValidators([Validators.required, Validators.pattern(RegexEnum.GSTNumberRegex)]);
             const state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode == this.plantDetails.GSTStateCode);
             this.plantForm.patchValue({
@@ -353,7 +353,7 @@ export class PlantListComponent implements OnInit {
         },
       });
     }
-    this.dialog.closeAll()
+    this.dialog.closeAll();
   }
 
   onClickDeletePlant() {
