@@ -26,55 +26,72 @@ export class SupplierListComponent implements OnInit {
   approveSuppliierList!: Suppliers[];
   rejectsuplierlist!: Suppliers[];
 
-  userRole!:number;
+  userRole!: number;
   Role = Role;
 
-  constructor(private supplierService: SupplierService, private toast: ToastrService,private dialog: MatDialog,private authService:AuthService) { }
+  constructor(private supplierService: SupplierService, private toast: ToastrService, private dialog: MatDialog, private authService: AuthService) { }
 
   ngOnInit() {
     this.userRole = this.authService.roles();
     this.apiAllSupplierList();
   }
 
-  // API for get all supplier list
-  apiAllSupplierList(){
+  // API Sync Supplier From SAP
+  onClickSyncSupplierFromSAP() {
     this.supplierService
-    .getSupplierList()
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.allSuppliierList = res[ResultEnum.Model];
-        this.rejectsuplierlist = this.allSuppliierList.filter(x => x.IsRejected == true);
-        console.log(this.rejectsuplierlist);
+      .syncSupplierFromSAP().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toast.success(res[ResultEnum.Message]);
+            this.apiAllSupplierList();
+          }
+          else {
+            this.toast.error(res[ResultEnum.Message]);
+          }
+        },
+        error: (e) => { this.toast.error(e.Message); }
+      });
+  }
+
+  // API for get all supplier list
+  apiAllSupplierList() {
+    this.supplierService
+      .getSupplierList()
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.allSuppliierList = res[ResultEnum.Model];
+          this.rejectsuplierlist = this.allSuppliierList.filter(x => x.IsRejected == true);
+          console.log(this.rejectsuplierlist);
 
 
-      }
-      else {
-        this.toast.error(res[ResultEnum.Message]);
-      }
-    });
+        }
+        else {
+          this.toast.error(res[ResultEnum.Message]);
+        }
+      });
   }
 
   // API for get all pending supplier list
-  apiAllPendingList(){
+  apiAllPendingList() {
     this.supplierService
-    .getSupplierList(false)
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.pendingSuppliierList = res[ResultEnum.Model];
-        this.pendingSuppliierList = this.pendingSuppliierList.filter(x => x.IsRejected == false);
-      }
-      else {
-        this.toast.error(res[ResultEnum.Message]);
-      }
-    });
+      .getSupplierList(false)
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.pendingSuppliierList = res[ResultEnum.Model];
+          this.pendingSuppliierList = this.pendingSuppliierList.filter(x => x.IsRejected == false);
+        }
+        else {
+          this.toast.error(res[ResultEnum.Message]);
+        }
+      });
   }
 
   // Search supplier
@@ -84,38 +101,38 @@ export class SupplierListComponent implements OnInit {
 
   //On tab change event
   onTabChanged(event: any) {
-    if (event?.index==0) {
+    if (event?.index == 0) {
       this.apiAllSupplierList();
     }
-    else if(event.index==1){
+    else if (event.index == 1) {
       this.apiAllPendingList();
     }
-    else{
+    else {
       this.supplierService
-      .getSupplierList(true)
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.approveSuppliierList = res[ResultEnum.Model];
-        }
-        else {
-          this.toast.error(res[ResultEnum.Message]);
-        }
-      });
+        .getSupplierList(true)
+        .pipe(
+          finalize(() => {
+          })
+        )
+        .subscribe(res => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.approveSuppliierList = res[ResultEnum.Model];
+          }
+          else {
+            this.toast.error(res[ResultEnum.Message]);
+          }
+        });
     }
 
   }
 
   // Open modal popup for add supplier and call add supplier API
-  onClickAddSupplier(){
+  onClickAddSupplier() {
     const dialogRef = this.dialog.open(AddSupplierForAdminComponent, {
       width: '60vw',
       panelClass: 'custom-modalbox'
     });
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       this.apiAllSupplierList();
     });
   }

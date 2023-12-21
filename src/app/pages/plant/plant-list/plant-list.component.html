@@ -16,6 +16,9 @@
     <mat-card-content>
         <div class="mt-5">
             <div class="d-flex justify-content-end">
+                <button mat-button mat-raised-button color="primary" (click)="onClickSyncPlantFromSAP()" class="mr-10">
+                    <mat-icon>cached</mat-icon>Sync Plant
+                  </button>
                 <button mat-button mat-raised-button color="primary"
                         (click)="openAddPlantModel(addPlant)">
                     <mat-icon>add</mat-icon>Add Plant

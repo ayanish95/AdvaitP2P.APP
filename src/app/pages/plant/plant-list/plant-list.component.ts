@@ -95,6 +95,23 @@ export class PlantListComponent implements OnInit {
     );
   }
 
+  // API Sync Plant From SAP
+  onClickSyncPlantFromSAP() {
+    this.plantService
+      .syncPlantsFromSAP().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+            this.apiPlantList();
+          }
+          else {
+            this.toaster.error(res[ResultEnum.Message]);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); }
+      });
+  }
+
   apiPlantList() {
     this.plantService
       .getPlantList()
@@ -379,11 +396,21 @@ export class PlantListComponent implements OnInit {
   }
   IsActiveFlagUpdate(element: any, e: any) {
     element.IsActive = e.srcElement.checked;
-    this.plantService.updatePlant(element)
-      .subscribe(response => {
-        console.log('Update successful', response);
-      }, error => {
-        console.error('Error updating', error);
+    this.plantService
+      .updatePlant(element).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+            this.apiPlantList();
+            this.selectedPlantId = 0;
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+
+          this.dialog.closeAll();
+        },
+        error: (e) => { this.toaster.error(e.Message) }
       });
+
   }
 }

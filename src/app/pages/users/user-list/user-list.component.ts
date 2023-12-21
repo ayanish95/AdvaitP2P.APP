@@ -44,23 +44,23 @@ export class UserListComponent {
   filteredRoles!: Observable<Roles[]>;
   selectedUserId = 0;
   userForm = this.fb.group({
-    FirstName: ['', [Validators.required,Validators.minLength(4)]],
+    FirstName: ['', [Validators.required, Validators.minLength(4)]],
     LastName: [''],
-    UserName: ['', [Validators.required,Validators.minLength(4),Validators.maxLength(30)]],
-    Password: ['', [Validators.required,Validators.minLength(6),Validators.maxLength(14)]],
+    UserName: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
+    Password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(14)]],
     Role: ['', [Validators.required]],
-    Email: ['', [Validators.required, Validators.email,Validators.pattern(RegexEnum.EmailRegex)]],
-    Mobile: ['', [Validators.required,Validators.pattern(RegexEnum.MobileNumberRegex)]],
+    Email: ['', [Validators.required, Validators.email, Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required, Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Plant: ['', [Validators.required]],
   });
   editUserForm = this.fb.group({
-    FirstName: ['', [Validators.required,Validators.minLength(4)]],
+    FirstName: ['', [Validators.required, Validators.minLength(4)]],
     LastName: [''],
-    UserName: ['', [Validators.required,Validators.minLength(4),Validators.maxLength(30)]],
-    Password: ['', [Validators.required,Validators.minLength(6),Validators.maxLength(14)]],
+    UserName: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
+    Password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(14)]],
     Role: ['', [Validators.required]],
-    Email: ['', [Validators.required, Validators.email,Validators.pattern(RegexEnum.EmailRegex)]],
-    Mobile: ['', [Validators.required,Validators.pattern(RegexEnum.MobileNumberRegex)]],
+    Email: ['', [Validators.required, Validators.email, Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required, Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Plant: ['', [Validators.required]],
     IsActive: [false]
   });
@@ -161,7 +161,7 @@ export class UserListComponent {
         role?.DisplayName?.toLowerCase().includes(name.toLowerCase()));
     }
   }
-// funcation for display role in dropdown
+  // funcation for display role in dropdown
   roleDisplayFn(role: Roles) {
     return role ? role.DisplayName! : '';
   }
@@ -180,9 +180,27 @@ export class UserListComponent {
     this.filter.Page = page.pageIndex + 1;
   }
 
+
+  // API Sync User From SAP
+  onClickSyncUserFromSAP() {
+    this.userService
+      .syncUserFromSAP().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+           this.apiUserList();
+          }
+          else{
+            this.toaster.error(res[ResultEnum.Message]);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); }
+      });
+  }
+
   // Modal popup for create user
   openModelAddUser(templateRef: TemplateRef<any>) {
-    this.hide=true;
+    this.hide = true;
     this.userForm.reset();
     this.userForm.updateValueAndValidity();
     this.dialog.open(templateRef, {
@@ -193,7 +211,7 @@ export class UserListComponent {
 
   // Model popup for edit user details
   openModelEditUser(templateRef: TemplateRef<any>, userId: number) {
-    this.hide=true;
+    this.hide = true;
     this.editUserForm.reset();
     this.editUserForm.updateValueAndValidity();
     this.userService

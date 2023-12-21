@@ -14,6 +14,9 @@ export class PlantService {
     private httpclient: HttpClientService
   ) {}
 
+  syncPlantsFromSAP(): Observable<any> {
+    return this.httpclient.authGet(`${Api.Plant + Method.SyncPlantsFromSAP}`);
+  }
   getPlantList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantList}`);
   }

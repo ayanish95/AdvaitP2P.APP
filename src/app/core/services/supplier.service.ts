@@ -13,6 +13,9 @@ export class SupplierService {
     private httpclient: HttpClientService
   ) { }
 
+  syncSupplierFromSAP() {
+    return this.httpclient.authGet(`${Api.Supplier + Method.syncSupplierFromSAP}`);
+  }  
   getSupplierList(isApproved?: boolean): Observable<any> {
     let url = `${Api.Supplier + Method.GetSupplierList}`;
     if (isApproved != null)
