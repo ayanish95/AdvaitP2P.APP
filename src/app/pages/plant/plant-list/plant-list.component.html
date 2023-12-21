@@ -312,7 +312,7 @@
                             <h5>GST Number<small>*</small></h5>
                         </label>
                         <mat-form-field class="demo-full-width">
-                            <input matInput toUppercase
+                            <input matInput oninput="this.value = this.value.toUpperCase()" maxlength="15"
                                    formControlName="GSTNumber"
                                    placeholder="GST Number">
                             <mat-error

@@ -300,7 +300,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
           },
           error: (e) => { this.toaster.error(e.Message); }
         });
-    }else{
+    } else {
       this.plantService
         .getPlantListByCompanyCode(companyCode).subscribe({
           next: (res: any) => {
@@ -312,6 +312,11 @@ export class CreatePurchaseOrderComponent implements OnInit {
               );
             }
             else {
+              this.plantList =[];
+              this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterPlant(value || ''))
+              );
               this.toaster.error(res[ResultEnum.Message]);
             }
           },
@@ -424,9 +429,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
   }
 
   filterPlant(name: any) {
-    return this.plantList.filter(plant =>
-      plant?.PlantName?.toLowerCase().includes(name?.toLowerCase()) ||
-      plant?.PlantCode?.toLowerCase().includes(name?.toLowerCase()));
+      return this.plantList.filter(plant =>
+        plant?.PlantName?.toLowerCase().includes(name?.toLowerCase()) ||
+        plant?.PlantCode?.toLowerCase().includes(name?.toLowerCase()));
   }
 
   filterStockType(name: any) {
@@ -504,8 +509,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
   onChangeCompanyCode(event: any) {
     console.log('companycode', event);
     this.POHeaderForm.get('Plant')?.setValue(null);
-    this.plantList=[];
-    if(event && event?.CompanyCode){
+    this.plantList = [];
+    if (event && event?.CompanyCode) {
       this.apiPlantList(event?.CompanyCode);
     }
   }
@@ -514,7 +519,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     this.locationList = [];
     this.POLineForm.get('StorageLocation')?.setValue(null);
     if (event) {
-      this.POHeaderForm.get('CompanyCode')?.setValue(this.companyCodeList.find(x=>x.CompanyCode == event?.CompanyCode) as any);
+      this.POHeaderForm.get('CompanyCode')?.setValue(this.companyCodeList.find(x => x.CompanyCode == event?.CompanyCode) as any);
       this.apiProductByPlantCode(event?.PlantCode);
       this.apiStorageLocationList(event?.PlantCode);
     }
@@ -714,7 +719,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         PRHeaderId: PRHeaderData.PRno?.Id,
         ContractNumber: PRHeaderData.ContractNumber,
         RFQHeaderId: PRHeaderData.RFQNumber,
-        CompanyCode: PRHeaderData.CompanyCode,
+        CompanyCode: PRHeaderData.CompanyCode?.CompanyCode,
         PODate: PRHeaderData.PODate ? PRHeaderData.PODate : new Date(),
         PlantId: PRHeaderData.Plant?.Id,
         TotalNetPrice: this.calculateTotalForFooter('TotalNetPrice'),
