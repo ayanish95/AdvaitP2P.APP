@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { RegexEnum } from '@core/enums/common-enum';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { Company } from '@core/models/company';
@@ -28,16 +29,16 @@ export class AddCompanyComponent {
   selectedCompantId!: number;
   plantDetails!: Plants;
   companyForm = this.fb.group({
-    CompanyName: ['', [Validators.required]],
+    CompanyName: ['',[Validators.required,Validators.minLength(4)]],
     Street1: ['', [Validators.required]],
     Street2: [''],
     Street3: [''],
     City: ['', [Validators.required]],
-    PostalCode: [''],
+    PostalCode: ['',[Validators.required]],
     State: [null, [Validators.required]],
     Country: [null, [Validators.required]],
-    Mobile: ['', [Validators.required]],
-    Email: ['', [Validators.required]],
+    Mobile: ['', [Validators.required,Validators.pattern(RegexEnum.MobileNumberRegex)]],
+    Email: ['',  [Validators.required, Validators.email,Validators.pattern(RegexEnum.EmailRegex)]],
     IsActive: [true],
   });
   Role = Role;

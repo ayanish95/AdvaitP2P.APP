@@ -56,9 +56,10 @@ export class ProductListComponent {
     // 'IsBatchNo',
     // 'IsSerialNo',
     'IsActive',
-    'View',
-    'Edit',
-    'Delete',
+    'Actions',
+    // 'View',
+    // 'Edit',
+    // 'Delete',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;

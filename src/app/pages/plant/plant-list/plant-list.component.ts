@@ -35,9 +35,10 @@ export class PlantListComponent implements OnInit {
     'Country',
     'Pincode',
     'IsActive',
-    'View',
-    'Edit',
-    'Delete',
+    'Actions',
+    // 'View',
+    // 'Edit',
+    // 'Delete',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -213,7 +214,7 @@ export class PlantListComponent implements OnInit {
     this.selectedCountryCode = countryCode;
     this.apiStateListByCountryCode(countryCode);
     if (countryCode == 'IN') {
-      this.plantForm.controls.GSTNumber.setValidators([Validators.required]);
+      this.plantForm.controls.GSTNumber.setValidators([Validators.required, Validators.pattern(RegexEnum.GSTNumberRegex)]);
       this.plantForm.controls.TaxNumber.setValidators(null);
     }
     else {
@@ -251,6 +252,8 @@ export class PlantListComponent implements OnInit {
           if (this.plantDetails) {
             await this.apiStateListByCountryCode(this.plantDetails.Country ? this.plantDetails.Country : '');
             this.selectedCountryCode = this.plantDetails.Country ? this.plantDetails.Country : '';
+            if (this.plantDetails.Country == "IN")
+              this.plantForm.controls.GSTNumber.setValidators([Validators.required, Validators.pattern(RegexEnum.GSTNumberRegex)]);
             const state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode == this.plantDetails.GSTStateCode);
             this.plantForm.patchValue({
               PlantName: this.plantDetails.PlantName,

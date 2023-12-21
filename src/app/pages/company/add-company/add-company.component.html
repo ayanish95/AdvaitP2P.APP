@@ -16,16 +16,19 @@
                                *ngIf="companyForm.get('CompanyName')?.hasError('required')">
                         This filed is required...
                     </mat-error>
+                    <mat-error *ngIf="companyForm.get('CompanyName')?.hasError('minlength')">
+                        Company name must be 4 character...
+                      </mat-error>
                 </mat-form-field>
             </div>
             <div class="col-sm-6">
                 <label class="custom-label">
-                    <h5>Street1<small>*</small></h5>
+                    <h5>Street 1<small>*</small></h5>
                 </label>
                 <mat-form-field class="demo-full-width">
                     <input matInput
                            formControlName="Street1"
-                           placeholder="Street1">
+                           placeholder="Street 1">
                     <mat-error
                                *ngIf="companyForm.get('Street1')?.hasError('required')">
                         This filed is required...
@@ -34,22 +37,22 @@
             </div>
             <div class="col-sm-6">
                 <label class="custom-label">
-                    <h5>Street2</h5>
+                    <h5>Street 2</h5>
                 </label>
                 <mat-form-field class="demo-full-width">
                     <input matInput
                            formControlName="Street2"
-                           placeholder="Street2">
+                           placeholder="Street 2">
                 </mat-form-field>
             </div>
             <div class="col-sm-6">
                 <label class="custom-label">
-                    <h5>Street3</h5>
+                    <h5>Street 3</h5>
                 </label>
                 <mat-form-field class="demo-full-width">
                     <input matInput
                            formControlName="Street3"
-                           placeholder="Street3">
+                           placeholder="Street 3">
                 </mat-form-field>
             </div>
             <div class="col-sm-6">
@@ -68,21 +71,21 @@
             </div>
             <div class="col-sm-6">
                 <label class="custom-label">
-                    <h5>Pincode</h5>
+                    <h5>Pincode<small>*</small></h5>
                 </label>
                 <mat-form-field class="demo-full-width">
                     <input matInput
                            formControlName="PostalCode"
                            placeholder="Pincode">
-                    <!-- <mat-error
+                    <mat-error
                                *ngIf="companyForm.get('Pincode')?.hasError('required')">
                         This filed is required...
-                    </mat-error> -->
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="col-sm-6">
                 <label class="custom-label">
-                    <h5>State</h5>
+                    <h5>State<small>*</small></h5>
                 </label>
                 <mat-form-field class="demo-full-width">
                     <mat-select formControlName="State" placeholder="State" #singleSelect (selectionChange)="onChangeState($event.value)">
@@ -138,6 +141,9 @@
                                *ngIf="companyForm.get('Mobile')?.hasError('required')">
                         This filed is required...
                     </mat-error>
+                    <mat-error *ngIf="companyForm.get('Mobile')?.hasError('pattern')">
+                        Please enter valid mobile number
+                      </mat-error>
                 </mat-form-field>
             </div>
             <div class="col-sm-6">
@@ -152,6 +158,10 @@
                                *ngIf="companyForm.get('Email')?.hasError('required')">
                         This filed is required...
                     </mat-error>
+                    <mat-error
+                    *ngIf="companyForm.get('Email')?.hasError('email') || companyForm.get('Email')?.hasError('pattern')">
+           Email must be a valid email address
+         </mat-error>
                 </mat-form-field>
             </div>
             <ng-container *ngIf="IsEdit">

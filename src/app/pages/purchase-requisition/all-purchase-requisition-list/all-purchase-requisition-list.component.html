@@ -1,56 +1,80 @@
 <div class="mt-5">
-    <table mat-table [dataSource]="dataSource">
-      <ng-container matColumnDef="srNo">
-        <th mat-header-cell *matHeaderCellDef># </th>
-        <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
-      </ng-container>
-      <ng-container matColumnDef="PRNumber">
-        <th mat-header-cell *matHeaderCellDef> PR Number </th>
-        <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
-      </ng-container>
-      <!-- <ng-container matColumnDef="ERPPRNumber">
+  <table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="srNo">
+      <th mat-header-cell *matHeaderCellDef># </th>
+      <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
+    </ng-container>
+    <ng-container matColumnDef="PRNumber">
+      <th mat-header-cell *matHeaderCellDef> PR Number </th>
+      <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="ERPPRNumber">
         <th mat-header-cell *matHeaderCellDef>ERP PR Number </th>
         <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}}</td>
       </ng-container> -->
-      <ng-container matColumnDef="PRDocType">
-        <th mat-header-cell *matHeaderCellDef> Doc. Type </th>
-        <td mat-cell *matCellDef="let element"> {{element?.PRDocType}} </td>
-      </ng-container>
-      <ng-container matColumnDef="PRDate">
-        <th mat-header-cell *matHeaderCellDef> PR Date </th>
-        <td mat-cell *matCellDef="let element"> {{element?.PRDate | date : 'dd-MM-yyyy' }} </td>
-      </ng-container>
-      <ng-container matColumnDef="SAPStatus">
-        <th mat-header-cell *matHeaderCellDef> SAP Status </th>
-        <td mat-cell *matCellDef="let element"> {{element?.SAPStatus}} </td>
-      </ng-container>
-      <ng-container matColumnDef="Plant">
-        <th mat-header-cell *matHeaderCellDef> Plant </th>
-        <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} - {{element?.PlantName}} </td>
-      </ng-container>
-      <ng-container matColumnDef="PRPendingBy">
-        <th mat-header-cell *matHeaderCellDef> Approval Pending  By</th>
-        <td mat-cell *matCellDef="let element">
-          {{element?.IsApprovedByAll ? "" :  element?.PRPendingBy}}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Approved">
-        <th mat-header-cell *matHeaderCellDef> Approval Status </th>
-        <td mat-cell *matCellDef="let element"
-            [ngStyle]="{'color': element?.IsRejected ? 'red' :  element?.IsApprovedByAll  ?  'green' : 'grey' }">
-          {{element?.IsRejected ? 'Rejected' : element?.IsApprovedByAll ? 'Approved' : 'Pending'}}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Edit">
-        <th mat-header-cell *matHeaderCellDef> Edit </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button [routerLink]="['edit']" [queryParams]="{id: element.Id}"
+    <ng-container matColumnDef="PRDocType">
+      <th mat-header-cell *matHeaderCellDef> Doc. Type </th>
+      <td mat-cell *matCellDef="let element"> {{element?.PRDocType}} </td>
+    </ng-container>
+    <ng-container matColumnDef="PRDate">
+      <th mat-header-cell *matHeaderCellDef> PR Date </th>
+      <td mat-cell *matCellDef="let element"> {{element?.PRDate | date : 'dd-MM-yyyy' }} </td>
+    </ng-container>
+    <ng-container matColumnDef="SAPStatus">
+      <th mat-header-cell *matHeaderCellDef> SAP Status </th>
+      <td mat-cell *matCellDef="let element"> {{element?.SAPStatus}} </td>
+    </ng-container>
+    <ng-container matColumnDef="Plant">
+      <th mat-header-cell *matHeaderCellDef> Plant </th>
+      <td mat-cell *matCellDef="let element"> {{element?.PlantCode}} - {{element?.PlantName}} </td>
+    </ng-container>
+    <ng-container matColumnDef="PRPendingBy">
+      <th mat-header-cell *matHeaderCellDef> Approval Pending By</th>
+      <td mat-cell *matCellDef="let element">
+        {{element?.IsApprovedByAll ? "" : element?.PRPendingBy}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Approved">
+      <th mat-header-cell *matHeaderCellDef> Approval Status </th>
+      <td mat-cell *matCellDef="let element"
+          [ngStyle]="{'color': element?.IsRejected ? 'red' :  element?.IsApprovedByAll  ?  'green' : 'grey' }">
+        {{element?.IsRejected ? 'Rejected' : element?.IsApprovedByAll ? 'Approved' : 'Pending'}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button [matMenuTriggerFor]="menu2" aria-label="Open Menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #menu2="matMenu">
+          <button mat-menu-item [routerLink]="['view']" [queryParams]="{id: element.Id}"
+                  matTooltip="Click to View">
+            <mat-icon>remove_red_eye</mat-icon>
+            <span>View</span>
+          </button>
+          <button mat-menu-item [routerLink]="['edit']" [queryParams]="{id: element.Id}"
+                  [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart  && Role.Admin != currentUserRole) &&  Role.Admin != currentUserRole"
+                  matTooltip="Click to Edit">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item
+                  [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart && Role.Admin != currentUserRole) && Role.Admin != currentUserRole"
+                  (click)="openDeleteModel(deleteAlert,element?.Id)" matTooltip="Click to Delete">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+
+        <!-- <button mat-icon-button [routerLink]="['edit']" [queryParams]="{id: element.Id}"
           [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart  && Role.Admin != currentUserRole) &&  Role.Admin != currentUserRole"  matTooltip="Click to Edit">
             <mat-icon>edit</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Delete">
+          </button> -->
+      </td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="Delete">
         <th mat-header-cell *matHeaderCellDef> Delete </th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button  [disabled]="(element?.IsApprovedByAll || element?.IsRejected || element?.IsApprovalStart && Role.Admin != currentUserRole) && Role.Admin != currentUserRole"
@@ -65,8 +89,8 @@
           <button mat-icon-button [routerLink]="['view']" [queryParams]="{id: element.Id}"  matTooltip="Click to View">
             <mat-icon>remove_red_eye</mat-icon></button>
         </td>
-      </ng-container>
-      <!-- <ng-container matColumnDef="Approve">
+      </ng-container> -->
+    <!-- <ng-container matColumnDef="Approve">
         <th mat-header-cell *matHeaderCellDef> Approve / Reject </th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button
@@ -75,25 +99,26 @@
           </button>
         </td>
       </ng-container> -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
-                         [columnCount]="displayedColumns.length"></app-no-record-found>
-    <mat-paginator #paginator
-                   [pageSize]="filter.PageSize"
-                   [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0"
-                   [length]="filter.TotalRecords"
-                   (page)="pageChange($event)"
-                   showFirstLastButtons></mat-paginator>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+                       [columnCount]="displayedColumns.length"></app-no-record-found>
+  <mat-paginator #paginator
+                 [pageSize]="filter.PageSize"
+                 [pageIndex]="filter.Page - 1 >= 0 ? filter.Page - 1 : 0"
+                 [length]="filter.TotalRecords"
+                 (page)="pageChange($event)"
+                 showFirstLastButtons></mat-paginator>
+</div>
+
+
+<ng-template #deleteAlert>
+  <h2 mat-dialog-title class="text-center">Delete Purchase Requisition</h2>
+  <div mat-dialog-content>Are you sure want to delete this PR?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeletePR()"
+            matTooltip="Click to Delete">Delete</button>
   </div>
-
-
-  <ng-template #deleteAlert>
-    <h2 mat-dialog-title class="text-center">Delete Purchase Requisition</h2>
-    <div mat-dialog-content>Are you sure want to delete this PR?</div>
-    <div mat-dialog-actions class="d-flex justify-content-center">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="warn" (click)="onClickDeletePR()"  matTooltip="Click to Delete">Delete</button>
-    </div>
-  </ng-template>
+</ng-template>
