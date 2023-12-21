@@ -298,7 +298,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               this.toaster.error(res[ResultEnum.Message]);
             }
           },
-          error: (e) => { this.toaster.error(e.Message) }
+          error: (e) => { this.toaster.error(e.Message); }
         });
     }else{
       this.plantService
@@ -315,7 +315,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               this.toaster.error(res[ResultEnum.Message]);
             }
           },
-          error: (e) => { this.toaster.error(e.Message) }
+          error: (e) => { this.toaster.error(e.Message); }
         });
     }
   }

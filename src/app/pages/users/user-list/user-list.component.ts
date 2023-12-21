@@ -242,7 +242,7 @@ export class UserListComponent {
   // User save api
   onClickAddUser() {
     const userFormValue = this.userForm.value as any;
-    let plantId = userFormValue.Plant.map((x: any) => x.Id);
+    const plantId = userFormValue.Plant.map((x: any) => x.Id);
     const user = {
       Id: 0,
       FirstName: userFormValue.FirstName,
@@ -276,7 +276,7 @@ export class UserListComponent {
   //User update api
   onClickUpdateUser() {
     const userFormValue = this.editUserForm.value as any;
-    let plantId = userFormValue.Plant.map((x: any) => x.Id);
+    const plantId = userFormValue.Plant.map((x: any) => x.Id);
     const user = {
       Id: this.userDetails.Id,
       FirstName: userFormValue.FirstName,
