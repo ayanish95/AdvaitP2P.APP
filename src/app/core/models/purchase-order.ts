@@ -60,6 +60,7 @@ export interface PurchaseOrderDataVM{
 export interface PurchaseOrderLine{
     Id:number;
     POLineId?:number;
+    PRHeaderId?:number;
     PRLineId?:number;
     ERPPRNumber?:string;
     // Product?:Products;

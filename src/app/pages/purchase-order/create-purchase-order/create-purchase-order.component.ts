@@ -577,9 +577,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
               TaxAmount: item?.TaxAmount,
               TotalAmount: item?.TotalAmount,
               StockType: 'Unrestricted Stock',
-              PRDetId: item?.Id,
               IsReturnItem: false,
               IsFreeOfCharge: false,
+              PRHeaderId: item?.PRHeaderId,
+              PRDetId: item?.Id,
               PRLineId: item?.Id,
               Id: index + 1
             });
@@ -710,13 +711,14 @@ export class CreatePurchaseOrderComponent implements OnInit {
     this.POHeaderForm.touched;
     if (this.POHeaderForm.valid) {
       const PRHeaderData = this.POHeaderForm.value as any;
+      let PRHeaderIds = PRHeaderData.PRno?.map((x: any) => x.Id);
       const PODetails: PurchaseOrderDataVM = {
         Id: 0,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData.SupplierCode?.Id as any,
         SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
         SupplierName: PRHeaderData.SupplierCode?.FirstName + ' ' + PRHeaderData.SupplierCode?.LastName as any,
-        PRHeaderId: PRHeaderData.PRno?.Id,
+        PRHeaderId: PRHeaderIds,
         ContractNumber: PRHeaderData.ContractNumber,
         RFQHeaderId: PRHeaderData.RFQNumber,
         CompanyCode: PRHeaderData.CompanyCode?.CompanyCode,
