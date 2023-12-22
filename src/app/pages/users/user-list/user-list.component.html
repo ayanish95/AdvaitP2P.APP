@@ -16,6 +16,9 @@
   <mat-card-content>
     <div class="mt-5">
       <div class="d-flex justify-content-end">
+        <button mat-button mat-raised-button color="primary" (click)="onClickSyncUserFromSAP()" class="mr-10">
+          <mat-icon>cached</mat-icon>Sync User
+        </button>
         <button mat-button mat-raised-button color="primary" (click)="openModelAddUser(addUser)">
           <mat-icon>add</mat-icon>Add User
         </button>
@@ -113,11 +116,14 @@
             <mat-error *ngIf="userForm.get('FirstName')?.hasError('required')">
               This filed is required...
             </mat-error>
+            <mat-error *ngIf="userForm.get('FirstName')?.hasError('minlength')">
+              Firstname must be 4 character...
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
           <label class="custom-label">
-            <h5>Last Name<small>*</small></h5>
+            <h5>Last Name</h5>
           </label>
           <mat-form-field class="demo-full-width">
             <input matInput
@@ -139,6 +145,12 @@
             <mat-error *ngIf="userForm.get('UserName')?.hasError('required')">
               This filed is required...
             </mat-error>
+            <mat-error *ngIf="userForm.get('UserName')?.hasError('minlength')">
+              Username must be 4 character...
+            </mat-error>
+            <mat-error *ngIf="userForm.get('UserName')?.hasError('maxlength')">
+              Username should be less than 30 character...
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
@@ -146,11 +158,19 @@
             <h5>Password<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
+            <input matInput [type]="hide ? 'password' : 'text'"
                    formControlName="Password"
                    placeholder="Password">
+            <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' :
+              'visibility'}}</mat-icon>
             <mat-error *ngIf="userForm.get('Password')?.hasError('required')">
               This filed is required...
+            </mat-error>
+            <mat-error *ngIf="userForm.get('Password')?.hasError('minlength')">
+              Password must be 6 character...
+            </mat-error>
+            <mat-error *ngIf="userForm.get('Password')?.hasError('maxlength')">
+              Password should be less than 14 character...
             </mat-error>
           </mat-form-field>
         </div>
@@ -186,6 +206,10 @@
             <mat-error *ngIf="userForm.get('Email')?.hasError('required')">
               This filed is required...
             </mat-error>
+            <mat-error
+                       *ngIf="userForm.get('Email')?.hasError('email') || userForm.get('Email')?.hasError('pattern')">
+              Email must be a valid email address
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
@@ -198,6 +222,9 @@
                    placeholder="Mobile">
             <mat-error *ngIf="userForm.get('Mobile')?.hasError('required')">
               This filed is required...
+            </mat-error>
+            <mat-error *ngIf="userForm.get('Mobile')?.hasError('pattern')">
+              Please enter valid mobile number
             </mat-error>
           </mat-form-field>
         </div>
@@ -254,6 +281,9 @@
             <mat-error *ngIf="editUserForm.get('FirstName')?.hasError('required')">
               This filed is required...
             </mat-error>
+            <mat-error *ngIf="editUserForm.get('FirstName')?.hasError('minlength')">
+              Firstname must be 4 character...
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
@@ -280,6 +310,12 @@
             <mat-error *ngIf="editUserForm.get('UserName')?.hasError('required')">
               This filed is required...
             </mat-error>
+            <mat-error *ngIf="editUserForm.get('UserName')?.hasError('minlength')">
+              Username must be 4 character...
+            </mat-error>
+            <mat-error *ngIf="editUserForm.get('UserName')?.hasError('maxlength')">
+              Username should be less than 30 character...
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
@@ -287,11 +323,19 @@
             <h5>Password<small>*</small></h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <input matInput
+            <input matInput [type]="hide ? 'password' : 'text'"
                    formControlName="Password"
                    placeholder="Password">
-            <mat-error *ngIf="userForm.get('Password')?.hasError('required')">
+            <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' :
+              'visibility'}}</mat-icon>
+            <mat-error *ngIf="editUserForm.get('Password')?.hasError('required')">
               This filed is required...
+            </mat-error>
+            <mat-error *ngIf="editUserForm.get('Password')?.hasError('minlength')">
+              Password must be 6 character...
+            </mat-error>
+            <mat-error *ngIf="editUserForm.get('Password')?.hasError('maxlength')">
+              Password should be less than 14 character...
             </mat-error>
           </mat-form-field>
         </div>
@@ -326,6 +370,10 @@
             <mat-error *ngIf="editUserForm.get('Email')?.hasError('required')">
               This filed is required...
             </mat-error>
+            <mat-error
+                       *ngIf="editUserForm.get('Email')?.hasError('email') || editUserForm.get('Email')?.hasError('pattern')">
+              Email must be a valid email address
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="col-sm-6">
@@ -338,6 +386,9 @@
                    placeholder="Mobile">
             <mat-error *ngIf="editUserForm.get('Mobile')?.hasError('required')">
               This filed is required...
+            </mat-error>
+            <mat-error *ngIf="editUserForm.get('Mobile')?.hasError('pattern')">
+              Please enter valid mobile number
             </mat-error>
           </mat-form-field>
         </div>

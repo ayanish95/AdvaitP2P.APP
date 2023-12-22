@@ -20,7 +20,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./purchase-requisition-list.component.scss']
 })
 export class PurchaseRequisitionListComponent implements OnInit {
-  
+
   PRHeaderList!: PurchaseRequisitionHeader[];
   pendingPRHeaderList!: PurchaseRequisitionHeader[];
   @ViewChild('paginator')
@@ -31,10 +31,10 @@ export class PurchaseRequisitionListComponent implements OnInit {
   selectedPRId!: number;
   currentUserRole!: number;
   Role = Role;
-  currentUserId!:number;
+  currentUserId!: number;
   approvalStrategyList!: ApprovalStrategy[];
   rightsForApproval = false;
-  constructor(private purchaseRequistionService: PurchaseRequistionService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog,private strategyService:ApprovalStrategyService) { }
+  constructor(private purchaseRequistionService: PurchaseRequistionService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog, private strategyService: ApprovalStrategyService) { }
 
   ngOnInit() {
     this.currentUserRole = this.authService.roles();
@@ -55,31 +55,34 @@ export class PurchaseRequisitionListComponent implements OnInit {
         if (res[ResultEnum.IsSuccess]) {
           this.PRHeaderList = res[ResultEnum.Model];
         }
-        else
-          this.toaster.error(res[ResultEnum.Message]);
+        else {
+          this.PRHeaderList = [];
+          this.toaster.info(res[ResultEnum.Message]);
+        }
       });
   }
 
-  apiAllPendingList(){
+  apiAllPendingList() {
     this.purchaseRequistionService
-    .getPendingPRByUserId()
-    .pipe(
-      finalize(() => {
-      })
-    )
-    .subscribe(res => {
-      if (res[ResultEnum.IsSuccess]) {
-        this.pendingPRHeaderList = res[ResultEnum.Model];
-      }
-      else {
-        this.toaster.error(res[ResultEnum.Message]);
-      }
-    });
+      .getPendingPRByUserId()
+      .pipe(
+        finalize(() => {
+        })
+      )
+      .subscribe(res => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.pendingPRHeaderList = res[ResultEnum.Model];
+        }
+        else {
+          this.pendingPRHeaderList = [];
+          this.toaster.info(res[ResultEnum.Message]);
+        }
+      });
   }
 
 
-   // api for get all list who have rights for approve supplier and based on that show approve and reject button
-   apiApprovalStrategyByApprovalType() {
+  // api for get all list who have rights for approve supplier and based on that show approve and reject button
+  apiApprovalStrategyByApprovalType() {
     this.strategyService
       .getApprovalStrategyByApprovalType(ApprovalTypeEnum.PR)
       .pipe(
@@ -89,7 +92,7 @@ export class PurchaseRequisitionListComponent implements OnInit {
       .subscribe(res => {
         if (res[ResultEnum.IsSuccess]) {
           this.approvalStrategyList = res[ResultEnum.Model];
-          
+
           // Condition - Here is the check the current user have rights for approve the supplier, If yes then it've show the approve and reject button otherwise it will disappear for the user
           if (this.currentUserRole != Role.Admin)
             this.rightsForApproval = this.approvalStrategyList.filter(x => x.UserId == this.currentUserId)?.length > 0 ? true : false;
@@ -107,10 +110,10 @@ export class PurchaseRequisitionListComponent implements OnInit {
   }
 
   onTabChanged(event: any) {
-    if (event?.index==0) {
+    if (event?.index == 0) {
       this.apiPRList();
     }
-    else if(event.index==1){
+    else if (event.index == 1) {
       this.apiAllPendingList();
     }
   }

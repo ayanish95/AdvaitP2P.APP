@@ -14,6 +14,10 @@ export class ProductService {
     private httpclient: HttpClientService
   ) {}
 
+  syncProductsFromSAP(): Observable<any> {
+    return this.httpclient.authGet(`${Api.Product + Method.SyncProductsFromSAP}`);
+  }
+  
   getProductList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Product + Method.GetProductList}`);
   }

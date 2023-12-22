@@ -4,12 +4,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from '@core';
+import { RegexEnum } from '@core/enums/common-enum';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Country } from '@core/models/country';
 import { Plants } from '@core/models/plants';
-import { Products } from '@core/models/products';
 import { States } from '@core/models/states';
 import { CountryService } from '@core/services/country.service';
 import { PlantService } from '@core/services/plant.service';
@@ -35,9 +35,10 @@ export class PlantListComponent implements OnInit {
     'Country',
     'Pincode',
     'IsActive',
-    'View',
-    'Edit',
-    'Delete',
+    'Actions',
+    // 'View',
+    // 'Edit',
+    // 'Delete',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -57,9 +58,9 @@ export class PlantListComponent implements OnInit {
   selectedPlantId!: number;
   plantDetails!: Plants;
   plantForm = this.fb.group({
-    PlantName: ['', [Validators.required]],
-    Email: ['', [Validators.required]],
-    Mobile: ['', [Validators.required]],
+    PlantName: ['', [Validators.required, Validators.minLength(4)]],
+    Email: ['', [Validators.required, Validators.email, Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required, Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Street1: ['', [Validators.required]],
     Street2: [''],
     City: ['', [Validators.required]],
@@ -79,7 +80,7 @@ export class PlantListComponent implements OnInit {
   rightsForApproval = false;
 
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private countryService: CountryService, private stateService: StateService,
-    private toaster: ToastrService,private authService: AuthService,) { }
+    private toaster: ToastrService, private authService: AuthService,) { }
 
   ngOnInit() {
     this.currentUserRole = this.authService.roles();
@@ -92,6 +93,23 @@ export class PlantListComponent implements OnInit {
       startWith(''),
       map(value => this.filterCountry(value || ''))
     );
+  }
+
+  // API Sync Plant From SAP
+  onClickSyncPlantFromSAP() {
+    this.plantService
+      .syncPlantsFromSAP().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+            this.apiPlantList();
+          }
+          else {
+            this.toaster.error(res[ResultEnum.Message]);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); }
+      });
   }
 
   apiPlantList() {
@@ -213,7 +231,7 @@ export class PlantListComponent implements OnInit {
     this.selectedCountryCode = countryCode;
     this.apiStateListByCountryCode(countryCode);
     if (countryCode == 'IN') {
-      this.plantForm.controls.GSTNumber.setValidators([Validators.required]);
+      this.plantForm.controls.GSTNumber.setValidators([Validators.required, Validators.pattern(RegexEnum.GSTNumberRegex)]);
       this.plantForm.controls.TaxNumber.setValidators(null);
     }
     else {
@@ -251,7 +269,9 @@ export class PlantListComponent implements OnInit {
           if (this.plantDetails) {
             await this.apiStateListByCountryCode(this.plantDetails.Country ? this.plantDetails.Country : '');
             this.selectedCountryCode = this.plantDetails.Country ? this.plantDetails.Country : '';
-            const state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode ==  this.plantDetails.GSTStateCode);
+            if (this.plantDetails.Country == 'IN')
+              this.plantForm.controls.GSTNumber.setValidators([Validators.required, Validators.pattern(RegexEnum.GSTNumberRegex)]);
+            const state = this.stateList.find(x => this.isSAPEnabled == 'false' ? (x.Id == this.plantDetails.StateId as unknown as number) : x.GSTStateCode == this.plantDetails.GSTStateCode);
             this.plantForm.patchValue({
               PlantName: this.plantDetails.PlantName,
               Email: this.plantDetails.Email,
@@ -289,6 +309,9 @@ export class PlantListComponent implements OnInit {
   }
 
   onClickAddPlant() {
+    this.plantForm.markAllAsTouched();
+    if (!this.plantForm.valid)
+      return;
     const plantdata = this.plantForm.value as any;
     const plant = {
       Id: this.isEdit ? this.selectedPlantId : 0,
@@ -347,7 +370,7 @@ export class PlantListComponent implements OnInit {
         },
       });
     }
-
+    this.dialog.closeAll();
   }
 
   onClickDeletePlant() {
@@ -371,13 +394,23 @@ export class PlantListComponent implements OnInit {
         this.dialog.closeAll();
       });
   }
-  IsActiveFlagUpdate(element:any,e:any){
+  IsActiveFlagUpdate(element: any, e: any) {
     element.IsActive = e.srcElement.checked;
-    this.plantService.updatePlant(element)
-    .subscribe(response => {
-      console.log('Update successful', response);
-    }, error => {
-      console.error('Error updating', error);
-    });
+    this.plantService
+      .updatePlant(element).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+            this.apiPlantList();
+            this.selectedPlantId = 0;
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+
+          this.dialog.closeAll();
+        },
+        error: (e) => { this.toaster.error(e.Message) }
+      });
+
   }
 }

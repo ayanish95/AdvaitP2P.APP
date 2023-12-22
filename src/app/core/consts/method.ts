@@ -1,14 +1,19 @@
 export class Method {
+  static syncUserFromSAP = `/syncUserFromSAP`;
   static GetUserList = `/GetUserList`;
   static GetSupplierList = `/GetSupplierList`;
   static GetSupplierByGSTNumber = `/GetSupplierByGSTNumber`;
   static GetSupplierDetailsById = `/GetSupplierDetailsById`;
+  static SyncProductsFromSAP = `/SyncProductsFromSAP`;
   static GetProductList = `/GetProductList`;
+  static SyncPlantsFromSAP = `/SyncPlantsFromSAP`;
   static GetPlantList = `/GetPlantList`;
   static GetPlantListByPlantCode = `/GetPlantListByPlantCode`;
+  static GetPlantListByCompanyCode = `/GetPlantListByCompanyCode`;
   static GetStateList = `/GetStateList`;
   static GetStateListByCountryCode = `/GetStateListByCountryCode`;
   static GetProductGroupList = `/GetProductGroupList`;
+  static syncSupplierFromSAP = `/syncSupplierFromSAP`;
   static CreateSupplier = `/CreateSupplier`;
   static ApproveSupplier = `/ApproveSupplier`;
   static GetCountryList = `/GetCountryList`;
@@ -78,6 +83,7 @@ export class Method {
   static GetAllGRListForQC = `/GetAllGRListForQC`;
   static DeleteGRById = `/DeleteGRById`;
   static GetGRNDetailsById = `/GetGRNDetailsById`;
+  static SyncCompanyFromSAP = `/SyncCompanyFromSAP`;
   static GetAllCompanyList = `/GetAllCompanyList`;
   static AddCompany = `/AddCompany`;
   static UpdateCompany = `/UpdateCompany`;

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ !isEdit ?  'Add' : 'Edit'}} Supplier</h2>
+<h2 mat-dialog-title>{{ !isEdit ? 'Add' : 'Edit'}} Supplier</h2>
 
 <mat-dialog-content>
     <mat-horizontal-stepper [linear]="isLinear"
@@ -9,18 +9,29 @@
                 <form class="form-field-full" [formGroup]="basicInfoFrom">
                     <div class="row mt-5">
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5> Company Name 1<small>*</small></h5>  </label>
+                            <label class="custom-label">
+                                <h5> Company Name 1<small>*</small></h5>
+                            </label>
                             <mat-form-field appearance="outline">
-                                <input matInput formControlName="firstName" placeholder="Company Name" required>
-                                <mat-error *ngIf="basicInfoFrom.get('firstName')?.invalid">
+                                <input matInput formControlName="firstName"
+                                       placeholder="Company Name" required>
+                                <mat-error
+                                           *ngIf="basicInfoFrom.get('firstName')?.hasError('required')">
                                     <span>{{'validations.required' | translate}}</span>
+                                </mat-error>
+                                <mat-error
+                                           *ngIf="basicInfoFrom.get('firstName')?.hasError('minlength')">
+                                    Company name must be 4 character...
                                 </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5> Company Name 2<small>*</small></h5>  </label>
+                            <label class="custom-label">
+                                <h5> Company Name 2</h5>
+                            </label>
                             <mat-form-field appearance="outline">
-                                <input matInput type="text" formControlName="lastName" placeholder="Company Name"
+                                <input matInput type="text" formControlName="lastName"
+                                       placeholder="Company Name"
                                        required>
                                 <mat-error *ngIf="basicInfoFrom.get('lastName')?.invalid">
                                     <span>{{'validations.required' | translate}}</span>
@@ -29,29 +40,45 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5>{{'suppliers.telephone' | translate}}<small>*</small></h5>  </label>
+                            <label class="custom-label">
+                                <h5>Mobile Number<small>*</small></h5>
+                            </label>
                             <mat-form-field appearance="outline">
-                                <input matInput type="text" formControlName="telePhone" placeholder="Phone Number"
+                                <input matInput type="text" formControlName="telePhone"
+                                       placeholder="Mobile Number"
                                        required>
                                 <mat-error
                                            *ngIf="basicInfoFrom.get('telePhone')?.hasError('required')">
                                     <span>{{'validations.required' | translate}}</span>
                                 </mat-error>
+                                <mat-error
+                                           *ngIf="basicInfoFrom.get('telePhone')?.hasError('pattern')">
+                                    Please enter valid mobile number
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5>{{'suppliers.emailId' | translate}}<small>*</small></h5>  </label>
+                            <label class="custom-label">
+                                <h5>{{'suppliers.emailId' | translate}}<small>*</small></h5>
+                            </label>
                             <mat-form-field appearance="outline">
-                                <input matInput type="text" formControlName="emailId"  placeholder="Email"
+                                <input matInput type="text" formControlName="emailId"
+                                       placeholder="Email"
                                        required>
                                 <mat-error
                                            *ngIf="basicInfoFrom.get('emailId')?.hasError('required')">
                                     <span>{{'validations.required' | translate}}</span>
                                 </mat-error>
+                                <mat-error
+                                           *ngIf="basicInfoFrom.get('emailId')?.hasError('email') || basicInfoFrom.get('emailId')?.hasError('pattern')">
+                                    Email must be a valid email address
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5> Product Group<small>*</small></h5> </label>
+                            <label class="custom-label">
+                                <h5> Product Group<small>*</small></h5>
+                            </label>
 
                             <ng-select [items]="productGroupList"
                                        bindLabel="ProductFullName"
@@ -85,21 +112,25 @@
 
                         </div>
                         <div class="col-sm-6">
-                            <label class="custom-label"> 
+                            <label class="custom-label">
                                 <h5>Country<small>*</small></h5>
                             </label>
-                            <mat-form-field class="demo-full-width">                                
-                                <mat-select formControlName="country" placeholder="Country" #singleSelect>
+                            <mat-form-field class="demo-full-width">
+                                <mat-select formControlName="country" placeholder="Country"
+                                            #singleSelect>
                                     <mat-option>
-                                      <ngx-mat-select-search [formControl]="basicInfoFromCountryControl" 
-                                       noEntriesFoundLabel="No Record Found..." placeholderLabel="Search..."></ngx-mat-select-search>
+                                        <ngx-mat-select-search [formControl]="basicInfoFromCountryControl"
+                                                               noEntriesFoundLabel="No Record Found..."
+                                                               placeholderLabel="Search..."></ngx-mat-select-search>
                                     </mat-option>
-                                    <mat-option *ngFor="let country of filteredCountry | async" [value]="country"
-                                            (onSelectionChange)="onChangeCountry($event)">
-                                            {{country?.CountryWithCode}}
+                                    <mat-option *ngFor="let country of filteredCountry | async"
+                                                [value]="country"
+                                                (onSelectionChange)="onChangeCountry($event)">
+                                        {{country?.CountryWithCode}}
                                     </mat-option>
-                                  </mat-select>                                
-                                <mat-error *ngIf="basicInfoFrom.get('country')?.hasError('required')">
+                                </mat-select>
+                                <mat-error
+                                           *ngIf="basicInfoFrom.get('country')?.hasError('required')">
                                     This filed is required...
                                 </mat-error>
                             </mat-form-field>
@@ -122,31 +153,47 @@
                         </div>
                         <ng-container *ngIf="selectedCountry == 'IN'">
                             <div class="col-sm-6">
-                                <label class="custom-label">  <h5>{{'suppliers.gstNumber' |
-                                    translate}}<small>*</small></h5>  </label>
+                                <label class="custom-label">
+                                    <h5>{{'suppliers.gstNumber' |
+                                        translate}}<small>*</small></h5>
+                                </label>
                                 <mat-form-field appearance="outline">
-                                    <input matInput type="text" formControlName="gstNumber" placeholder="GST Number">
+                                    <input matInput type="text" formControlName="gstNumber" toUppercase
+                                           placeholder="GST Number">
                                     <mat-error
                                                *ngIf="basicInfoFrom.get('gstNumber')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
+                                    <mat-error
+                                               *ngIf="basicInfoFrom.get('gstNumber')?.hasError('pattern')">
+                                        Please enter valid GST number...
+                                    </mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-sm-6">
-                                <label class="custom-label">  <h5>{{'suppliers.panCard' |
-                                    translate}}<small>*</small></h5>  </label>
+                                <label class="custom-label">
+                                    <h5>{{'suppliers.panCard' |
+                                        translate}}<small>*</small></h5>
+                                </label>
                                 <mat-form-field appearance="outline">
-                                    <input matInput type="text" formControlName="panNumber"  placeholder="PAN Number">
+                                    <input matInput type="text" formControlName="panNumber" toUppercase
+                                    placeholder="PAN Number">
                                     <mat-error
                                                *ngIf="basicInfoFrom.get('panNumber')?.hasError('required')">
                                         <span>{{'validations.required' | translate}}</span>
                                     </mat-error>
+                                    <mat-error
+                                    *ngIf="basicInfoFrom.get('panNumber')?.hasError('pattern')">
+                             Please enter valid PAN number...
+                         </mat-error>
                                 </mat-form-field>
                             </div>
                         </ng-container>
                         <ng-container *ngIf="selectedCountry && selectedCountry != 'IN'">
                             <div class="col-sm-12">
-                                <label class="custom-label">  <h5>{{'suppliers.taxNo' | translate}}<small>*</small></h5>  </label>
+                                <label class="custom-label">
+                                    <h5>{{'suppliers.taxNo' | translate}}<small>*</small></h5>
+                                </label>
                                 <mat-form-field appearance="outline">
                                     <input matInput maxlength="50" type="text"
                                            formControlName="taxNumber" placeholder="Tax Number">
@@ -162,16 +209,19 @@
 
                 </form>
             </div>
-           
+
         </mat-step>
 
         <mat-step [stepControl]="addressForm" label="Address">
             <form class="form-field-full" [formGroup]="addressForm">
                 <div class="row mt-5">
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.street1' | translate}}<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.street1' | translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="street1" placeholder="Street" required>
+                            <input matInput type="text" formControlName="street1"
+                                   placeholder="Street" required>
                             <mat-error
                                        *ngIf="addressForm.get('street1')?.hasError('required')">
                                 <span>{{'validations.required' | translate}}</span>
@@ -179,15 +229,21 @@
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.street2' | translate}}</h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.street2' | translate}}</h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="street2" placeholder="Street">
+                            <input matInput type="text" formControlName="street2"
+                                   placeholder="Street">
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5> {{'suppliers.postcalCode' | translate}}<small>*</small></h5> </label>
+                        <label class="custom-label">
+                            <h5> {{'suppliers.postcalCode' | translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="postalcode" placeholder="Postal Code"
+                            <input matInput type="text" formControlName="postalcode"
+                                   placeholder="Postal Code"
                                    required>
                             <mat-error
                                        *ngIf="addressForm.get('postalcode')?.hasError('required')">
@@ -196,9 +252,12 @@
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.city' | translate}}<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.city' | translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="city" placeholder="City" required>
+                            <input matInput type="text" formControlName="city" placeholder="City"
+                                   required>
                             <mat-error
                                        *ngIf="addressForm.get('city')?.hasError('required')">
                                 <span>{{'validations.required' | translate}}</span>
@@ -206,17 +265,22 @@
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>State<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>State<small>*</small></h5>
+                        </label>
                         <mat-form-field>
                             <mat-select formControlName="state" placeholder="State" #singleSelect>
                                 <mat-option>
-                                  <ngx-mat-select-search [formControl]="basicInfoFromStateControl" placeholder="State"
-                                   noEntriesFoundLabel="No Record Found..." placeholderLabel="Search..."></ngx-mat-select-search>
+                                    <ngx-mat-select-search [formControl]="basicInfoFromStateControl"
+                                                           placeholder="State"
+                                                           noEntriesFoundLabel="No Record Found..."
+                                                           placeholderLabel="Search..."></ngx-mat-select-search>
                                 </mat-option>
-                                <mat-option *ngFor="let state of filteredStates | async" [value]="state">
-                                        {{state?.Name}}
+                                <mat-option *ngFor="let state of filteredStates | async"
+                                            [value]="state">
+                                    {{state?.Name}}
                                 </mat-option>
-                              </mat-select>                           
+                            </mat-select>
                             <mat-error
                                        *ngIf="addressForm.get('state')?.hasError('required')">
                                 <span>{{'validations.required' | translate}}</span>
@@ -225,9 +289,12 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.country' | translate}}<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.country' | translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="country" placeholder="Country" required>
+                            <input matInput type="text" formControlName="country"
+                                   placeholder="Country" required>
                             <mat-error
                                        *ngIf="addressForm.get('country')?.hasError('required')">
                                 <span>{{'validations.required' | translate}}</span>
@@ -242,8 +309,10 @@
             <form class="form-field-full" [formGroup]="bankDetailsFrom">
                 <div class="row mt-5">
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.bankCountry' |
-                            translate}}<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.bankCountry' |
+                                translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
                             <mat-select formControlName="bankCountry" placeholder="Bank Country"
                                         (selectionChange)="onChangeBankCountry($event.value)">
@@ -261,9 +330,12 @@
                     </div>
                     <ng-container *ngIf="selectedBankCountry == 'IN'">
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5>{{'suppliers.ifscCode' | translate}}<small>*</small></h5>  </label>
+                            <label class="custom-label">
+                                <h5>{{'suppliers.ifscCode' | translate}}<small>*</small></h5>
+                            </label>
                             <mat-form-field appearance="outline">
-                                <input matInput type="text" placeholder="IFSC Code" formControlName="ifscCode">
+                                <input matInput type="text" placeholder="IFSC Code"
+                                       formControlName="ifscCode">
                                 <mat-error
                                            *ngIf="bankDetailsFrom.get('ifscCode')?.hasError('required')">
                                     <span>{{'validations.required' | translate}}</span>
@@ -273,9 +345,12 @@
                     </ng-container>
                     <ng-container *ngIf="selectedBankCountry != 'IN'">
                         <div class="col-sm-6">
-                            <label class="custom-label">  <h5>{{'suppliers.swiftCode' | translate}}<small>*</small></h5>  </label>
+                            <label class="custom-label">
+                                <h5>{{'suppliers.swiftCode' | translate}}<small>*</small></h5>
+                            </label>
                             <mat-form-field appearance="outline">
-                                <input matInput type="text" placeholder="Swift Code" formControlName="swiftCode">
+                                <input matInput type="text" placeholder="Swift Code"
+                                       formControlName="swiftCode">
                                 <mat-error
                                            *ngIf="bankDetailsFrom.get('swiftCode')?.hasError('required')">
                                     <span>{{'validations.required' | translate}}</span>
@@ -284,9 +359,12 @@
                         </div>
                     </ng-container>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.bankName' | translate}}<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.bankName' | translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="bankName" placeholder="Bank Name" required>
+                            <input matInput type="text" formControlName="bankName"
+                                   placeholder="Bank Name" required>
                             <mat-error
                                        *ngIf="bankDetailsFrom.get('bankName')?.hasError('required')">
                                 <span>{{'validations.required' | translate}}</span>
@@ -294,9 +372,12 @@
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5> {{'suppliers.accountNumber' | translate}}<small>*</small></h5> </label>
+                        <label class="custom-label">
+                            <h5> {{'suppliers.accountNumber' | translate}}<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="accountNumber" placeholder="Account Number"
+                            <input matInput type="text" formControlName="accountNumber" (keypress)="onKeyPress($event)"
+                                   placeholder="Account Number"
                                    required>
                             <mat-error
                                        *ngIf="bankDetailsFrom.get('accountNumber')?.hasError('required')">
@@ -305,9 +386,12 @@
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>Account Holder Name<small>*</small></h5>  </label>
+                        <label class="custom-label">
+                            <h5>Account Holder Name<small>*</small></h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="accountHolderName" placeholder="Account Holder Name"
+                            <input matInput type="text" formControlName="accountHolderName"
+                                   placeholder="Account Holder Name"
                                    required>
                             <mat-error
                                        *ngIf="bankDetailsFrom.get('accountHolderName')?.hasError('required')">
@@ -316,9 +400,12 @@
                         </mat-form-field>
                     </div>
                     <div class="col-sm-6">
-                        <label class="custom-label">  <h5>{{'suppliers.remarks' | translate}}</h5>  </label>
+                        <label class="custom-label">
+                            <h5>{{'suppliers.remarks' | translate}}</h5>
+                        </label>
                         <mat-form-field appearance="outline">
-                            <input matInput type="text" formControlName="remarks" placeholder="Remarks">
+                            <input matInput type="text" formControlName="remarks"
+                                   placeholder="Remarks">
                         </mat-form-field>
                     </div>
                     <ng-container *ngIf="isEdit">
@@ -349,6 +436,6 @@
 <mat-dialog-actions *ngIf="selectedIndex==2" align="end">
     <button mat-raised-button (click)="nextOrPrevious('previous')">Previous</button>
     <button mat-raised-button color="primary" (click)="onClickRegister()"
-            cdkFocusInitial>{{ !isEdit ?  'Add' : 'Update'}}</button>
+            cdkFocusInitial>{{ !isEdit ? 'Add' : 'Update'}}</button>
     <!-- mat-dialog-close="{{supplier}}" -->
 </mat-dialog-actions>

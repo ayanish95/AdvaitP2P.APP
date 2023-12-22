@@ -53,6 +53,23 @@ export class CompanyListComponent {
     this.apiCompanyList();
   }
 
+  // API Sync Company From SAP
+  onClickSyncCompanyFromSAP() {
+    this.companyService
+      .syncCompanyFromSAP().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+            this.apiCompanyList();
+          }
+          else {
+            this.toaster.error(res[ResultEnum.Message]);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); }
+      });
+  }
+
   apiCompanyList() {
     this.companyService
       .getCompanyList().subscribe({
@@ -97,7 +114,7 @@ export class CompanyListComponent {
 
   openEditModelPopup(companyId: number) {
     if(!companyId)
-    throw this.toaster.error('Company id is not found...')
+    throw this.toaster.error('Company id is not found...');
     this.isEdit = true;
     this.selectedCompanyId = companyId;
     this.companyService

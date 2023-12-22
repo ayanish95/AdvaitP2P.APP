@@ -23,7 +23,7 @@ export class LoginComponent {
     rememberMe: [false],
   });
   loginDetails!: LoginUser;
-
+  hide = true;
   constructor(
     private fb: FormBuilder,
     private router: Router,

@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { RegexEnum } from '@core/enums/common-enum';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { Plants } from '@core/models/plants';
@@ -43,23 +44,23 @@ export class UserListComponent {
   filteredRoles!: Observable<Roles[]>;
   selectedUserId = 0;
   userForm = this.fb.group({
-    FirstName: ['', [Validators.required]],
+    FirstName: ['', [Validators.required, Validators.minLength(4)]],
     LastName: [''],
-    UserName: ['', [Validators.required]],
-    Password: ['', [Validators.required]],
+    UserName: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
+    Password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(14)]],
     Role: ['', [Validators.required]],
-    Email: ['', [Validators.required]],
-    Mobile: ['', [Validators.required]],
+    Email: ['', [Validators.required, Validators.email, Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required, Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Plant: ['', [Validators.required]],
   });
   editUserForm = this.fb.group({
-    FirstName: ['', [Validators.required]],
+    FirstName: ['', [Validators.required, Validators.minLength(4)]],
     LastName: [''],
-    UserName: ['', [Validators.required]],
-    Password: ['', [Validators.required]],
+    UserName: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
+    Password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(14)]],
     Role: ['', [Validators.required]],
-    Email: ['', [Validators.required]],
-    Mobile: ['', [Validators.required]],
+    Email: ['', [Validators.required, Validators.email, Validators.pattern(RegexEnum.EmailRegex)]],
+    Mobile: ['', [Validators.required, Validators.pattern(RegexEnum.MobileNumberRegex)]],
     Plant: ['', [Validators.required]],
     IsActive: [false]
   });
@@ -68,7 +69,7 @@ export class UserListComponent {
   filteredPlants!: Observable<any>;
   searchPlantControl = new FormControl();
   searchRoleControl = new FormControl();
-
+  hide = true;
   constructor(
     private dataSrv: TablesDataService,
     private dialog: MatDialog,
@@ -160,7 +161,7 @@ export class UserListComponent {
         role?.DisplayName?.toLowerCase().includes(name.toLowerCase()));
     }
   }
-// funcation for display role in dropdown
+  // funcation for display role in dropdown
   roleDisplayFn(role: Roles) {
     return role ? role.DisplayName! : '';
   }
@@ -179,8 +180,27 @@ export class UserListComponent {
     this.filter.Page = page.pageIndex + 1;
   }
 
+
+  // API Sync User From SAP
+  onClickSyncUserFromSAP() {
+    this.userService
+      .syncUserFromSAP().subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.toaster.success(res[ResultEnum.Message]);
+           this.apiUserList();
+          }
+          else{
+            this.toaster.error(res[ResultEnum.Message]);
+          }
+        },
+        error: (e) => { this.toaster.error(e.Message); }
+      });
+  }
+
   // Modal popup for create user
   openModelAddUser(templateRef: TemplateRef<any>) {
+    this.hide = true;
     this.userForm.reset();
     this.userForm.updateValueAndValidity();
     this.dialog.open(templateRef, {
@@ -191,6 +211,7 @@ export class UserListComponent {
 
   // Model popup for edit user details
   openModelEditUser(templateRef: TemplateRef<any>, userId: number) {
+    this.hide = true;
     this.editUserForm.reset();
     this.editUserForm.updateValueAndValidity();
     this.userService
@@ -239,7 +260,7 @@ export class UserListComponent {
   // User save api
   onClickAddUser() {
     const userFormValue = this.userForm.value as any;
-    let plantId = userFormValue.Plant.map((x: any) => x.Id);
+    const plantId = userFormValue.Plant.map((x: any) => x.Id);
     const user = {
       Id: 0,
       FirstName: userFormValue.FirstName,
@@ -273,7 +294,7 @@ export class UserListComponent {
   //User update api
   onClickUpdateUser() {
     const userFormValue = this.editUserForm.value as any;
-    let plantId = userFormValue.Plant.map((x: any) => x.Id);
+    const plantId = userFormValue.Plant.map((x: any) => x.Id);
     const user = {
       Id: this.userDetails.Id,
       FirstName: userFormValue.FirstName,

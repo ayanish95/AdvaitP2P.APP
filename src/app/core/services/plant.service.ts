@@ -14,11 +14,18 @@ export class PlantService {
     private httpclient: HttpClientService
   ) {}
 
+  syncPlantsFromSAP(): Observable<any> {
+    return this.httpclient.authGet(`${Api.Plant + Method.SyncPlantsFromSAP}`);
+  }
   getPlantList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantList}`);
   }
   getPlantListByPlantCode(plantCode:string): Observable<any> {
     return this.httpclient.authGet(`${Api.Plant + Method.GetPlantListByPlantCode}/${plantCode}`);
+  }
+
+  getPlantListByCompanyCode(companyCode:string): Observable<any> {
+    return this.httpclient.authGet(`${Api.Plant + Method.GetPlantListByCompanyCode}/${companyCode}`);
   }
 
   getPlantDetailsById(plantId:number): Observable<any> {

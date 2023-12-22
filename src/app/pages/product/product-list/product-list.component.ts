@@ -56,9 +56,10 @@ export class ProductListComponent {
     // 'IsBatchNo',
     // 'IsSerialNo',
     'IsActive',
-    'View',
-    'Edit',
-    'Delete',
+    'Actions',
+    // 'View',
+    // 'Edit',
+    // 'Delete',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
@@ -106,6 +107,23 @@ export class ProductListComponent {
     this.apiInitialize(); //API initialize
 
   }
+
+    // API Sync Product From SAP
+    onClickSyncProductFromSAP() {
+      this.productService
+        .syncProductsFromSAP().subscribe({
+          next: (res: any) => {
+            if (res[ResultEnum.IsSuccess]) {
+              this.toaster.success(res[ResultEnum.Message]);
+              this.apiProductList();
+            }
+            else {
+              this.toaster.error(res[ResultEnum.Message]);
+            }
+          },
+          error: (e) => { this.toaster.error(e.Message); }
+        });
+    }
 
   //All api initialize
   apiInitialize() {

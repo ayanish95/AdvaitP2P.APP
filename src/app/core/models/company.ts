@@ -1,5 +1,5 @@
-import { Country } from "./country";
-import { States } from "./states";
+import { Country } from './country';
+import { States } from './states';
 
 export interface Company {
     Id: number;

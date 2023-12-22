@@ -46,6 +46,9 @@
                                    *ngIf="productForm.get('ProductDescription')?.hasError('required')">
                             This filed is required...
                         </mat-error>
+                        <mat-error *ngIf="productForm.get('ProductDescription')?.hasError('minlength')">
+                            Product description must be 4 character...
+                        </mat-error>
                     </mat-form-field>
                 </div>
 

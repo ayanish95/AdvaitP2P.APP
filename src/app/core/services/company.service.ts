@@ -13,6 +13,10 @@ export class CompanyService {
     private httpclient: HttpClientService
   ) { }
 
+  syncCompanyFromSAP(): Observable<any> {
+    return this.httpclient.authGet(`${Api.Company + Method.SyncCompanyFromSAP}`);
+  }
+
   getCompanyList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Company + Method.GetAllCompanyList}`);
   }

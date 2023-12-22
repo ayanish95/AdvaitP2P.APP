@@ -33,9 +33,10 @@ export class AllPurchaseRequisitionListComponent implements OnInit,OnChanges {
     'Plant',
     'PRPendingBy',
     'Approved',
-    'Edit',
-    'Delete',
-    'View'
+    'Actions',
+    // 'Edit',
+    // 'Delete',
+    // 'View'
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;

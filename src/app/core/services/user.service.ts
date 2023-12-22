@@ -19,6 +19,9 @@ export class UserService {
   login(user:any) {
     return this.httpclient.authPost(`${Api.Auth + Method.Login}`,user);
   }
+  syncUserFromSAP(): Observable<any> {
+    return this.httpclient.authGet(`${Api.Users + Method.syncUserFromSAP}`);
+  }
   getUserList(): Observable<any> {
     return this.httpclient.authGet(`${Api.Users + Method.GetUserList}`);
   }

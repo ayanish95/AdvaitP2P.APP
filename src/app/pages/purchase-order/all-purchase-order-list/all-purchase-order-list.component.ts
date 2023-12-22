@@ -32,10 +32,11 @@ export class AllPurchaseOrderListComponent implements OnInit {
     'TotalPOAmount',
     'PRPendingBy',
     'Approved',
-    'Edit',
-    'Delete',
-    'View',
-    'AddASN',
+    'Actions',
+    // 'Edit',
+    // 'Delete',
+    // 'View',
+    // 'AddASN',
   ];
   dataSource = new MatTableDataSource<any>();
   dataSource1: any;
