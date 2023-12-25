@@ -5,7 +5,9 @@
   .cdk-overlay-pane{
     width: 60vw !important;
   }
-  
+  .mr-10{
+    margin-right: 10px !important;
+  }
   .mt-20{
     margin-top: 40px ;
   }
@@ -18,7 +20,11 @@
     max-width: 250px !important;
     padding-right: 8px;
   }
-  td.mat-column-ProductCode {
+  td.mat-column-PRLineId {
+    min-width: 150px !important;
+    max-width: 250px !important;
+    padding-right: 8px;
+  } td.mat-column-ProductCode {
     min-width: 150px !important;
     max-width: 250px !important;
     padding-right: 8px;

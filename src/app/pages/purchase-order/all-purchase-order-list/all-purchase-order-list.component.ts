@@ -26,7 +26,7 @@ export class AllPurchaseOrderListComponent implements OnInit {
     'srNo',
     'PONumber',
     'PODate',
-    'PRNumber',
+    // 'PRNumber',
     'DocType',
     'Supplier',
     'TotalPOAmount',

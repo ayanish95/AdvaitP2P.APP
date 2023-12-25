@@ -29,6 +29,12 @@ export class ViewPurchaseOrderComponent {
     'ProductGroup',
     'Qty',
     'Unit',
+    'NetPrice',
+    'TotalNetPrice',
+    'Tax',
+    'TaxAmount',
+    'TotalAmount',
+    'Currency',
     'DeliveryDate',
     'Location',
     'Close',
@@ -239,6 +245,12 @@ export class ViewPurchaseOrderComponent {
   subscribeOrderItems() {
     throw new Error('Method not implemented.');
   }
+
+  calculateTotalForFooter(columnName: string) {
+    return this.dataSource?.data?.map((element) => element[columnName])
+      .reduce((acc, current) => acc + current, 0);
+  }
+
   onClickBack() {
     this.location.back();
   }

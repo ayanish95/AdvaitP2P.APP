@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -25,7 +25,7 @@ export class PendingPOForApprovalComponent implements OnInit {
     'srNo',
     'PONumber',
     'PODate',
-    'PRNumber',
+    // 'PRNumber',
     'DocType',
     'Supplier',
     'TotalPOAmount',

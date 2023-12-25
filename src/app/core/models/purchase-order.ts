@@ -71,10 +71,6 @@ export interface PurchaseOrderLineVM{
     IsReturnItem?: boolean;
     IsFreeOfCharge?: boolean;
     POHeaderId?: number,
-    GST?:number;
-    IGST?:number;
-    SGST?:number;
-    CGST?:number;
     IsSerialNo?: boolean;
     IsBatchNo?: boolean;
     IsASNGenerated?: boolean,
@@ -86,7 +82,7 @@ export interface PurchaseOrderLineVM{
     CreatedOn?: Date,
     UpdatedBy?: number,
     UpdatedOn?: Date,
-    IsDeleted?: true,
+    IsDeleted?: boolean,
     DeletedOn?: Date,
     Extra1?: string,
     Extra2?: string,

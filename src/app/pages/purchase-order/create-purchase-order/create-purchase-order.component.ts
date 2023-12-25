@@ -28,6 +28,7 @@ import { PurchaseOrderVM, PurchaseOrderLineVM } from '@core/models/purchase-orde
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { CompanyService } from '@core/services/company.service';
 import { Company } from '@core/models/company';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -140,7 +141,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
 
   constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService,
-    private supplierService: SupplierService, private prService: PurchaseRequistionService, private companyService: CompanyService,
+    private supplierService: SupplierService, private prService: PurchaseRequistionService, private companyService: CompanyService,private location: Location,
     private router: Router, private authService: AuthService, private purchaseOrderService: PurchaseOrderService) {
     this.dateAdapter.setLocale('en-GB');
     // DD/MM/YYYY
@@ -476,10 +477,11 @@ export class CreatePurchaseOrderComponent implements OnInit {
     if (docType && plant) {
       this.apiPRNoList(docType, plant?.Id);
     }
+    this.POLineItem = [];
+    this.dataSource.data = [];
   }
 
   onChangeCompanyCode(event: any) {
-    console.log('companycode', event);
     this.POHeaderForm.get('Plant')?.setValue(null);
     this.plantList = [];
     if (event && event?.CompanyCode) {
@@ -555,7 +557,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               PRHeaderId: item?.PRHeaderId,
               PRDetId: item?.Id,
               PRLineId: item?.Id,
-              Id: index + 1,
+              Id: this.POLineItem?.length + 1,
             });
           });
         });
@@ -720,5 +722,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
         },
       });
     }
+  }
+
+  onClickBack() {
+    this.location.back();
   }
 }

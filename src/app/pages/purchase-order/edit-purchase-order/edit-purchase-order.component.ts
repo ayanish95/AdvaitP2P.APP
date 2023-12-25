@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { DateAdapter } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,10 +26,11 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { AuthService } from '@core';
 import { Role } from '@core/enums/role';
-import { PurchaseOrderVM,PurchaseOrderLineVM } from '@core/models/purchase-order';
-import { States } from '@core/models/states';
-import { StateService } from '@core/services/state.service';
+import { PurchaseOrderVM, PurchaseOrderLineVM } from '@core/models/purchase-order';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
+import { Company } from '@core/models/company';
+import { CompanyService } from '@core/services/company.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-edit-purchase-order',
@@ -39,12 +40,12 @@ import { PurchaseOrderService } from '@core/services/purchase-order.service';
 export class EditPurchaseOrderComponent implements OnInit {
 
   POHeaderForm = this.fb.group({
-    DocType: ['', [Validators.required]],
-    CompanyCode: [''],
-    PRno: [null, [Validators.required]],
+    DocType: [{ value: '', disabled: true }, [Validators.required]],
+    CompanyCode: [{ value: '', disabled: true }],
+    Plant: [{ value: '', disabled: true }],
+    PRno: [{ value: '', disabled: true }],
     ContractNumber: [null],
-    SupplierCode: [null, [Validators.required]],
-    SupplierName: [''],
+    SupplierCode: [{ value: '', disabled: true }, [Validators.required]],
     RFQNumber: [null],
     PODate: [new Date(), [Validators.required]],
   });
@@ -55,10 +56,12 @@ export class EditPurchaseOrderComponent implements OnInit {
     Description: [''],
     ProductGroup: [''],
     Unit: [''],
+    Tax: ['', [Validators.required]],
     Qty: ['', [Validators.required]],
     NetPrice: ['', [Validators.required]],
     DeliveryDate: ['', [Validators.required]],
     StockType: ['', [Validators.required]],
+    // StorageLocation: ['', [Validators.required]],
     IsReturnItem: [false],
     IsFreeOfCharge: [false],
   });
@@ -82,9 +85,13 @@ export class EditPurchaseOrderComponent implements OnInit {
   filterprlist!: Observable<PurchaseRequisitionDetailsLine[]>;
   prDetailsData: PurchaseRequisitionDetailsLine[] = [];
   dataSource = new MatTableDataSource<any>();
+  companyCodeList!: Company[];
+  filteredCompanyCode!: Observable<Company[]>;
   index = 0;
   displayedColumns: string[] = [
     'srNo',
+    'ERPPRNUmber',
+    'PRLineId',
     'ProductCode',
     'Description',
     'ProductGroup',
@@ -98,7 +105,6 @@ export class EditPurchaseOrderComponent implements OnInit {
     'Currency',
     'DeliveryDate',
     'StockType',
-    'Plant',
     'Location',
     'IsReturnItem',
     'IsFreeOfCharge',
@@ -122,15 +128,22 @@ export class EditPurchaseOrderComponent implements OnInit {
   POLineItem: PurchaseOrderLineVM[] = [];
   supplierCurrency = 'INR';
   selectedSupplier!: Suppliers;
-  stateList!: States[];
   selectedLineId!: number;
   minDate!: Date;
   companyCode!: string;
   selectedPOId!: number;
 
-  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService, private stateService: StateService,
+  PRNoControl = new FormControl();
+  supplierControl = new FormControl();
+  docTypeControl = new FormControl();
+  companyCodeControl = new FormControl();
+  searchPlantControl = new FormControl();
+  searchProductControl = new FormControl();
+
+
+  constructor(private plantService: PlantService, private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private productService: ProductService,
     private storageLocationService: StorageLocationService, private toaster: ToastrService, private unitService: UnitService, private docTypeSerivce: DocTypeService, private supplierService: SupplierService,
-    private prService: PurchaseRequistionService, private poService: PurchaseOrderService,
+    private prService: PurchaseRequistionService, private poService: PurchaseOrderService, private companyService: CompanyService,private location: Location,
     private router: Router, private authService: AuthService, private purchaseOrderService: PurchaseOrderService, private route: ActivatedRoute,) {
     this.route.queryParams.subscribe((params: any) => {
       this.selectedPOId = params.id;
@@ -173,7 +186,7 @@ export class EditPurchaseOrderComponent implements OnInit {
               this.POHeaderForm.patchValue({
                 DocType: this.PODetails?.DocType as any,
                 PODate: this.PODetails?.PODate as any,
-                // SupplierCode: this.PODetails?.SupplierCode as any,
+                SupplierCode: this.PODetails?.Supplier?.SupplierCode + ' - ' + this.PODetails?.Supplier?.FirstName + ' ' + this.PODetails?.Supplier?.LastName as any,
                 // SupplierName: this.PODetails?.SupplierName as any,
                 PRno: this.PODetails?.PRHeaderId as any,
                 ContractNumber: this.PODetails?.ContractNumber as any,
@@ -184,22 +197,17 @@ export class EditPurchaseOrderComponent implements OnInit {
             this.PODetails.POLineItems?.forEach((item, index) => {
 
               this.POLineItem.push({
-                // Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
-                // ProductCode: item.ProductCode ? item.ProductCode : '',
-                // ProductGroup: item.ProductGroup,
-                // Description: item.ProductDescription,
+                Product: item?.Product,
+                ERPPRNumber: item?.ERPPRNumber,
                 Qty: item?.Qty,
                 DeliveryDate: item?.DeliveryDate,
-                Unit: this.unitList?.find(x => x.Id == item.UnitId),
-                // Plant: this.plantList?.find(x => x.Id == item.PlantId),
-                // StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
-                // LocationCode: item?.LocationCode,
-                // LocationDescription: item?.LocationDescription,
+                Unit: item?.Unit,
+                StorageLocation: item?.StorageLocation,
                 StorageLocationId: item.StorageLocationId,
                 NetPrice: item?.NetPrice,
                 TotalNetPrice: item?.TotalNetPrice,
                 Currency: item?.Currency,
-                Tax: item?.GST,
+                Tax: item?.Tax,
                 TaxAmount: item?.TaxAmount,
                 TotalAmount: item?.TotalAmount,
                 StockType: item?.StockType,
@@ -207,6 +215,7 @@ export class EditPurchaseOrderComponent implements OnInit {
                 IsReturnItem: item.IsReturnItem,
                 IsFreeOfCharge: item.IsFreeOfCharge,
                 POLineId: item?.Id,
+                IsDeleted:false,
                 Id: index + 1
               });
             });
@@ -229,8 +238,25 @@ export class EditPurchaseOrderComponent implements OnInit {
     this.apiUnit();
     this.apiProductList();
     this.apiPlantList();
-    this.apiStorageLocationList();
-    this.apiState();
+    // this.apiStorageLocationList();
+    this.apiCompanyCode();
+  }
+
+  apiCompanyCode() {
+    this.companyService.getCompanyList().subscribe({
+      next: (res: any) => {
+        if (res[ResultEnum.IsSuccess]) {
+          this.companyCodeList = res[ResultEnum.Model];
+          this.filteredCompanyCode = this.companyCodeControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterCompanyCode(value || ''))
+          );
+        }
+        else
+          this.toaster.error(res[ResultEnum.Message]);
+      },
+      error: (e) => { this.toaster.error(e.Message); }
+    });
   }
 
   apiDocType() {
@@ -339,50 +365,101 @@ export class EditPurchaseOrderComponent implements OnInit {
       });
   }
 
-  apiPlantList() {
-    this.plantService
-      .getPlantList()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.plantList = res[ResultEnum.Model];
-        }
-        else {
-          this.toaster.error(res[ResultEnum.Message]);
-        }
-      });
+  apiPlantList(companyCode?: string) {
+    if (!companyCode) {
+      this.plantService
+        .getPlantList().subscribe({
+          next: (res: any) => {
+            if (res[ResultEnum.IsSuccess]) {
+              this.plantList = res[ResultEnum.Model];
+              this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterPlant(value || ''))
+              );
+            }
+            else {
+              this.toaster.error(res[ResultEnum.Message]);
+            }
+          },
+          error: (e) => { this.toaster.error(e.Message); }
+        });
+    } else {
+      this.plantService
+        .getPlantListByCompanyCode(companyCode).subscribe({
+          next: (res: any) => {
+            if (res[ResultEnum.IsSuccess]) {
+              this.plantList = res[ResultEnum.Model];
+              this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterPlant(value || ''))
+              );
+            }
+            else {
+              this.plantList = [];
+              this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
+                startWith(''),
+                map(value => this.filterPlant(value || ''))
+              );
+              this.toaster.error(res[ResultEnum.Message]);
+            }
+          },
+          error: (e) => { this.toaster.error(e.Message); }
+        });
+    }
   }
 
-  apiStorageLocationList() {
-    this.storageLocationService.getAllLocationList().pipe(
-      finalize(() => {
-      })
-    )
-      .subscribe(res => {
+  apiStorageLocationList(plantCode: string) {
+    this.storageLocationService.getStorageLocationByPlantCode(plantCode).subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.locationList = res[ResultEnum.Model];
         }
         else {
           this.toaster.error(res[ResultEnum.Message]);
         }
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+    });
+  }
+
+  apiPRNoList(doctype?: string, plantId?: number) {
+    this.prService
+      .getAllPRNumberForPO(doctype, plantId).subscribe({
+        next: (res: any) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.prlist = res[ResultEnum.Model];
+            if (!this.prlist.length)
+              this.toaster.error(res[ResultEnum.Message]);
+
+            this.filteredprno = this.PRNoControl!.valueChanges.pipe(
+              startWith(''),
+              map(value => this.filterPrno(value || ''))
+            );
+          }
+          else
+            this.toaster.error(res[ResultEnum.Message]);
+        },
+        error: (e) => { this.toaster.error(e.Message); },
       });
   }
 
-  apiState() {
-    this.stateService.getStateList()
-      .pipe(finalize(() => { }))
-      .subscribe(res => {
+  apiProductByPlantCode(plantCode?: string) {
+    this.productService.getProductListByPlantCode(plantCode).subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
-          this.stateList = res[ResultEnum.Model];
-          // this.filteredStates = this.addressForm.get('state')!.valueChanges.pipe(
-          //   startWith(''),
-          //   map(value => this.filterStates(value || ''))
-          // );
+          this.productList = res[ResultEnum.Model];
+          if (this.productList?.length == 0)
+            this.toaster.error('Product not found in this plant, please select other plant...');
+          this.productList.map(x => x.ProductFullName = x.ProductCode + (x.Description ? ' - ' + x.Description : ''));
+          this.filteredProducts = this.searchProductControl!.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterProducts(value || ''))
+          );
         }
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+      complete() { },
+    });
   }
 
   filterDocType(name: any) {
@@ -395,6 +472,20 @@ export class EditPurchaseOrderComponent implements OnInit {
         doctype?.Type?.toLowerCase().includes(name.toLowerCase()));
     }
   }
+
+  filterProducts(name: any) {
+    return this.productList.filter(product =>
+      product?.ProductCode?.toLowerCase().includes(name.toLowerCase()) ||
+      product?.Description?.toLowerCase().includes(name.toLowerCase()));
+  }
+
+
+  filterCompanyCode(name: any) {
+    return this.companyCodeList.filter(company =>
+      company?.CompanyCode?.toLowerCase().includes(name.toLowerCase()) ||
+      company?.CompanyName?.toLowerCase().includes(name.toLowerCase()));
+  }
+
 
   filterPrno(name: any) {
     if (this.isSAPEnabled == 'true') {
@@ -479,38 +570,8 @@ export class EditPurchaseOrderComponent implements OnInit {
         plant?.Type?.toLowerCase().indexOf(name.toLowerCase()) === 0);
   }
 
-  suppliercodee(supplierCode: Suppliers) {
-    return supplierCode ? supplierCode.SupplierCode! : ''; ``;
-  }
-
-  prNumberDisplayFn(prno: any) {
-    return prno ? prno?.Id : '';
-  }
-  prNumberDisplayForSAPFn(prno: any) {
-    return prno ? prno?.ERPPRNumber : '';
-  }
-
-  docTypeDisplayFn(docType: DocTypes) {
-    return docType ? docType.Type! : '';
-  }
-
-  supplierDisplayFn(supplier: Suppliers) {
-    return supplier ? supplier.SupplierCode! : '';
-  }
-
   unitDisplayFn(units: Units) {
     return units ? units.UOM + ' - ' + units.MeasurementUnitName! : '';
-  }
-
-  plantDisplayFn(user: Plants) {
-    return user ? user.PlantCode + ' - ' + user.PlantName! : '';
-  }
-
-  storageLocationDisplayFn(location: StorageLocations) {
-    return location ? location.LocationCode + ' - ' + location.LocationName! : '';
-  }
-  productDisplayFn(product: Products) {
-    return product ? product.ProductCode! : '';
   }
 
   onKeyPress(evt: any) {
@@ -529,13 +590,39 @@ export class EditPurchaseOrderComponent implements OnInit {
     return true;
   }
 
+  getPRNUmberList() {
+    const docType = this.POHeaderForm.get('DocType')?.value;
+    const plant = this.POHeaderForm.get('Plant')?.value as any;
+    if (docType && plant) {
+      this.apiPRNoList(docType, plant?.Id);
+    }
+  }
+
+  onChangeCompanyCode(event: any) {
+    this.POHeaderForm.get('Plant')?.setValue(null);
+    this.plantList = [];
+    if (event && event?.CompanyCode) {
+      this.apiPlantList(event?.CompanyCode);
+    }
+  }
+
+  onChangePlant(event: any) {
+    this.locationList = [];
+    // this.POLineForm.get('StorageLocation')?.setValue(null);
+    if (event) {
+      this.POHeaderForm.get('CompanyCode')?.setValue(this.companyCodeList.find(x => x.CompanyCode == event?.CompanyCode) as any);
+      this.apiProductByPlantCode(event?.PlantCode);
+      this.apiStorageLocationList(event?.PlantCode);
+    }
+  }
+
   onSelectChangeSupplier(event: any) {
 
     const supplier = this.suppliercodelist.find(x => x.SupplierCode?.toLowerCase() == event?.SupplierCode?.toLowerCase());
     if (supplier) {
       this.selectedSupplier = supplier;
       this.supplierCurrency = supplier?.Currency ? supplier?.Currency : 'INR';
-      this.POHeaderForm.get('SupplierName')?.setValue(supplier.FirstName + ' ' + supplier.LastName);
+      // this.POHeaderForm.get('SupplierName')?.setValue(supplier.FirstName + ' ' + supplier.LastName);
     }
   }
 
@@ -556,11 +643,12 @@ export class EditPurchaseOrderComponent implements OnInit {
       this.minDate = new Date(data.DeliveryDate);
       //this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
       this.POLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode)?.ProductCode as any,
-        Description: data?.Description,
-        ProductGroup: data?.ProductGroup,
+        Product: data?.Product?.ProductCode as any,
+        Description: data?.Product?.Description,
+        ProductGroup: data?.Product?.ProductGroup,
+        Tax: data.Tax,
         Qty: data.Qty,
-        Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
+        Unit: data?.Unit as any,
         NetPrice: data?.NetPrice,
         DeliveryDate: data.DeliveryDate,
         StockType: data.StockType,
@@ -586,7 +674,7 @@ export class EditPurchaseOrderComponent implements OnInit {
   }
 
   onClickUpdateProduct() {
-    const POline = this.POLineForm.value;
+    const POline = this.POLineForm.value as any;
     if (this.selectedLineId > 0) {
       this.POLineItem.forEach(item => {
 
@@ -600,7 +688,7 @@ export class EditPurchaseOrderComponent implements OnInit {
 
           let taxAmount = 0;
           if (totalNetPrice) {
-            taxAmount = Math.round((totalNetPrice * (item.Tax ? item.Tax : 0)) / 100);
+            taxAmount = Math.round((totalNetPrice * (POline.Tax ? POline.Tax : 0)) / 100);
           }
           let totalAmount = 0;
           if (totalNetPrice) {
@@ -611,6 +699,7 @@ export class EditPurchaseOrderComponent implements OnInit {
           item.Qty = qty;
           item.NetPrice = !IsFreeOfCharge ? netPrice : 0;
           item.TotalNetPrice = !IsFreeOfCharge ? totalNetPrice : 0;
+          item.Tax = !IsFreeOfCharge ? POline.Tax : 0;
           item.TaxAmount = !IsFreeOfCharge ? taxAmount : 0;
           item.TotalAmount = !IsFreeOfCharge ? totalAmount : 0;
           item.StockType = POline.StockType as any;
@@ -633,35 +722,42 @@ export class EditPurchaseOrderComponent implements OnInit {
       throw this.toaster.error('Purchase order must have one line item, you can not delete....');
 
     const id = this.selectedLineId;
-    this.POLineItem.forEach((element, index) => {
-      element.Id = index + 1;
-      if (element.Id == id) {
-        if (element?.POLineId) {
-          this.poService.deletePOLineByLineId(element.POLineId ? element.POLineId : 0).subscribe({
-            next: (res: any) => {
-              if (res[ResultEnum.IsSuccess]) {
-                this.toaster.success(res.Message);
-                this.POLineItem.splice(index, 1);
-                this.POLineItem.forEach((element, index) => {
-                  element.Id = index + 1;
-                });
-                this.dataSource = new MatTableDataSource<any>(this.POLineItem);
-              }
-              else {
-                this.toaster.error(res.Message);
-              }
-            },
-            error: (e) => { this.toaster.error(e.Message); },
-            complete() {
+    const index: number = this.POLineItem.findIndex(x => x.Id == this.selectedLineId);
+    if (index !== -1) {
+      this.POLineItem[index].IsDeleted=true;
+    }
+    this.dataSource.data = this.POLineItem.filter(x=>x.IsDeleted==false);
+  
+    //Currently commented code for direct delete from database
+    // this.POLineItem.forEach((element, index) => {
+      //   element.Id = index + 1;
+      //   if (element.Id == id) {
+        //     if (element?.POLineId) {
+    //       this.poService.deletePOLineByLineId(element.POLineId ? element.POLineId : 0).subscribe({
+    //         next: (res: any) => {
+    //           if (res[ResultEnum.IsSuccess]) {
+    //             this.toaster.success(res.Message);
+    //             this.POLineItem.splice(index, 1);
+    //             this.POLineItem.forEach((element, index) => {
+    //               element.Id = index + 1;
+    //             });
+    //             this.dataSource = new MatTableDataSource<any>(this.POLineItem);
+    //           }
+    //           else {
+    //             this.toaster.error(res.Message);
+    //           }
+    //         },
+    //         error: (e) => { this.toaster.error(e.Message); },
+    //         complete() {
 
-            },
-          });
-        }
-        this.dialog.closeAll();
-       
-      }
-    });
-   
+    //         },
+    //       });
+    //     }
+    //     this.dialog.closeAll();
+
+    //   }
+    // });
+    this.dialog.closeAll();
     this.selectedLineId = 0;
   }
   onClickUpdatePO() {
@@ -707,5 +803,9 @@ export class EditPurchaseOrderComponent implements OnInit {
         },
       });
     }
+  }
+
+  onClickBack() {
+    this.location.back();
   }
 }
