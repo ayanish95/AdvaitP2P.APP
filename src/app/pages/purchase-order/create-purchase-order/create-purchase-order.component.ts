@@ -24,7 +24,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { AuthService } from '@core';
 import { Role } from '@core/enums/role';
-import { PurchaseOrderDataVM, PurchaseOrderLine } from '@core/models/purchase-order';
+import { PurchaseOrderVM, PurchaseOrderLineVM } from '@core/models/purchase-order';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { CompanyService } from '@core/services/company.service';
 import { Company } from '@core/models/company';
@@ -90,8 +90,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     'srNo',
     'PRNumber',
     'PRLineId',
-    'ProductCode',
-    'Description',
+    'Product',
     'ProductGroup',
     'Qty',
     'Unit',
@@ -125,7 +124,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
   currentUserId!: number;
   rightsForApproval = false;
   PRDetails!: PurchaseRequisitionDetailsVM[];
-  POLineItem: PurchaseOrderLine[] = [];
+  POLineItem: PurchaseOrderLineVM[] = [];
   supplierCurrency = 'INR';
   selectedSupplier!: Suppliers;
   selectedLineId!: number;
@@ -312,7 +311,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               );
             }
             else {
-              this.plantList =[];
+              this.plantList = [];
               this.filteredPlants = this.searchPlantControl!.valueChanges.pipe(
                 startWith(''),
                 map(value => this.filterPlant(value || ''))
@@ -429,9 +428,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
   }
 
   filterPlant(name: any) {
-      return this.plantList.filter(plant =>
-        plant?.PlantName?.toLowerCase().includes(name?.toLowerCase()) ||
-        plant?.PlantCode?.toLowerCase().includes(name?.toLowerCase()));
+    return this.plantList.filter(plant =>
+      plant?.PlantName?.toLowerCase().includes(name?.toLowerCase()) ||
+      plant?.PlantCode?.toLowerCase().includes(name?.toLowerCase()));
   }
 
   filterStockType(name: any) {
@@ -442,37 +441,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
   suppliercodee(supplierCode: Suppliers) {
     return supplierCode ? supplierCode.SupplierCode! : ''; ``;
   }
-
-  prNumberDisplayFn(prno: any) {
-    return prno ? prno?.Id : '';
-  }
-  prNumberDisplayForSAPFn(prno: any) {
-    return prno ? prno?.ERPPRNumber : '';
-  }
-
-  docTypeDisplayFn(docType: DocTypes) {
-    return docType ? docType.Type! : '';
-  }
-
-  supplierDisplayFn(supplier: Suppliers) {
-    return supplier ? supplier.SupplierCode! : '';
-  }
-
   unitDisplayFn(units: Units) {
     return units ? units.UOM + ' - ' + units.MeasurementUnitName! : '';
   }
-
-  plantDisplayFn(user: Plants) {
-    return user ? user.PlantCode + ' - ' + user.PlantName! : '';
-  }
-
-  storageLocationDisplayFn(location: StorageLocations) {
-    return location ? location.LocationCode + ' - ' + location.LocationName! : '';
-  }
-  productDisplayFn(product: Products) {
-    return product ? product.ProductCode! : '';
-  }
-
+  
   // openModelForAddItem(templateRef: TemplateRef<any>) {
   //   this.PRLineForm.reset();
   //   this.PRLineForm.updateValueAndValidity();
@@ -556,19 +528,20 @@ export class CreatePurchaseOrderComponent implements OnInit {
             const product = this.productList?.find(x => x.ProductCode == item.ProductCode);
 
             this.POLineItem.push({
-              // Product: product,
+              Product: item.Product,
               ERPPRNumber: item?.ERPPRNumber ? item?.ERPPRNumber : '',
               ProductId: item.ProductId,
-              ProductCode: item.ProductCode ? item.ProductCode : '',
-              ProductGroup: item.ProductGroup,
-              Description: item.ProductDescription,
+              // ProductCode: item.ProductCode ? item.ProductCode : '',
+              // ProductGroup: item.ProductGroup,
+              // Description: item.ProductDescription,
               Qty: item?.Qty,
               DeliveryDate: item?.DeliveryDate,
-              Unit: this.unitList?.find(x => x.Id == item.UnitId),
+              Unit: item?.Unit,
               UnitId: item.UnitId,
               // Plant: this.plantList?.find(x => x.Id == item.PlantId),
-              LocationCode: item?.LocationCode,
-              LocationDescription: item?.LocationDescription,
+              // LocationCode: item?.LocationCode,
+              // LocationDescription: item?.LocationDescription,
+              StorageLocation: item.StorageLocation,
               StorageLocationId: item.StorageLocationId,
               NetPrice: item?.NetPrice,
               TotalNetPrice: item?.TotalNetPrice,
@@ -582,7 +555,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               PRHeaderId: item?.PRHeaderId,
               PRDetId: item?.Id,
               PRLineId: item?.Id,
-              Id: index + 1
+              Id: index + 1,
             });
           });
         });
@@ -615,9 +588,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
       this.minDate = new Date(data.DeliveryDate);
       //this.onChangePlant(data?.Plant?.PlantCode, true, data?.StorageLocation?.Id);
       this.POLineForm.patchValue({
-        Product: this.productList?.find(x => x.ProductCode == data?.Product?.ProductCode)?.ProductCode as any,
-        Description: data?.Description,
-        ProductGroup: data?.ProductGroup,
+        Product: data?.Product?.ProductCode as any,
+        Description: data?.Product?.Description,
+        ProductGroup: data?.Product.ProductGroup,
         Qty: data.Qty,
         Tax: data.Tax,
         Unit: this.unitList.find(x => x.Id == data?.Unit?.Id) as any,
@@ -705,6 +678,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
     }
     this.dialog.closeAll();
   }
+  
   onClickCreatePO() {
     if (this.POLineItem?.length == 0)
       throw this.toaster.error('Please select alteast one product for create purchase order...');
@@ -712,12 +686,10 @@ export class CreatePurchaseOrderComponent implements OnInit {
     if (this.POHeaderForm.valid) {
       const PRHeaderData = this.POHeaderForm.value as any;
       let PRHeaderIds = PRHeaderData.PRno?.map((x: any) => x.Id);
-      const PODetails: PurchaseOrderDataVM = {
+      const PODetails: PurchaseOrderVM = {
         Id: 0,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData.SupplierCode?.Id as any,
-        SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-        SupplierName: PRHeaderData.SupplierCode?.FirstName + ' ' + PRHeaderData.SupplierCode?.LastName as any,
         PRHeaderId: PRHeaderIds,
         ContractNumber: PRHeaderData.ContractNumber,
         RFQHeaderId: PRHeaderData.RFQNumber,

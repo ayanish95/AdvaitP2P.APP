@@ -1,73 +1,56 @@
+import { Company } from './company';
 import { Plants } from './plants';
 import { Products } from './products';
 import { StorageLocations } from './storage-location';
+import { Suppliers } from './suppliers';
 import { Units } from './units';
 
-export interface PurchaseOrderHeader{
-    Id?:number;
-    ERPPONumber:string;
-    ERPPRNumber?:string;
-    DocType:string;
-    SupplierId?:number;
-    SupplierCode?:string;
-    SupplierName?:string;
-    PODate?:Date;
-    CompanyCode?:string;
-    PRHeaderId?:number;
-    RFQHeaderId?:number;
-    OAHeaderId?:number;
-    CreatedBy?:number;
-    CreatedOn?:Date;
-    UpdatedBy?:number;
-    UpdatedOn?:Date;
-    IsActive?:boolean;
-    IsDeleted?:boolean;
-    DeletedOn?:Date;
-    Extra1:string;
-    Extra2:string;
-    ApproverId?: number;
-    IsApprovedByAll?: boolean;
-    IsRejected?: boolean;
-    RejectedBy?: number;
-    RejectedDate?: Date;
-    POPendingBy?: string;
-    IsApprovalStart?: boolean;
-    TotalNetPrice?: number;
-    TotalTaxAmount?: number;
-    TotalPOAmount?: number;
-}
-
-export interface PurchaseOrderDataVM{
+export interface PurchaseOrderVM{
     Id?:number;
     ERPPONumber?:string;
     DocType:string;
     SupplierId?:number;
-    SupplierCode?:string;
-    SupplierName?:string;
+    Supplier?:Suppliers;
     PODate?:Date;
     PRHeaderId?:number;
     RFQHeaderId?:number;
     OAHeaderId?:number;
     ContractNumber?:string;
     CompanyCode?:string;
+    Company?:Company;
+    PlantId?: number;
+    Plant?:Plants;
     TotalNetPrice?: number;
     TotalTaxAmount?: number;
     TotalPOAmount?: number;
-    PlantId?: number;
-    POLineItems:PurchaseOrderLine[];
+    ERPPRNumber?:string;
+    POPendingBy?: string;
+    ApproverId?: number;
+    IsApprovedByAll?: boolean;
+    CreatedOn?:Date;
+    CreatedBy?:number;
+    UpdatedBy?:number;
+    UpdatedOn?:Date;
+    IsActive?:boolean;
+    IsDeleted?:boolean;
+    DeletedOn?:Date;
+    IsRejected?: boolean;
+    RejectedBy?: number;
+    RejectedDate?: Date;
+    IsApprovalStart?: boolean;
+    Extra1?:string;
+    Extra2?:string;
+    POLineItems:PurchaseOrderLineVM[];
 }
 
-export interface PurchaseOrderLine{
+export interface PurchaseOrderLineVM{
     Id:number;
     POLineId?:number;
     PRHeaderId?:number;
     PRLineId?:number;
     ERPPRNumber?:string;
-    // Product?:Products;
     ProductId?:number;
-    Description?:string;
-    ProductCode?:string;
-    ProductGroup?:string;
+    Product?:Products;
     DeliveryDate?:Date;
     Qty?: number;
     Unit?: Units;
@@ -80,100 +63,31 @@ export interface PurchaseOrderLine{
     TaxAmount?:number;
     TotalAmount?:number;
     StockType?:string;
-    LocationCode?:string;
-    LocationDescription?:string;
-    // StorageLocation?: StorageLocations;
+    StorageLocation?: StorageLocations;
     StorageLocationId?: number;
-    Plant?: Plants;
     PRDetId?: number;
     RFQDetId?: number;
     OADetId?: number;
     IsReturnItem?: boolean;
     IsFreeOfCharge?: boolean;
-}
-
-export interface PurchaseOrderDetailsVM{
-    Id?:number;
-    ERPPONumber:string;
-    DocType:string;
-    SupplierId?:number;
-    SupplierCode?:string;
-    SupplierName?:string;
-    PODate?:Date;
-    CompanyCode?:string;
-    PRHeaderId?:number;
-    RFQHeaderId?:number;
-    OAHeaderId?:number;
-    CreatedBy?:number;
-    CreatedOn?:Date;
-    UpdatedBy?:number;
-    UpdatedOn?:Date;
-    IsActive?:boolean;
-    IsDeleted?:boolean;
-    DeletedOn?:Date;
-    Extra1:string;
-    Extra2:string;
-    ApproverId?: number;
-    IsApprovedByAll?: boolean;
-    IsRejected?: boolean;
-    RejectedBy?: number;
-    RejectedDate?: Date;
-    PRPendingBy?: string;
-    IsApprovalStart?: boolean;
-    TotalNetPrice?: number;
-    TotalTaxAmount?: number;
-    TotalPOAmount?: number;
-    POLineItems:PurchaseOrderDetailsLine[];
-    ContractNumber?:string;
-}
-
-export interface PurchaseOrderDetailsLine{
-    Id?: number,
-    POHeaderId: number,
-    ProductId: number,
-    ProductCode: string,
-    ProductDescription: string,
-    ProductGroup: string,
-    Qty: number,
-    DeliveryDate: Date,
-    UnitId: number,
-    UnitName: string,
-    UnitDescription: string,
-    PlantId: number,
-    PlantCode: string,
-    PlantDescription: string,
-    StorageLocationId: number,
-    LocationCode: string,
-    LocationDescription: string,
-    NetPrice?:number;
-    TotalNetPrice?:number;
-    Currency?:string;
-    HSNCode?:string;
+    POHeaderId?: number,
     GST?:number;
     IGST?:number;
     SGST?:number;
     CGST?:number;
-    TaxAmount?:number;
-    TotalAmount?:number;
-    StockType?:string;
-    PRDetId?: number;
-    RFQDetId?: number;
-    OADetId?: number;
-    IsReturnItem?: boolean;
-    IsFreeOfCharge?: boolean;
     IsSerialNo?: boolean;
     IsBatchNo?: boolean;
     IsASNGenerated?: boolean,
     IsGRGenerated?: boolean,
     IsInvoiceGenerated?: boolean,
     IsQualityChecked?: boolean,
-    IsActive: boolean,
-    CreatedBy: number,
-    CreatedOn: Date,
-    UpdatedBy: number,
-    UpdatedOn: Date,
-    IsDeleted: true,
-    DeletedOn: Date,
-    Extra1: string,
-    Extra2: string,
+    IsActive?: boolean,
+    CreatedBy?: number,
+    CreatedOn?: Date,
+    UpdatedBy?: number,
+    UpdatedOn?: Date,
+    IsDeleted?: true,
+    DeletedOn?: Date,
+    Extra1?: string,
+    Extra2?: string,
 }

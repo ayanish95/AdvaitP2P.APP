@@ -14,7 +14,7 @@ import { DocTypeService } from '@core/services/doc-type.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { SupplierService } from '@core/services/supplier.service';
-import { PurchaseOrderDetailsVM } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
@@ -61,7 +61,7 @@ export class EditAsnComponent {
   locationList!: StorageLocations[];
   filteredlocation!: Observable<StorageLocations[]>;
 
-  PoDetails!: PurchaseOrderDetailsVM;
+  PoDetails!: PurchaseOrderVM;
   ASNDetails!: AdvancedShipmentNotificationVM;
 
   //POLineItems: PurchaseOrderDetailsLine[] = [];

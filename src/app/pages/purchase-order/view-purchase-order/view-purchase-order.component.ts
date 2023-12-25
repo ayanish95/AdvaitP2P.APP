@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
-import { PurchaseRequisitionDataVM, PurchaseRequisitionDetailsVM } from '@core/models/purchase-requistion';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import template from '@core/purchaseordertemplate';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
-import { PurchaseOrderDetailsVM } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';
 
@@ -31,13 +30,12 @@ export class ViewPurchaseOrderComponent {
     'Qty',
     'Unit',
     'DeliveryDate',
-    'Plant',
     'Location',
     'Close',
 
   ];
   PRId!: number;
-  PODetails!: PurchaseOrderDetailsVM;
+  PODetails!: PurchaseOrderVM;
   dataSource = new MatTableDataSource<any>();
   index = 0;
   constructor(private PRService: PurchaseRequistionService,
@@ -137,12 +135,12 @@ export class ViewPurchaseOrderComponent {
 
       Podate = formatDate(  this.PODetails.PODate?.toString()??'' ,'dd-MM-yyyy', 'en-US');
 
-      Suppliercode = this.PODetails.SupplierCode ?? '';
-      Suppliername = this.PODetails.SupplierName ?? '';
-      Plantname = this.PODetails.POLineItems[0].PlantDescription ?? '';
-      city = this.PODetails.SupplierName ?? '';
-      orderBy = this.PODetails.SupplierName ?? '';
-      remarks = this.PODetails.SupplierName ?? '';
+      // Suppliercode = this.PODetails.SupplierCode ?? '';
+      // Suppliername = this.PODetails.SupplierName ?? '';
+     // Plantname = this.PODetails.POLineItems[0].PlantDescription ?? '';
+      // city = this.PODetails.SupplierName ?? '';
+      // orderBy = this.PODetails.SupplierName ?? '';
+      // remarks = this.PODetails.SupplierName ?? '';
 
     }
 
@@ -164,13 +162,13 @@ export class ViewPurchaseOrderComponent {
 
       orderRow += '<tr>';
       orderRow += '<td>' + (1 + i) + '</td>';
-      orderRow += '<td>' + this.PODetails.POLineItems[i].ProductCode + '</td>';
-      orderRow += '<td>' + this.PODetails.POLineItems[i].ProductDescription + '</td>';
+      // orderRow += '<td>' + this.PODetails.POLineItems[i].ProductCode + '</td>';
+     // orderRow += '<td>' + this.PODetails.POLineItems[i].ProductDescription + '</td>';
       orderRow += '<td>' +   + '</td>';
       orderRow += '<td>' + this.PODetails.POLineItems[i].Qty + '</td>';
-      orderRow +='<td>' + this.PODetails.POLineItems[i].UnitName + '</td>';
+      //orderRow +='<td>' + this.PODetails.POLineItems[i].UnitName + '</td>';
       orderRow +='<td>' +  this.PODetails.POLineItems[i].NetPrice+ '</td>';
-      orderRow +='<td>' + formatDate(  this.PODetails.POLineItems[i].DeliveryDate  ,'dd-MM-yyyy', 'en-US'); + '</td>';
+      //orderRow +='<td>' + formatDate(  this.PODetails.POLineItems[i].DeliveryDate  ,'dd-MM-yyyy', 'en-US'); + '</td>';
       orderRow +='<td>' +  this.PODetails.POLineItems[i].TotalNetPrice+ '</td>';
 
       orderRow += '</tr>';

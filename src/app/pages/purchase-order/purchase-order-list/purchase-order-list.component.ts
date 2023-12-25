@@ -8,7 +8,7 @@ import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { ApprovalStrategy } from '@core/models/approval-type';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { ApprovalStrategyService } from '@core/services/approval-strategy.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { ToastrService } from 'ngx-toastr';
@@ -44,8 +44,8 @@ export class PurchaseOrderListComponent {
   dataSource1: any;
   currentPage = 1;
   pageSize = 10;
-  POHeaderList!: PurchaseOrderHeader[];
-  pendingPOHeaderList!: PurchaseOrderHeader[];
+  POHeaderList!: PurchaseOrderVM[];
+  pendingPOHeaderList!: PurchaseOrderVM[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
   filter: Filter = new Filter();

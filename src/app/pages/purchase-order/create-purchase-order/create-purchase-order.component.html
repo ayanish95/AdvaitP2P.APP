@@ -187,19 +187,14 @@
               <td mat-cell *matCellDef="let element"> {{element?.PRLineId}}</td>
               <th mat-footer-cell *matFooterCellDef> </th>
             </ng-container>
-            <ng-container matColumnDef="ProductCode">
-              <th mat-header-cell *matHeaderCellDef> Product Code </th>
-              <td mat-cell *matCellDef="let element"> {{element?.ProductCode}}</td>
+            <ng-container matColumnDef="Product">
+              <th mat-header-cell *matHeaderCellDef> Product </th>
+              <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductCode}} - {{element?.Product?.Description}}</td>
               <th mat-footer-cell *matFooterCellDef> </th>
-            </ng-container>
-            <ng-container matColumnDef="Description">
-              <th mat-header-cell *matHeaderCellDef> Description </th>
-              <td mat-cell *matCellDef="let element"> {{element?.Description}} </td>
-              <td mat-footer-cell *matFooterCellDef> </td>
             </ng-container>
             <ng-container matColumnDef="ProductGroup">
               <th mat-header-cell *matHeaderCellDef> Product Group </th>
-              <td mat-cell *matCellDef="let element"> {{element?.ProductGroup}} </td>
+              <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductGroup}} </td>
               <td mat-footer-cell *matFooterCellDef> </td>
             </ng-container>
             <ng-container matColumnDef="Qty">
@@ -209,7 +204,7 @@
             </ng-container>
             <ng-container matColumnDef="Unit">
               <th mat-header-cell *matHeaderCellDef> Unit </th>
-              <td mat-cell *matCellDef="let element"> {{element?.Unit?.UnitName}} </td>
+              <td mat-cell *matCellDef="let element"> {{element?.Unit?.UOM}} </td>
               <td mat-footer-cell *matFooterCellDef> </td>
             </ng-container>
             <ng-container matColumnDef="NetPrice">
@@ -273,8 +268,8 @@
             </ng-container> -->
             <ng-container matColumnDef="Location">
               <th mat-header-cell *matHeaderCellDef> Location </th>
-              <td mat-cell *matCellDef="let element"> {{element?.LocationCode}} -
-                {{element?.LocationDescription}} </td>
+              <td mat-cell *matCellDef="let element"> {{element?.StorageLocation?.LocationCode}} -
+                {{element?.StorageLocation?.LocationName}} </td>
               <td mat-footer-cell *matFooterCellDef> </td>
             </ng-container>
             <ng-container matColumnDef="IsReturnItem">
@@ -345,11 +340,11 @@
         </div>
         <div class="col-sm-6">
           <label class="custom-label">
-            <h5>Description</h5>
+            <h5>Product Description</h5>
           </label>
           <mat-form-field appearance="outline" class="demo-full-width">
             <input matInput type="text" formControlName="Description"
-                   placeholder="Product Group">
+                   placeholder="Product Description">
 
           </mat-form-field>
         </div>

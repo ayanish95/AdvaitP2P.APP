@@ -9,7 +9,7 @@ import { ApprovalStrategyService } from '@core/services/approval-strategy.servic
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { ToastrService } from 'ngx-toastr';
 import { AdvanceShippingNotificationService } from './../../../core/services/advance-shipment-notification.service';
-import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
 
 @Component({
@@ -19,8 +19,8 @@ import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-no
 })
 export class AsnListComponent implements OnInit {
 
-  ASNList!: PurchaseOrderHeader[];
-  pendingASNList!: PurchaseOrderHeader[];
+  ASNList!: PurchaseOrderVM[];
+  pendingASNList!: PurchaseOrderVM[];
   AsnallList!: AdvancedShipmentNotificationVM[];
   @ViewChild('paginator')
   paginator!: MatPaginator;

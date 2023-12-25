@@ -7,7 +7,7 @@ import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { ApprovalStrategy } from '@core/models/approval-type';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { ApprovalStrategyService } from '@core/services/approval-strategy.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { ToastrService } from 'ngx-toastr';
@@ -19,7 +19,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./all-purchase-order-list.component.scss']
 })
 export class AllPurchaseOrderListComponent implements OnInit {
-  @Input() allPOHeaderList!: PurchaseOrderHeader[];
+  @Input() allPOHeaderList!: PurchaseOrderVM[];
   @Input() ApprovalStrategyList!: ApprovalStrategy[];
   @Output() LoadAllPO: EventEmitter<string> = new EventEmitter<string>();
   displayedColumns: string[] = [

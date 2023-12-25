@@ -7,7 +7,7 @@ import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-notification';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
@@ -20,7 +20,7 @@ import { finalize } from 'rxjs';
 })
 export class AllAsnListComponent implements OnInit, OnChanges {
   @Input() allASNList!: AdvancedShipmentNotificationVM[];
-  @Input() allPOList!: PurchaseOrderHeader[];
+  @Input() allPOList!: PurchaseOrderVM[];
   @Input() Type!:string;
   @Output() LoadAllASN: EventEmitter<string> = new EventEmitter<string>();
 

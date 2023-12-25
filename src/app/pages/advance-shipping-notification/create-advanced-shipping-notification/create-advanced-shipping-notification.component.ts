@@ -17,7 +17,7 @@ import { Observable, finalize, map, startWith } from 'rxjs';
 import { Suppliers } from '@core/models/suppliers';
 import { SupplierService } from '@core/services/supplier.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
-import { PurchaseOrderDetailsVM, PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { ASNDetailsLine, AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
@@ -55,8 +55,8 @@ export class CreateAdvancedShippingNotificationComponent {
     items: new FormArray([]),
   });
 
-  approvedPolist: PurchaseOrderHeader[] = [];
-  filteredprno!: Observable<PurchaseOrderHeader[]>;
+  approvedPolist: PurchaseOrderVM[] = [];
+  filteredprno!: Observable<PurchaseOrderVM[]>;
 
   suppliercodelist!: Suppliers[];
   filtersupplierCode!: Observable<Suppliers[]>;
@@ -74,7 +74,7 @@ export class CreateAdvancedShippingNotificationComponent {
   locationList!: StorageLocations[];
   filteredlocation!: Observable<StorageLocations[]>;
 
-  PoDetails!: PurchaseOrderDetailsVM;
+  PoDetails!: PurchaseOrderVM;
 
   //POLineItems: PurchaseOrderDetailsLine[] = [];
   ASNLineItems: ASNDetailsLine[] = [];
@@ -213,32 +213,32 @@ export class CreateAdvancedShippingNotificationComponent {
                 DocType: this.PoDetails.DocType as any,
                 Documentdate: this.formatDate(this.PoDetails.PODate) as any,
                 SupplierId: this.PoDetails.SupplierId as any,
-                SupplierCode: this.PoDetails.SupplierCode as any,
-                SupplierName: this.PoDetails.SupplierName as any,
+                // SupplierCode: this.PoDetails.SupplierCode as any,
+                // SupplierName: this.PoDetails.SupplierName as any,
               });
             }
 
             this.PoDetails.POLineItems?.forEach((item, index) => {
               this.ASNLineItems.push({
-                ProductCode: item ? item?.ProductCode : '',
-                ProductDescription: item ? item?.ProductDescription : '',
+                // ProductCode: item ? item?.ProductCode : '',
+                // ProductDescription: item ? item?.ProductDescription : '',
                 LineId: 0,
-                POHeaderId: item ? item?.POHeaderId : 0,
+                // POHeaderId: item ? item?.POHeaderId : 0,
                 POLineId: item?.Id ? item?.Id : 0,
-                ProductId: item ? item?.ProductId : 0,
-                ProductGroup: item ? item?.ProductGroup : '',
-                POQty: item ? item?.Qty : 0,
-                Qty: item ? item?.Qty : 0,
-                DeliveryDate: item.DeliveryDate,
-                UnitId: item ? item?.UnitId : 0,
-                UnitName: item ? item?.UnitName : '',
-                UnitDescription: item ? item?.UnitDescription : '',
-                PlantId: item ? item?.POHeaderId : 0,
-                PlantCode: item ? item?.PlantCode : '',
-                PlantDescription: item ? item?.PlantDescription : '',
-                StorageLocationId: item ? item?.StorageLocationId : 0,
-                LocationCode: item ? item?.LocationCode : '',
-                LocationDescription: item ? item?.LocationDescription : '',
+                // ProductId: item ? item?.ProductId : 0,
+                // ProductGroup: item ? item?.ProductGroup : '',
+                 POQty: item ? item?.Qty : 0 as any,
+                // Qty: item ? item?.Qty : 0,
+                // DeliveryDate: item.DeliveryDate,
+                // UnitId: item ? item?.UnitId : 0,
+                // UnitName: item ? item?.UnitName : '',
+                // UnitDescription: item ? item?.UnitDescription : '',
+                // PlantId: item ? item?.POHeaderId : 0,
+                // PlantCode: item ? item?.PlantCode : '',
+                // PlantDescription: item ? item?.PlantDescription : '',
+                // StorageLocationId: item ? item?.StorageLocationId : 0,
+                // LocationCode: item ? item?.LocationCode : '',
+                // LocationDescription: item ? item?.LocationDescription : '',
                 IsActive: false,
                 IsReturnItem: item?.IsReturnItem,
                 IsGRGenerated: item?.IsGRGenerated,
@@ -529,14 +529,14 @@ export class CreateAdvancedShippingNotificationComponent {
       const asnLineDetails = this.batchAndSerialNoList.filter(x=>x.PoDetId == element.POLineId);
       lineDet.push({
         ASNHeaderId: 0,
-        POId: element.POHeaderId,
-        PODetId: element.POLineId,
-        ProductCode: element.ProductCode,
-        ProductDescription: element.ProductDescription,
-        ProductGroup: element.ProductGroup,
+        POId: element.POHeaderId as any,
+        PODetId: element.POLineId as any,
+        ProductCode: element.ProductCode as any,
+        ProductDescription: element.ProductDescription as any,
+        ProductGroup: element.ProductGroup as any,
         StockType: element.StockType ? element.StockType : '',
-        Plant: element.PlantCode,
-        StorageLocation: element.LocationCode,
+        Plant: element.PlantCode as any,
+        StorageLocation: element.LocationCode as any,
         OpenGRQty: element.OpenGRQty ? element.OpenGRQty : 0,
         DeliveryQty: element.Qty ? element.Qty : 0,
         DeliveryDate: element.DeliveryDate,

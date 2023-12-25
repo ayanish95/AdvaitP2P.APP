@@ -6,7 +6,7 @@ import { AuthService } from '@core';
 import { ResultEnum } from '@core/enums/result-enum';
 import { Role } from '@core/enums/role';
 import { Filter, OrderBy } from '@core/models/base-filter';
-import { PurchaseOrderHeader } from '@core/models/purchase-order';
+import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
@@ -18,7 +18,7 @@ import { finalize } from 'rxjs';
 })
 export class PendingPOForApprovalComponent implements OnInit {
 
-  @Input() PendingPOHeaderList!: PurchaseOrderHeader[];
+  @Input() PendingPOHeaderList!: PurchaseOrderVM[];
   @Output() LoadPendingPO: EventEmitter<string> = new EventEmitter<string>();
 
   displayedColumns: string[] = [

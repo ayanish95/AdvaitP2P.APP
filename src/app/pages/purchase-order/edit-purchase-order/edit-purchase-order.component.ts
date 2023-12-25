@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResultEnum } from '@core/enums/result-enum';
 import { DocTypes } from '@core/models/doc-type';
 import { Suppliers } from '@core/models/suppliers';
-import { PurchaseRequisitionDetailsVM, PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
+import { PurchaseRequisitionHeader } from '@core/models/purchase-requistion';
 import { Plants } from '@core/models/plants';
 import { Products } from '@core/models/products';
 import {
@@ -26,7 +26,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { AuthService } from '@core';
 import { Role } from '@core/enums/role';
-import { PurchaseOrderDataVM, PurchaseOrderDetailsVM, PurchaseOrderLine } from '@core/models/purchase-order';
+import { PurchaseOrderVM,PurchaseOrderLineVM } from '@core/models/purchase-order';
 import { States } from '@core/models/states';
 import { StateService } from '@core/services/state.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
@@ -118,8 +118,8 @@ export class EditPurchaseOrderComponent implements OnInit {
   Role = Role;
   currentUserId!: number;
   rightsForApproval = false;
-  PODetails!: PurchaseOrderDetailsVM;
-  POLineItem: PurchaseOrderLine[] = [];
+  PODetails!: PurchaseOrderVM;
+  POLineItem: PurchaseOrderLineVM[] = [];
   supplierCurrency = 'INR';
   selectedSupplier!: Suppliers;
   stateList!: States[];
@@ -173,8 +173,8 @@ export class EditPurchaseOrderComponent implements OnInit {
               this.POHeaderForm.patchValue({
                 DocType: this.PODetails?.DocType as any,
                 PODate: this.PODetails?.PODate as any,
-                SupplierCode: this.PODetails?.SupplierCode as any,
-                SupplierName: this.PODetails?.SupplierName as any,
+                // SupplierCode: this.PODetails?.SupplierCode as any,
+                // SupplierName: this.PODetails?.SupplierName as any,
                 PRno: this.PODetails?.PRHeaderId as any,
                 ContractNumber: this.PODetails?.ContractNumber as any,
                 RFQNumber: this.PODetails?.RFQHeaderId as any,
@@ -185,16 +185,16 @@ export class EditPurchaseOrderComponent implements OnInit {
 
               this.POLineItem.push({
                 // Product: this.productList?.find(x => x.ProductCode == item.ProductCode),
-                ProductCode: item.ProductCode ? item.ProductCode : '',
-                ProductGroup: item.ProductGroup,
-                Description: item.ProductDescription,
+                // ProductCode: item.ProductCode ? item.ProductCode : '',
+                // ProductGroup: item.ProductGroup,
+                // Description: item.ProductDescription,
                 Qty: item?.Qty,
                 DeliveryDate: item?.DeliveryDate,
                 Unit: this.unitList?.find(x => x.Id == item.UnitId),
-                Plant: this.plantList?.find(x => x.Id == item.PlantId),
+                // Plant: this.plantList?.find(x => x.Id == item.PlantId),
                 // StorageLocation: this.locationList?.find(x => x.Id == item.StorageLocationId),
-                LocationCode: item?.LocationCode,
-                LocationDescription: item?.LocationDescription,
+                // LocationCode: item?.LocationCode,
+                // LocationDescription: item?.LocationDescription,
                 StorageLocationId: item.StorageLocationId,
                 NetPrice: item?.NetPrice,
                 TotalNetPrice: item?.TotalNetPrice,
@@ -672,12 +672,12 @@ export class EditPurchaseOrderComponent implements OnInit {
     this.POHeaderForm.touched;
     if (this.POHeaderForm.valid) {
       const PRHeaderData = this.POHeaderForm.value as any;
-      const PODetails: PurchaseOrderDataVM = {
+      const PODetails: PurchaseOrderVM = {
         Id: this.selectedPOId,
         DocType: PRHeaderData.DocType ? PRHeaderData.DocType : '',
         SupplierId: PRHeaderData.SupplierCode?.Id as any,
-        SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
-        SupplierName: PRHeaderData.SupplierName as any,
+        // SupplierCode: PRHeaderData.SupplierCode?.SupplierCode as any,
+        // SupplierName: PRHeaderData.SupplierName as any,
         PRHeaderId: PRHeaderData.PRno?.Id,
         ContractNumber: PRHeaderData.ContractNumber,
         RFQHeaderId: PRHeaderData.RFQNumber,
