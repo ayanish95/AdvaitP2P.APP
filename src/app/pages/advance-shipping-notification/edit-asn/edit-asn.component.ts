@@ -17,7 +17,7 @@ import { SupplierService } from '@core/services/supplier.service';
 import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
-import { AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, AdvancedShipmentNotificationDetVM } from '@core/models/advance-shipping-notification';
+import { AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, ASNDetailsLine } from '@core/models/advance-shipping-notification';
 import { CommonEnum } from '@core/enums/common-enum';
 import { find } from 'rxjs/operators';
 
@@ -65,7 +65,7 @@ export class EditAsnComponent {
   ASNDetails!: AdvancedShipmentNotificationVM;
 
   //POLineItems: PurchaseOrderDetailsLine[] = [];
-  ASNLineItems: AdvancedShipmentNotificationDetVM[] = [];
+  ASNLineItems: ASNDetailsLine[] = [];
   dataSource = new MatTableDataSource<any>();
   index = 0;
   POId!: number;
@@ -149,28 +149,28 @@ export class EditAsnComponent {
             }
 
             this.ASNDetails.ASNDetails?.forEach((item, index) => {
-              this.ASNLineItems.push({
-                Id: item ? item?.Id : 0,
-                ProductCode: item ? item?.ProductCode : '',
-                ProductDescription: item ? item?.ProductDescription : '',
-                LineId: 0,
-                POId: item ? item?.POId : 0,
-                PODetId: item?.Id ? item?.PODetId : 0,
-                // ProductId: item ? item?.ProductId : 0,
-                ProductGroup: item ? item?.ProductGroup : '',
-                DeliveryQty: item ? item?.DeliveryQty : 0,
-                OpenGRQty: item ? item?.OpenGRQty : 0,
-                TotalQty: (item?.DeliveryQty ? item?.DeliveryQty  : 0) +item?.OpenGRQty,
-                DeliveryDate: item.DeliveryDate,
-                UnitName: item ? item?.UnitName : '',
-                Plant: item ? item?.Plant : '',
-                StorageLocation: item ? item?.StorageLocation : '',
-                ASNHeaderId: item ? item?.ASNHeaderId : 0,
-                StockType: item ? item?.StockType : '',
-                IsBatchNo: item ? item?.IsBatchNo : false,
-                IsSerialNo: item ? item?.IsSerialNo : false,
-                ASNProductDetails: item ? item?.ASNProductDetails : []
-              });
+              // this.ASNLineItems.push({
+              //   Id: item ? item?.Id : 0,
+              //   // ProductCode: item ? item?.ProductCode : '',
+              //   // ProductDescription: item ? item?.ProductDescription : '',
+              //   // ProductGroup: item ? item?.ProductGroup : '',
+              //   LineId: 0,
+              //   POId: item ? item?.POId : 0,
+              //   PODetId: item?.Id ? item?.PODetId : 0,
+              //   // ProductId: item ? item?.ProductId : 0,
+              //   DeliveryQty: item ? item?.DeliveryQty : 0,
+              //   OpenGRQty: item ? item?.OpenGRQty : 0,
+              //   TotalQty: (item?.DeliveryQty ? item?.DeliveryQty  : 0) +item?.OpenGRQty,
+              //   DeliveryDate: item.DeliveryDate,
+              //   // UnitName: item ? item?.UnitName : '',
+              //   // Plant: item ? item?.Plant : '',
+              //   // StorageLocation: item ? item?.StorageLocation : '',
+              //   ASNHeaderId: item ? item?.ASNHeaderId : 0,
+              //   StockType: item ? item?.StockType : '',
+              //   IsBatchNo: item ? item?.IsBatchNo : false,
+              //   IsSerialNo: item ? item?.IsSerialNo : false,
+              //   ASNProductDetails: item ? item?.ASNProductDetails : []
+              // });
             });
 
             this.dataSource.data = this.ASNLineItems;            
@@ -299,16 +299,16 @@ export class EditAsnComponent {
       });
     });
     
-    this.ASNLineItems.forEach( x =>{                      
-      x.ASNProductDetails.forEach(y =>
-        {
-          if(y.Id == this.batchAndSerialNoList[0].Id){
-            y.Qty = this.batchAndSerialNoList[0].Qty;
-            y.BatchNo = this.batchAndSerialNoList[0].BatchNo;
-            y.SerialNo = this.batchAndSerialNoList[0].SerialNo;
-          }
-        });    
-    });    
+    // this.ASNLineItems.forEach( x =>{                      
+    //   x.ASNProductDetails.forEach(y =>
+    //     {
+    //       if(y.Id == this.batchAndSerialNoList[0].Id){
+    //         y.Qty = this.batchAndSerialNoList[0].Qty;
+    //         y.BatchNo = this.batchAndSerialNoList[0].BatchNo;
+    //         y.SerialNo = this.batchAndSerialNoList[0].SerialNo;
+    //       }
+    //     });    
+    // });    
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
@@ -339,7 +339,7 @@ export class EditAsnComponent {
     this.ASNLineItems.forEach((element, index) => {
       element.Id = index + 1;
       if (element.Id == id) {
-        if (element?.LineId) {
+        if (element?.ASNLineId) {
           // this.purchaseOrderService.deletePOLineByLineId(element.LineId ? element.LineId : 0).subscribe({
           //   next: (res: any) => {
           //     if (res[ResultEnum.IsSuccess]) {
@@ -378,9 +378,9 @@ export class EditAsnComponent {
   openForAddAsn() {
     // if(this.batchAndSerialNoList?.length == 0)
 
-    const lineDet: AdvancedShipmentNotificationDetVM[] = [];
+    const lineDet: ASNDetailsLine[] = [];
     this.ASNLineItems.forEach(element => {
-      const asnLineDetails = this.batchAndSerialNoList.filter(x => x.PoDetId == element.LineId);
+      const asnLineDetails = this.batchAndSerialNoList.filter(x => x.PoDetId == element.ASNLineId);
       // lineDet.push({
       //   ASNHeaderId: 0,
       //   POId: element.POHeaderId,
@@ -409,7 +409,7 @@ export class EditAsnComponent {
         SupplierId: PRHeaderData?.SupplierId as any,
         DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
         ShippingDate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
-        ASNDetails: lineDet,
+        ASNDetails: this.ASNLineItems,
 
       };
 

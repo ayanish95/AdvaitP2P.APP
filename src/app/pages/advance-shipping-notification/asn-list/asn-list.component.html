@@ -1,4 +1,3 @@
-
 <breadcrumb></breadcrumb>
 
 <mat-card>
@@ -6,26 +5,23 @@
     <div class="col-md-9">
       <h3>Advance Shipment Notification</h3>
     </div>
-      <div class="col-md-3 d-flex  justify-content-end">
-            <button mat-raised-button color="primary" routerLink="add-asn">
-              Create ASN
-            </button>
-          </div>
+    <div class="col-md-3 d-flex  justify-content-end">
+      <button mat-raised-button color="primary" routerLink="add-asn">
+        Create ASN
+      </button>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <ng-container>
       <mat-tab-group dynamicHeight (selectedTabChange)="onTabChanged($event);">
         <mat-tab>
           <ng-template mat-tab-label>Create Advance Shipment Notification</ng-template>
-          <app-all-asn-list [allPOList]="ASNList" [Type]="'PO'">
-                            (LoadAllPR)="apiASNList()"
+          <app-all-asn-list [allPOList]="POList" [Type]="'PO'">
           </app-all-asn-list>
         </mat-tab>
-        <mat-tab >
+        <mat-tab>
           <ng-template mat-tab-label>List of Created Advance Shipment Notification</ng-template>
-
           <app-all-asn-list [allASNList]="AsnallList" [Type]="'ASN'">
-                            (LoadAllPR)="apiAllPendingList()">
           </app-all-asn-list>
         </mat-tab>
       </mat-tab-group>

@@ -50,7 +50,7 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   dataSource1: any;
   currentPage = 1;
   pageSize = 10;
-  AsnList!: AdvancedShipmentNotificationVM[];
+  // AsnList!: AdvancedShipmentNotificationVM[];
   @ViewChild('paginator')
   paginator!: MatPaginator;
   filter: Filter = new Filter();
@@ -65,28 +65,21 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   constructor(private purchaseRequistionService: PurchaseRequistionService, private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog) { }
 
   ngOnInit() {
-
     this.currentUserRole = this.authService.roles();
     this.isSAPEnabled = this.authService.isSAPEnable();
 
     if (this.allPOList?.length > 0 && this.Type=='PO') {
-      this.AsnList = [];
       this.dataSource.data = this.allPOList;
-      this.dataSource.paginator = this.paginator;
-      this.filter = new Filter();
-      this.filter.OrderBy = OrderBy.DESC;
-      this.filter.OrderByColumn = 'id';
-      this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
     if (this.allASNList?.length > 0 && this.Type=='ASN') {
       this.allPOList=[];
       this.dataSource.data = this.allASNList;
-      this.dataSource.paginator = this.paginator;
-      this.filter = new Filter();
-      this.filter.OrderBy = OrderBy.DESC;
-      this.filter.OrderByColumn = 'id';
-      this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
+    this.dataSource.paginator = this.paginator;
+    this.filter = new Filter();
+    this.filter.OrderBy = OrderBy.DESC;
+    this.filter.OrderByColumn = 'id';
+    this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -96,23 +89,17 @@ export class AllAsnListComponent implements OnInit, OnChanges {
       const currentValue = this.propChanges.allASNList?.currentValue;
       this.allASNList = currentValue;
       this.dataSource.data = this.allASNList;
-      this.dataSource.paginator = this.paginator;
-      this.filter = new Filter();
-      this.filter.OrderBy = OrderBy.DESC;
-      this.filter.OrderByColumn = 'id';
-      this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
     if (this.propChanges?.allPOList && this.Type=='PO') {
-      this.AsnList = [];
       const currentValue = this.propChanges.allPOList?.currentValue;
       this.allPOList = currentValue;
       this.dataSource.data = this.allPOList;
-      this.dataSource.paginator = this.paginator;
-      this.filter = new Filter();
-      this.filter.OrderBy = OrderBy.DESC;
-      this.filter.OrderByColumn = 'id';
-      this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
     }
+    this.dataSource.paginator = this.paginator;
+    this.filter = new Filter();
+    this.filter.OrderBy = OrderBy.DESC;
+    this.filter.OrderByColumn = 'id';
+    this.filter.TotalRecords = this.dataSource.data ? this.dataSource.data.length : 0;
   }
 
   openDeleteModel(templateRef: TemplateRef<any>, plantId: number) {

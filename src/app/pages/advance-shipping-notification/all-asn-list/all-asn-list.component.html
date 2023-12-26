@@ -54,7 +54,7 @@
       <tr mat-row *matRowDef="let row; columns: asnDisplayedColumns;"></tr>
     </table>
 
-    <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+    <app-no-record-found *ngIf="!dataSource?.data?.length"
                          [columnCount]="asnDisplayedColumns.length"></app-no-record-found>
     <mat-paginator #paginator
                    [pageSize]="filter.PageSize"
@@ -105,7 +105,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <app-no-record-found *ngIf="!dataSource?.filteredData?.length || !dataSource?.data?.length"
+    <app-no-record-found  *ngIf="!dataSource?.data?.length"
                          [columnCount]="displayedColumns.length"></app-no-record-found>
     <mat-paginator #paginator
                    [pageSize]="filter.PageSize"

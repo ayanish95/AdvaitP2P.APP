@@ -230,16 +230,21 @@ export class CreatePurchaseOrderComponent implements OnInit {
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
             this.prlist = res[ResultEnum.Model];
-            if (!this.prlist.length)
-              this.toaster.error(res[ResultEnum.Message]);
-
             this.filteredprno = this.PRNoControl!.valueChanges.pipe(
               startWith(''),
               map(value => this.filterPrno(value || ''))
             );
+            if (!this.prlist.length)
+              this.toaster.error(res[ResultEnum.Message]);
           }
-          else
+          else{
+            this.prlist = [];
+            this.filteredprno = this.PRNoControl!.valueChanges.pipe(
+              startWith(''),
+              map(value => this.filterPrno(value || ''))
+            );
             this.toaster.error(res[ResultEnum.Message]);
+          }
         },
         error: (e) => { this.toaster.error(e.Message); },
       });
@@ -474,6 +479,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
   getPRNUmberList() {
     const docType = this.POHeaderForm.get('DocType')?.value;
     const plant = this.POHeaderForm.get('Plant')?.value as any;
+    this.POHeaderForm.get('PRno')?.setValue(null);
+    this.prlist = [];
     if (docType && plant) {
       this.apiPRNoList(docType, plant?.Id);
     }
@@ -530,9 +537,9 @@ export class CreatePurchaseOrderComponent implements OnInit {
             const product = this.productList?.find(x => x.ProductCode == item.ProductCode);
 
             this.POLineItem.push({
-              Product: item.Product,
               ERPPRNumber: item?.ERPPRNumber ? item?.ERPPRNumber : '',
               ProductId: item.ProductId,
+              Product: item.Product,
               // ProductCode: item.ProductCode ? item.ProductCode : '',
               // ProductGroup: item.ProductGroup,
               // Description: item.ProductDescription,

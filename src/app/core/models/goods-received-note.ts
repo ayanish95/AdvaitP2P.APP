@@ -26,13 +26,13 @@ export interface GoodsReceivedNoteHeaderVM{
     ASNHeaderId: number,
     ASNDetId?: number,
     PODetId: number,
-    ProductCode: string,
-    ProductDescription: string,
-    ProductGroup: string,
-    UnitName?:string;
+    // ProductCode: string,
+    // ProductDescription: string,
+    // ProductGroup: string,
+    // UnitName?:string;
     StockType: string,
-    Plant: string,
-    StorageLocation: string,
+    // Plant: string,
+    // StorageLocation: string,
     TotalWeight?: number;
     QtyWeight?: number;
     TotalQty?: number;

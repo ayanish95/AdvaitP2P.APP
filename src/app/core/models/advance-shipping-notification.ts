@@ -1,3 +1,6 @@
+import { Products } from "./products";
+import { StorageLocations } from "./storage-location";
+import { Units } from "./units";
 
 export interface AdvancedShipmentNotificationVM{
   Id?:number;
@@ -20,66 +23,41 @@ export interface AdvancedShipmentNotificationVM{
   SequenceNo?:number;
   Remark?:string;
   ASNCreatedBy?:string;
-  ASNDetails:AdvancedShipmentNotificationDetVM[];  
+  ASNDetails:ASNDetailsLine[];  
 }
 
-export interface AdvancedShipmentNotificationDetVM{
-  Id?: number,
-  LineId?: number,
-  POId: number,
-  ASNHeaderId: number,
-  PODetId: number,
-  ProductCode: string,
-  ProductDescription: string,
-  ProductGroup: string,
-  UnitName?:string;
-  StockType: string,
-  Plant: string,
-  StorageLocation: string,
-  TotalWeight?: number;
-  QtyWeight?: number;
-  TotalQty?: number;
-  DeliveryQty?: number;
-  DeliveryDate?: Date,
-  OpenGRQty: number,
-  Length?: number,
-  Hight?: number,
-  Width?: number,
-  IsBatchNo?: boolean,
-  IsSerialNo?: boolean,
-  ASNProductDetails:AdvancedShipmentNotificationProductDet[];
-}
 
 export interface ASNDetailsLine{
   Id?: number,
-  LineId? : number,
-  POHeaderId?: number,
-  POLineId?: number,
+  ASNHeaderId?: number,
+  ASNLineId? : number,
+  POId?: number,
+  PODetId?: number,
   ProductId?: number,
-  ProductCode?: string,
-  ProductDescription?: string,
-  ProductGroup?: string,
+  Product?:Products,
   POQty: number,
-  Qty?: number,
+  //Qty?: number,
   OpenGRQty?: number,
   DeliveryDate?: Date,
   UnitId?: number,
-  UnitName?: string,
-  UnitDescription?: string,
-  PlantId?: number,
-  PlantCode?: string,
-  PlantDescription?: string,
+  Unit?: Units,
+  // UnitName?: string,
+  // UnitDescription?: string,
+  // PlantId?: number,
+  // PlantCode?: string,
+  // PlantDescription?: string,
   StorageLocationId?: number,
-  LocationCode?: string,
-  LocationDescription?: string,
+  StorageLocation?: StorageLocations,
+  // LocationCode?: string,
+  // LocationDescription?: string,
+  TotalQty?: number;
+  DeliveryQty?: number;
+
   NetPrice?:number;
   TotalNetPrice?:number;
   Currency?:string;
   HSNCode?:string;
-  GST?:number;
-  IGST?:number;
-  SGST?:number;
-  CGST?:number;
+  
   TaxAmount?:number;
   TotalAmount?:number;
   StockType?:string;
@@ -95,18 +73,13 @@ export interface ASNDetailsLine{
   IsInvoiceGenerated?: boolean,
   IsQualityChecked?: boolean,
   IsActive?: boolean,
-  CreatedBy?: number,
-  CreatedOn?: Date,
-  UpdatedBy?: number,
-  UpdatedOn?: Date,
-  IsDeleted?: true,
-  DeletedOn?: Date,
-  Extra1?: string,
-  Extra2?: string,
+  IsDeleted?: boolean,
   Width? : number,
   Height? : number,
   Length? : number,
-  QtyWeight? : number
+  QtyWeight? : number,
+  TotalWeight?: number;
+  ASNProductDetails?:AdvancedShipmentNotificationProductDet[];
 }
 
 export class AdvancedShipmentNotificationProductDet{

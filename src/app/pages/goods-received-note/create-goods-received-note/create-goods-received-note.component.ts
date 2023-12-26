@@ -174,30 +174,30 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
                 StockType: StockTypeEnum.QualityCheck
               });
               this.ASNDetails.ASNDetails?.forEach((item, index) => {
-                this.GRNLineItems.push({
-                  Id: 0,
-                  ASNDetId: item ? item?.Id : 0,
-                  ProductCode: item ? item?.ProductCode : '',
-                  ProductDescription: item ? item?.ProductDescription : '',
-                  POId: item ? item?.POId : 0,
-                  PODetId: item?.Id ? item?.PODetId : 0,
-                  // ProductId: item ? item?.ProductId : 0,
-                  ProductGroup: item ? item?.ProductGroup : '',
-                  GRDeliveryQty: item ? item?.DeliveryQty : 0,
-                  OpenGRQty: item ? item?.OpenGRQty : 0,
-                  TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) + item?.OpenGRQty,
-                  DeliveryDate: item.DeliveryDate,
-                  UnitName: item ? item?.UnitName : '',
-                  Plant: item ? item?.Plant : '',
-                  StorageLocation: item ? item?.StorageLocation : '',
-                  ASNHeaderId: item ? item?.ASNHeaderId : 0,
-                  StockType: item ? item?.StockType : '',
-                  IsBatchNo: item ? item?.IsBatchNo : false,
-                  IsSerialNo: item ? item?.IsSerialNo : false,
-                  GRNProductDetails: item ? item?.ASNProductDetails : [],
-                  IsSelected: false
-                });
-                item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row));
+                // this.GRNLineItems.push({
+                //   Id: 0,
+                //   ASNDetId: item ? item?.Id : 0,
+                //   // ProductCode: item ? item?.ProductCode : '',
+                //   // ProductDescription: item ? item?.ProductDescription : '',
+                //   // ProductGroup: item ? item?.ProductGroup : '',
+                //   POId: item ? item?.POId : 0,
+                //   PODetId: item?.Id ? item?.PODetId : 0,
+                //   // ProductId: item ? item?.ProductId : 0,
+                //   GRDeliveryQty: item ? item?.DeliveryQty : 0,
+                //   OpenGRQty: item ? item?.OpenGRQty : 0,
+                //   TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) + item?.OpenGRQty,
+                //   DeliveryDate: item.DeliveryDate,
+                //   // UnitName: item ? item?.UnitName : '',
+                //   // Plant: item ? item?.Plant : '',
+                //   // StorageLocation: item ? item?.StorageLocation : '',
+                //   ASNHeaderId: item ? item?.ASNHeaderId : 0,
+                //   StockType: item ? item?.StockType : '',
+                //   IsBatchNo: item ? item?.IsBatchNo : false,
+                //   IsSerialNo: item ? item?.IsSerialNo : false,
+                //   GRNProductDetails: item ? item?.ASNProductDetails : [],
+                //   IsSelected: false
+                // });
+                // item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row));
               });
               this.GRNLineItems.filter(x => x.GRNProductDetails.filter(y => y.IsSelected = true));
               this.dataSource.data = this.GRNLineItems;

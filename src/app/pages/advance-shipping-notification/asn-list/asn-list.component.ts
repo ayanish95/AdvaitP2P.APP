@@ -19,7 +19,7 @@ import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-no
 })
 export class AsnListComponent implements OnInit {
 
-  ASNList!: PurchaseOrderVM[];
+  POList!: PurchaseOrderVM[];
   pendingASNList!: PurchaseOrderVM[];
   AsnallList!: AdvancedShipmentNotificationVM[];
   @ViewChild('paginator')
@@ -36,6 +36,7 @@ export class AsnListComponent implements OnInit {
   constructor(private purchaseOrderService: PurchaseOrderService, private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog, private strategyService: ApprovalStrategyService) { }
 
   ngOnInit() {
+
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
@@ -52,9 +53,10 @@ export class AsnListComponent implements OnInit {
       .getAllApprovedPOHeaderListByUserId().subscribe({
         next: (res: any) => {
           if (res[ResultEnum.IsSuccess]) {
-            this.ASNList = res[ResultEnum.Model];
+            this.POList = res[ResultEnum.Model];
           }
           else {
+            this.POList = [];
             this.toaster.error(res.Message);
           }
         },
@@ -72,6 +74,7 @@ export class AsnListComponent implements OnInit {
           this.AsnallList = res[ResultEnum.Model];
         }
         else {
+          this.AsnallList = [];
           this.toaster.error(res.Message);
         }
       },

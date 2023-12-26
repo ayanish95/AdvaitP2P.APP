@@ -53,6 +53,7 @@ export interface PurchaseOrderLineVM{
     Product?:Products;
     DeliveryDate?:Date;
     Qty?: number;
+    OpenGRQty?: number;
     Unit?: Units;
     UnitId?:number;
     NetPrice?:number;
