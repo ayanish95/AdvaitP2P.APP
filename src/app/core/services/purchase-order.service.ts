@@ -26,6 +26,10 @@ export class PurchaseOrderService {
     return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetPurchaseOrderDetailsById}/${Id}`);
   }
 
+  getPODetailsForASNById(Id:number): Observable<any> {
+    return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetPurchaseOrderDetailsForASNById}/${Id}`);
+  }
+
   getPendingPOByUserId(): Observable<any> {
     return this.httpclient.authGet(`${Api.PurchaseOrder + Method.GetPendingPurchaseOrderByUserId}`);
   }

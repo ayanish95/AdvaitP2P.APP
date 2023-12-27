@@ -169,7 +169,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
                 DocType: this.ASNDetails?.DocType ? this.ASNDetails?.DocType : null,
                 PONumber: this.ASNDetails?.ERPPONumber ? this.ASNDetails.ERPPONumber : null,
                 CompanyCode: this.ASNDetails?.CompanyCode ? this.ASNDetails.CompanyCode : null,
-                Supplier: (this.ASNDetails?.SupplierCode ? this.ASNDetails.SupplierCode : null) +' - ' + (this.ASNDetails?.SupplierName ? this.ASNDetails.SupplierName : null),
+                Supplier: (this.ASNDetails?.Supplier ? this.ASNDetails.Supplier.SupplierCode : null) +' - ' + (this.ASNDetails?.Supplier?.FirstName ? (this.ASNDetails?.Supplier?.FirstName + this.ASNDetails?.Supplier?.LastName): null),
                 Transaction: 'Inbound Delivery',
                 StockType: StockTypeEnum.QualityCheck
               });

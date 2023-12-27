@@ -563,7 +563,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
               IsFreeOfCharge: false,
               PRHeaderId: item?.PRHeaderId,
               PRDetId: item?.Id,
-              PRLineId: item?.Id,
+              // PRLineId: item?.Id,
               Id: this.POLineItem?.length + 1,
             });
           });

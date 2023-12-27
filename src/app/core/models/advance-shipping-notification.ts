@@ -1,21 +1,25 @@
+import { Company } from "./company";
 import { Products } from "./products";
 import { StorageLocations } from "./storage-location";
+import { Suppliers } from "./suppliers";
 import { Units } from "./units";
 
 export interface AdvancedShipmentNotificationVM{
   Id?:number;
   ASNId?:number;
+  ASNNo?:string;
+  ASNDate?:Date;
   ERPPONumber:string;
   DocType:string;
   SupplierId?:number;
+  Supplier?:Suppliers;
   PODate?:Date;
   CompanyCode?:string;
-  CompanyName?:string;
-  SupplierCode?:string;
-  SupplierName?:string;
+  // CompanyName?:string;
+  Company?:Company;
+  // SupplierCode?:string;
+  // SupplierName?:string;
   SAPStatus?:boolean;
-  ASNNo?:string;
-  ASNDate?:Date;
   DeliveryDate?:Date;
   ShippingDate?:Date;
   POId?:number;
@@ -41,23 +45,14 @@ export interface ASNDetailsLine{
   DeliveryDate?: Date,
   UnitId?: number,
   Unit?: Units,
-  // UnitName?: string,
-  // UnitDescription?: string,
-  // PlantId?: number,
-  // PlantCode?: string,
-  // PlantDescription?: string,
   StorageLocationId?: number,
   StorageLocation?: StorageLocations,
-  // LocationCode?: string,
-  // LocationDescription?: string,
   TotalQty?: number;
   DeliveryQty?: number;
-
   NetPrice?:number;
   TotalNetPrice?:number;
   Currency?:string;
   HSNCode?:string;
-  
   TaxAmount?:number;
   TotalAmount?:number;
   StockType?:string;
@@ -83,6 +78,7 @@ export interface ASNDetailsLine{
 }
 
 export class AdvancedShipmentNotificationProductDet{
+  SRNo?:number;
   Id?:number;
   PoId?:number;
   PoDetId?:number;
@@ -97,4 +93,5 @@ export class AdvancedShipmentNotificationProductDet{
   IsInvoiceGenerated?:boolean;
   IsQualityChecked?:boolean;
   IsGRGenerated?:boolean;
+  IsDeleted?:boolean;
 }

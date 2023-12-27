@@ -47,7 +47,7 @@ export interface PurchaseOrderLineVM{
     Id:number;
     POLineId?:number;
     PRHeaderId?:number;
-    PRLineId?:number;
+    // PRLineId?:number;
     ERPPRNumber?:string;
     ProductId?:number;
     Product?:Products;

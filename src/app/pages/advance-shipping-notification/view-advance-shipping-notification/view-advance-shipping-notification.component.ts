@@ -24,14 +24,14 @@ export class ViewAdvanceShippingNotificationComponent {
     'Qty',
     'Unit',
     'DeliveryDate',
-    'Plant',
+    // 'Plant',
     'Location',
     'View',
     // 'Close',
     // 'RFQ',
   ];
 
-  displayedPackingColumns!:string[];
+  displayedPackingColumns!: string[];
   // displayedPackingColumns: string[] = [
   //   'srNo',
   //   'BatchNo',
@@ -43,7 +43,7 @@ export class ViewAdvanceShippingNotificationComponent {
   dataSource = new MatTableDataSource<any>();
   packingdataSource = new MatTableDataSource<any>();
   index = 0;
-  constructor(private ASNService: AdvanceShippingNotificationService,private location: Location,private toaster: ToastrService, private route: ActivatedRoute,private dialog: MatDialog) {
+  constructor(private ASNService: AdvanceShippingNotificationService, private location: Location, private toaster: ToastrService, private route: ActivatedRoute, private dialog: MatDialog) {
 
     this.route.queryParams.subscribe((params: any) => {
       this.ASNId = params.id;
@@ -51,15 +51,9 @@ export class ViewAdvanceShippingNotificationComponent {
   }
 
   ngOnInit(): void {
-    this.ASNService
-      .GetASNDetailsById(this.ASNId)
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+    this.ASNService.GetASNDetailsById(this.ASNId).subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
-          console.log(res[ResultEnum.Model]);
           if (res[ResultEnum.Model]) {
             this.ASNDetails = res[ResultEnum.Model];
             this.dataSource.data = this.ASNDetails.ASNDetails;
@@ -69,14 +63,16 @@ export class ViewAdvanceShippingNotificationComponent {
         }
         else
           this.toaster.error(res[ResultEnum.Message]);
-      });
+      },
+      error: (e) => { this.toaster.error(e.Message); },
+    });
   }
 
-  async openModelForViewItem(templateRef: TemplateRef<any>,data?: any) {
-    //const isSerialNo = data?.IsSerialNo;
-    //const isBatchNo = data?.IsBatchNo;
-    const isBatchNo = true;
-    const isSerialNo = false;
+  async openModelForViewItem(templateRef: TemplateRef<any>, data?: any) {
+    const isSerialNo = data?.IsSerialNo;
+    const isBatchNo = data?.IsBatchNo;
+    //const isBatchNo = true;
+    //const isSerialNo = false;
 
     const type = this.checkProductType(isSerialNo, isBatchNo);
     if (data?.DeliveryQty) {
@@ -98,7 +94,7 @@ export class ViewAdvanceShippingNotificationComponent {
             'Qty'
           ];
         }
-        if(type == CommonEnum.All){
+        if (type == CommonEnum.All) {
           this.displayedPackingColumns = [
             'srNo',
             'Product',
@@ -129,7 +125,7 @@ export class ViewAdvanceShippingNotificationComponent {
     return CommonEnum.None;
   }
 
-  closeDialog(){
+  closeDialog() {
     this.dialog.closeAll();
   }
   onClickBack() {

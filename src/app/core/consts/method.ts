@@ -66,6 +66,7 @@ export class Method {
   static UpdatePurchaseOrder = `/UpdatePurchaseOrder`;
   static GetAllPurchaseOrderHeaderList = `/GetAllPurchaseOrderHeaderList`;
   static GetPurchaseOrderDetailsById = `/GetPurchaseOrderDetailsById`;
+  static GetPurchaseOrderDetailsForASNById = `/GetPurchaseOrderDetailsForASNById`;
   static DeletePurchaseOrderById = `/DeletePurchaseOrderById`;
   static DeletePOLineItemByLineId = `/DeletePOLineItemByLineId`;
   static GetPendingPurchaseOrderByUserId = `/GetPendingPurchaseOrderByUserId`;

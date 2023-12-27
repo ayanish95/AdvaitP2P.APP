@@ -35,13 +35,13 @@ import { find } from 'rxjs/operators';
 })
 export class EditAsnComponent {
   ASNHeaderForm = this.fb.group({
-    ASNNumber: [null],
-    PoNo: [null, [Validators.required]],
-    DocType: [null, [Validators.required]],
-    Documentdate: [new Date(), [Validators.required]],
+    ASNNumber: [{value:null,disabled:true}],
+    PoNo: [{value:null,disabled:true}, [Validators.required]],
+    DocType: [{value:null,disabled:true}, [Validators.required]],
+    Documentdate: [{value:Date(),disabled:true} , [Validators.required]],
     SupplierId: [null, [Validators.required]],
-    SupplierCode: [null, [Validators.required]],
-    SupplierName: [null, [Validators.required]],
+    SupplierCode: [{value:null,disabled:true}, [Validators.required]],
+    SupplierName: [null],
     Shippingdate: [new Date(), [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
 
@@ -75,11 +75,11 @@ export class EditAsnComponent {
     'polineno',
     // 'Sequanceno',
     'ProductCode',
-    'Description',
+    // 'Description',
     'Deliveryqty',
     'PutAwayqty',
     'Unit',
-    'Plant',
+    // 'Plant',
     'Location',
     'Edit',
     'Delete',
@@ -133,10 +133,10 @@ export class EditAsnComponent {
                 ASNNumber: this.ASNDetails.ASNNo as any,
                 PoNo: this.ASNDetails.ERPPONumber as any,
                 DocType: this.ASNDetails.DocType as any,
-                Documentdate: this.formatDate(this.ASNDetails.PODate) as any,
+                Documentdate: this.formatDate(this.ASNDetails.ASNDate) as any,
                 SupplierId: this.ASNDetails?.SupplierId as any,
-                SupplierCode: this.ASNDetails?.SupplierCode as any,
-                SupplierName: this.ASNDetails?.SupplierName as any,
+                 SupplierCode: this.ASNDetails?.Supplier?.SupplierCode + ' - '+this.ASNDetails?.Supplier?.FirstName +' '+ this.ASNDetails?.Supplier?.LastName as any,
+                // SupplierName: this.ASNDetails?.SupplierName as any,
                 Shippingdate: this.formatDate(this.ASNDetails?.ShippingDate) as any,
                 Deliverydate: this.formatDate(this.ASNDetails?.DeliveryDate) as any,
               });
@@ -149,28 +149,30 @@ export class EditAsnComponent {
             }
 
             this.ASNDetails.ASNDetails?.forEach((item, index) => {
-              // this.ASNLineItems.push({
-              //   Id: item ? item?.Id : 0,
-              //   // ProductCode: item ? item?.ProductCode : '',
-              //   // ProductDescription: item ? item?.ProductDescription : '',
-              //   // ProductGroup: item ? item?.ProductGroup : '',
-              //   LineId: 0,
-              //   POId: item ? item?.POId : 0,
-              //   PODetId: item?.Id ? item?.PODetId : 0,
-              //   // ProductId: item ? item?.ProductId : 0,
-              //   DeliveryQty: item ? item?.DeliveryQty : 0,
-              //   OpenGRQty: item ? item?.OpenGRQty : 0,
-              //   TotalQty: (item?.DeliveryQty ? item?.DeliveryQty  : 0) +item?.OpenGRQty,
-              //   DeliveryDate: item.DeliveryDate,
-              //   // UnitName: item ? item?.UnitName : '',
-              //   // Plant: item ? item?.Plant : '',
-              //   // StorageLocation: item ? item?.StorageLocation : '',
-              //   ASNHeaderId: item ? item?.ASNHeaderId : 0,
-              //   StockType: item ? item?.StockType : '',
-              //   IsBatchNo: item ? item?.IsBatchNo : false,
-              //   IsSerialNo: item ? item?.IsSerialNo : false,
-              //   ASNProductDetails: item ? item?.ASNProductDetails : []
-              // });
+              this.ASNLineItems.push({
+                Id: item ? item?.Id : 0,
+                ProductId: item.ProductId,
+                Product:item.Product,
+                POId: item ? item?.POId : 0,
+                PODetId: item?.Id ? item?.PODetId : 0,
+                DeliveryQty: item ? item?.DeliveryQty : 0,
+                OpenGRQty: item ? item?.OpenGRQty : 0,
+                TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) +( item?.OpenGRQty ?item?.OpenGRQty : 0),
+                DeliveryDate: item.DeliveryDate,
+                UnitId : item.UnitId,
+                Unit : item.Unit,
+                StorageLocationId:item.StorageLocationId,
+                StorageLocation : item.StorageLocation,
+                // UnitName: item ? item?.UnitName : '',
+                // Plant: item ? item?.Plant : '',
+                // StorageLocation: item ? item?.StorageLocation : '',
+                ASNHeaderId: item ? item?.ASNHeaderId : 0,
+                StockType: item ? item?.StockType : '',
+                IsBatchNo: item ? item?.IsBatchNo : false,
+                IsSerialNo: item ? item?.IsSerialNo : false,
+                ASNProductDetails: item ? item?.ASNProductDetails : [],
+                POQty: 0
+              });
             });
 
             this.dataSource.data = this.ASNLineItems;            

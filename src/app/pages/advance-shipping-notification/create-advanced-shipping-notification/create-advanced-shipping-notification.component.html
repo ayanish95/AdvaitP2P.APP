@@ -165,7 +165,7 @@
             </ng-container>
             <ng-container matColumnDef="polineno">
               <th mat-header-cell *matHeaderCellDef> PO Line No </th>
-              <td mat-cell *matCellDef="let element"> {{element?.POLineId}}
+              <td mat-cell *matCellDef="let element"> {{element?.PODetId}}
               </td>
             </ng-container>
             <ng-container matColumnDef="ProductCode">
@@ -185,7 +185,7 @@
               <th mat-header-cell *matHeaderCellDef> Delivery Qty(ASN)</th>
               <td mat-cell *matCellDef="let element;let i = index">
                 <input matInput type="number" style="width: 70px;" [value]="element.DeliveryQty" name='Qty'
-                       (input)="DetLineChange($event,i)" />
+                       (input)="DetLineChange($event,i,element)" />
                 <!-- <td mat-cell *matCellDef="let element"> {{element?.Qty}} </td> -->
               </td>
             </ng-container>

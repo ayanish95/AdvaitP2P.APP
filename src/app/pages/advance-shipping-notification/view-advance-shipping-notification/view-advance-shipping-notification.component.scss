@@ -3,11 +3,11 @@
 //       top:0px;
 //       right:0px;
 //     }
-    
+
 //     .close-icon {
 //       transition: 1s ease-in-out;
 //     }
-    
+
 //     .close-icon:hover {
 //       transform: rotate(180deg);
 //     }
@@ -17,7 +17,22 @@
 //       top:0px;
 //       right:0px;
 //     }
-    
+
 //     ::ng-deep .icon-outside .mat-dialog-container {
 //      overflow: unset
 //     }
+.demo-full-width {
+  width: 100%;
+}
+
+.mr-10 {
+  margin-right: 10px !important;
+}
+
+.mb-0 {
+  margin-bottom: 0px !important;
+}
+
+.mt-5 {
+  margin-top: 5px !important;
+}
