@@ -12,7 +12,7 @@ export interface PurchaseOrderVM{
     SupplierId?:number;
     Supplier?:Suppliers;
     PODate?:Date;
-    PRHeaderId?:number;
+    PRHeaderId?:number[];
     RFQHeaderId?:number;
     OAHeaderId?:number;
     ContractNumber?:string;
@@ -23,7 +23,7 @@ export interface PurchaseOrderVM{
     TotalNetPrice?: number;
     TotalTaxAmount?: number;
     TotalPOAmount?: number;
-    ERPPRNumber?:string;
+    ERPPRNumber?:string[];
     POPendingBy?: string;
     ApproverId?: number;
     IsApprovedByAll?: boolean;

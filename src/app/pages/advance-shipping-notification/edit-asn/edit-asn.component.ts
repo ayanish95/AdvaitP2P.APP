@@ -19,7 +19,7 @@ import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
 import { AdvancedShipmentNotificationVM, AdvancedShipmentNotificationProductDet, ASNDetailsLine } from '@core/models/advance-shipping-notification';
 import { CommonEnum } from '@core/enums/common-enum';
-import { find } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-edit-asn',
@@ -35,12 +35,12 @@ import { find } from 'rxjs/operators';
 })
 export class EditAsnComponent {
   ASNHeaderForm = this.fb.group({
-    ASNNumber: [{value:null,disabled:true}],
-    PoNo: [{value:null,disabled:true}, [Validators.required]],
-    DocType: [{value:null,disabled:true}, [Validators.required]],
-    Documentdate: [{value:Date(),disabled:true} , [Validators.required]],
+    ASNNumber: [{ value: null, disabled: true }],
+    PoNo: [{ value: null, disabled: true }, [Validators.required]],
+    DocType: [{ value: null, disabled: true }, [Validators.required]],
+    Documentdate: [{ value: Date(), disabled: true }, [Validators.required]],
     SupplierId: [null, [Validators.required]],
-    SupplierCode: [{value:null,disabled:true}, [Validators.required]],
+    SupplierCode: [{ value: null, disabled: true }, [Validators.required]],
     SupplierName: [null],
     Shippingdate: [new Date(), [Validators.required]],
     Deliverydate: [new Date(), [Validators.required]],
@@ -92,10 +92,11 @@ export class EditAsnComponent {
   selecteItemQty!: number;
   selectePOLineId!: number;
   selectePOId!: number;
-  deliveryQty!:number;
+  deliveryQty!: number;
   batchAndSerialNoList: AdvancedShipmentNotificationProductDet[] = [];
+  previousBatchSerialNo!: AdvancedShipmentNotificationProductDet;
   constructor(private fb: FormBuilder, private dialog: MatDialog, private dateAdapter: DateAdapter<any>, private advanceShippingNotificationService: AdvanceShippingNotificationService,
-    private toaster: ToastrService, private docTypeSerivce: DocTypeService,
+    private toaster: ToastrService, private docTypeSerivce: DocTypeService, private location: Location,
     private router: Router, private route: ActivatedRoute, private authService: AuthService, private supplierService: SupplierService) {
     this.route.queryParams.subscribe((params: any) => {
       this.ASNId = params.id;
@@ -135,34 +136,35 @@ export class EditAsnComponent {
                 DocType: this.ASNDetails.DocType as any,
                 Documentdate: this.formatDate(this.ASNDetails.ASNDate) as any,
                 SupplierId: this.ASNDetails?.SupplierId as any,
-                 SupplierCode: this.ASNDetails?.Supplier?.SupplierCode + ' - '+this.ASNDetails?.Supplier?.FirstName +' '+ this.ASNDetails?.Supplier?.LastName as any,
+                SupplierCode: this.ASNDetails?.Supplier?.SupplierCode + ' - ' + this.ASNDetails?.Supplier?.FirstName + ' ' + this.ASNDetails?.Supplier?.LastName as any,
                 // SupplierName: this.ASNDetails?.SupplierName as any,
                 Shippingdate: this.formatDate(this.ASNDetails?.ShippingDate) as any,
                 Deliverydate: this.formatDate(this.ASNDetails?.DeliveryDate) as any,
               });
-              
-              const  shippingDate=new Date(this.ASNDetails?.ShippingDate ? this.ASNDetails?.ShippingDate : new Date());
+
+              const shippingDate = new Date(this.ASNDetails?.ShippingDate ? this.ASNDetails?.ShippingDate : new Date());
               if (this.currentDate.getTime() > shippingDate.getTime())
                 this.minShippingDate = new Date(shippingDate);
-                if (this.currentDate.getTime() > new Date(this.ASNDetails?.DeliveryDate ? this.ASNDetails?.DeliveryDate : new Date()).getTime())
+              if (this.currentDate.getTime() > new Date(this.ASNDetails?.DeliveryDate ? this.ASNDetails?.DeliveryDate : new Date()).getTime())
                 this.minDeliveryDate = new Date(this.ASNDetails?.DeliveryDate ? this.ASNDetails?.DeliveryDate : new Date());
             }
 
             this.ASNDetails.ASNDetails?.forEach((item, index) => {
+              item.ASNProductDetails = this.setASNProductDetails(item.ASNProductDetails) as any;
               this.ASNLineItems.push({
                 Id: item ? item?.Id : 0,
                 ProductId: item.ProductId,
-                Product:item.Product,
+                Product: item.Product,
                 POId: item ? item?.POId : 0,
                 PODetId: item?.Id ? item?.PODetId : 0,
                 DeliveryQty: item ? item?.DeliveryQty : 0,
                 OpenGRQty: item ? item?.OpenGRQty : 0,
-                TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) +( item?.OpenGRQty ?item?.OpenGRQty : 0),
+                TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) + (item?.OpenGRQty ? item?.OpenGRQty : 0),
                 DeliveryDate: item.DeliveryDate,
-                UnitId : item.UnitId,
-                Unit : item.Unit,
-                StorageLocationId:item.StorageLocationId,
-                StorageLocation : item.StorageLocation,
+                UnitId: item.UnitId,
+                Unit: item.Unit,
+                StorageLocationId: item.StorageLocationId,
+                StorageLocation: item.StorageLocation,
                 // UnitName: item ? item?.UnitName : '',
                 // Plant: item ? item?.Plant : '',
                 // StorageLocation: item ? item?.StorageLocation : '',
@@ -170,12 +172,13 @@ export class EditAsnComponent {
                 StockType: item ? item?.StockType : '',
                 IsBatchNo: item ? item?.IsBatchNo : false,
                 IsSerialNo: item ? item?.IsSerialNo : false,
-                ASNProductDetails: item ? item?.ASNProductDetails : [],
+                IsDeleted: false,
+                ASNProductDetails: item ? item.ASNProductDetails : [],
                 POQty: 0
               });
             });
 
-            this.dataSource.data = this.ASNLineItems;            
+            this.dataSource.data = this.ASNLineItems;
           }
 
           else
@@ -185,6 +188,18 @@ export class EditAsnComponent {
         else
           this.toaster.error(res[ResultEnum.Message]);
       });
+  }
+
+  setASNProductDetails(ASNProductDetails?: AdvancedShipmentNotificationProductDet[]) {
+    if (ASNProductDetails && ASNProductDetails.length > 0) {
+      ASNProductDetails.forEach((element, index) => {
+        element.SRNo = index + 1;
+        element.IsDeleted = false;
+        this.batchAndSerialNoList.push(element);
+      });
+      return ASNProductDetails;
+    }
+    return [];
   }
 
   private formatDate(date: any) {
@@ -219,9 +234,19 @@ export class EditAsnComponent {
       if (!this.selectePOId || !this.selectePOLineId)
         throw this.toaster.error('PO Id or PO Line Id not found for selected row...');
       if (type != CommonEnum.None) {
-          data?.ASNProductDetails?.forEach((element:any) => {
+        let existingData = this.batchAndSerialNoList.filter(x => x.POId == this.selectePOId && x.PODetId == this.selectePOLineId && x.IsDeleted == false);
+        if (existingData && existingData.length > 0) {
+          existingData?.forEach((element: any) => {
             this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, element));
           });
+        }
+        else {
+          for (let index = 0; index < data?.DeliveryQty; index++) {
+            let BSData = { 'SRNo': index + 1, 'type': type, 'Id': 0, 'POId': this.selectePOId, 'PODetId': this.selectePOLineId, 'BatchNo': '', 'SerialNo': '', 'Qty': 1 };
+            this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(type, BSData));
+          }
+        }
+
       }
     }
 
@@ -231,9 +256,10 @@ export class EditAsnComponent {
     });
   }
 
-  createFormForBatchAndSerialNo(type: any,data:any) {
+  createFormForBatchAndSerialNo(type: any, data: any) {
     if (type == CommonEnum.All) {
       return this.fb.group({
+        SRNo: [data?.SRNo],
         Id: [data?.Id],
         PoId: [data?.POId],
         POLineId: [data?.PODetId],
@@ -243,6 +269,7 @@ export class EditAsnComponent {
     }
     else if (type == CommonEnum.BatchNo) {
       return this.fb.group({
+        SRNo: [data?.SRNo],
         Id: [data?.Id],
         PoId: [data?.POId],
         POLineId: [data?.PODetId],
@@ -252,6 +279,7 @@ export class EditAsnComponent {
     }
     else if (type == CommonEnum.SerialNo) {
       return this.fb.group({
+        SRNo: [data?.SRNo],
         Id: [data?.Id],
         PoId: [data?.POId],
         POLineId: [data?.PODetId],
@@ -267,7 +295,14 @@ export class EditAsnComponent {
 
   removeBatchNumberFormRow(i: any) {
     const remove = this.BatchAndSerialNoForm.get('items') as FormArray;
-    remove.removeAt(i);
+    if (remove.value) {
+      let index = this.batchAndSerialNoList.findIndex(x => x.SRNo == remove.value[i]?.SRNo && x.POId == remove.value[i]?.PoId && x.PODetId == remove.value[i]?.POLineId);
+      if (index != -1) {
+        this.batchAndSerialNoList[index].IsDeleted = true;
+      }
+      this.previousBatchSerialNo = remove.value;
+      remove.removeAt(i);
+    }
   }
 
   checkProductType(isSerialNo: any, isBatchNo: any) {
@@ -287,20 +322,29 @@ export class EditAsnComponent {
   }
 
   onClickAddBatchSerialNo() {
-    debugger;
-    this.batchAndSerialNoList = [];
+    // this.batchAndSerialNoList = [];
     const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value;
     batchSerialNo?.forEach((data: any) => {
-      this.batchAndSerialNoList.push({
-        Id: data?.Id,
-        PoId: data?.PoId,
-        PoDetId: data?.POLineId,
-        BatchNo: data?.BatchNo ? data?.BatchNo : '',
-        Qty: data?.Qty ? data?.Qty : null,
-        SerialNo: data?.SerialNo ? data?.SerialNo : '',
-      });
+      let index = this.batchAndSerialNoList.findIndex(x => x.SRNo == data?.SRNo && x.POId == data?.PoId && x.PODetId == data?.POLineId && x.IsDeleted == false);
+      if (index !== -1) {
+        this.batchAndSerialNoList[index].BatchNo = data?.BatchNo ? data?.BatchNo : '';
+        this.batchAndSerialNoList[index].Qty = data?.Qty ? data?.Qty : '';
+        this.batchAndSerialNoList[index].SerialNo = data?.SerialNo ? data?.SerialNo : '';
+      } else {
+        this.batchAndSerialNoList.push({
+          SRNo: data?.SRNo,
+          Id: data?.Id,
+          POId: data?.PoId,
+          PODetId: data?.POLineId,
+          BatchNo: data?.BatchNo ? data?.BatchNo : '',
+          Qty: data?.Qty ? data?.Qty : 1,
+          SerialNo: data?.SerialNo ? data?.SerialNo : '',
+          IsDeleted: false
+        });
+      }
     });
-    
+    this.previousBatchSerialNo = new AdvancedShipmentNotificationProductDet();
+
     // this.ASNLineItems.forEach( x =>{                      
     //   x.ASNProductDetails.forEach(y =>
     //     {
@@ -314,10 +358,9 @@ export class EditAsnComponent {
   }
 
   openModelForDeleteItem(templateRef: TemplateRef<any>, data?: any) {
-    debugger;
     if (this.ASNLineItems?.length == 1)
       throw this.toaster.error('ASN must have one line item, you can not delete....');
-    if (data?.LineId > 0) {
+    if (data?.Id > 0) {
       this.dialog.open(templateRef);
       this.selectedLineId = data?.Id;
     }
@@ -338,69 +381,63 @@ export class EditAsnComponent {
 
   onClickDeleteItem() {
     const id = this.selectedLineId;
-    this.ASNLineItems.forEach((element, index) => {
-      element.Id = index + 1;
-      if (element.Id == id) {
-        if (element?.ASNLineId) {
-          // this.purchaseOrderService.deletePOLineByLineId(element.LineId ? element.LineId : 0).subscribe({
-          //   next: (res: any) => {
-          //     if (res[ResultEnum.IsSuccess]) {
-          //       this.toaster.success(res.Message);
-          //     }
-          //     else {
-          //       this.toaster.error(res.Message);
-          //     }
-          //   },
-          //   error: (e) => { this.toaster.error(e.Message); },
-          //   complete() {
-          //   },
-          // });
-        }
-        this.dialog.closeAll();
-        this.ASNLineItems.splice(index, 1);
-      }
-    });
-    this.ASNLineItems.forEach((element, index) => {
-      element.Id = index + 1;
-    });
-    this.dataSource = new MatTableDataSource<any>(this.ASNLineItems);
+    // this.ASNLineItems.forEach((element, index) => {
+    //   element.Id = index + 1;
+    //   if (element.Id == id) {
+    //     if (element?.ASNLineId) {
+    //       // this.purchaseOrderService.deletePOLineByLineId(element.LineId ? element.LineId : 0).subscribe({
+    //       //   next: (res: any) => {
+    //       //     if (res[ResultEnum.IsSuccess]) {
+    //       //       this.toaster.success(res.Message);
+    //       //     }
+    //       //     else {
+    //       //       this.toaster.error(res.Message);
+    //       //     }
+    //       //   },
+    //       //   error: (e) => { this.toaster.error(e.Message); },
+    //       //   complete() {
+    //       //   },
+    //       // });
+    //     }
+    //     this.dialog.closeAll();
+    //     // this.ASNLineItems.splice(index, 1);
+    //     this.ASNLineItems[index].IsDeleted = true;
+    //   }
+    // });
+    let index = this.ASNLineItems.findIndex(x => x.Id == this.selectedLineId);
+    if (index != -1)
+      this.ASNLineItems[index].IsDeleted = true;
+    this.dataSource = new MatTableDataSource<any>(this.ASNLineItems.filter(x => x.IsDeleted == false));
     this.selectedLineId = 0;
+    this.dialog.closeAll();
   }
 
-  DetLineChange(paramevent: any, paramIndex: number) {
+  DetLineChange(paramevent: any, paramIndex: number, data?: any) {
     const _letNumber = Number(paramevent.target.value);
-
     //this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty;
-    const totalQty=  this.ASNLineItems[paramIndex]?.TotalQty! ? this.ASNLineItems[paramIndex]?.TotalQty! : 0;
+    const totalQty = this.ASNLineItems[paramIndex]?.TotalQty! ? this.ASNLineItems[paramIndex]?.TotalQty! : 0;
     this.ASNLineItems[paramIndex].OpenGRQty = totalQty - _letNumber;
     this.ASNLineItems[paramIndex].DeliveryQty = _letNumber;
-
     this.dataSource.data = this.ASNLineItems;
+    this.batchAndSerialNoList.forEach(element => {
+      if (element.PODetId == data.PODetId)
+        element.IsDeleted = true;
+      return element;
+    });
   }
   openForAddAsn() {
     // if(this.batchAndSerialNoList?.length == 0)
-
-    const lineDet: ASNDetailsLine[] = [];
     this.ASNLineItems.forEach(element => {
-      const asnLineDetails = this.batchAndSerialNoList.filter(x => x.PoDetId == element.ASNLineId);
-      // lineDet.push({
-      //   ASNHeaderId: 0,
-      //   POId: element.POHeaderId,
-      //   PODetId: element.POLineId ? element.POLineId : 0,
-      //   ProductCode: element.ProductCode,
-      //   Description: element.ProductDescription,
-      //   ProductGroup: element.ProductGroup,
-      //   StockType: element.StockType ? element.StockType : '',
-      //   Plant: element.PlantCode,
-      //   StorageLocation: element.LocationCode,
-      //   OpenGRQty: element.OpenGRQty ? element.OpenGRQty : 0,
-      //   DeliveryQty: element.Qty ? element.Qty : 0,
-      //   DeliveryDate: element.DeliveryDate,
-      //   ASNProductDetails: asnLineDetails
-      // });
+      // if (!element?.ASNProductDetails)
+        element.ASNProductDetails = [];
+      const asnLineDetails = this.batchAndSerialNoList?.filter(x => x.PODetId == element.PODetId);
+      asnLineDetails?.forEach(productDetials => {
+        if (productDetials)
+          element?.ASNProductDetails?.push(productDetials);
+      });
+
     });
 
-    this.advanceShippingNotificationService;
     if (this.ASNHeaderForm.valid) {
       const PRHeaderData = this.ASNHeaderForm.value as any;
       const ASNAdd: AdvancedShipmentNotificationVM = {
@@ -412,7 +449,6 @@ export class EditAsnComponent {
         DeliveryDate: PRHeaderData.DeliveryDate ? PRHeaderData.DeliveryDate : new Date(),
         ShippingDate: PRHeaderData.Shippingdate ? PRHeaderData.Shippingdate : new Date(),
         ASNDetails: this.ASNLineItems,
-
       };
 
       this.advanceShippingNotificationService.UpdateASNDetails(ASNAdd).subscribe({
@@ -427,12 +463,16 @@ export class EditAsnComponent {
             this.toaster.error(res.Message);
           }
         },
-        error: (e) => { },
+        error: (e) => { this.toaster.error(e.Message) },
         complete() {
 
         },
       });
     }
+  }
+
+  onClickBack() {
+    this.location.back();
   }
 
 }

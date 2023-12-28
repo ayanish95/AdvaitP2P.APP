@@ -40,7 +40,7 @@ export class AsnListComponent implements OnInit {
     this.currentUserRole = this.authService.roles();
     this.currentUserId = this.authService.userId();
     this.isSAPEnabled = this.authService.isSAPEnable();
-    this.apiASNList();
+    this.apiPOList();
     this.apiAllPendingList();
   }
 
@@ -48,7 +48,7 @@ export class AsnListComponent implements OnInit {
     filterValue = filterValue.target.value;
   }
 
-  apiASNList() {
+  apiPOList() {
     this.purchaseOrderService
       .getAllApprovedPOHeaderListByUserId().subscribe({
         next: (res: any) => {
@@ -90,7 +90,7 @@ export class AsnListComponent implements OnInit {
       this.apiAllPendingList();
     }
     else if (event.index == 0) {
-      this.apiASNList();
+      this.apiPOList();
     }
   }
 
