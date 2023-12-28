@@ -9,9 +9,7 @@ import { AdvancedShipmentNotificationVM } from '@core/models/advance-shipping-no
 import { Filter, OrderBy } from '@core/models/base-filter';
 import { PurchaseOrderVM } from '@core/models/purchase-order';
 import { AdvanceShippingNotificationService } from '@core/services/advance-shipment-notification.service';
-import { PurchaseRequistionService } from '@core/services/purchase-requistion.service';
 import { ToastrService } from 'ngx-toastr';
-import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-all-asn-list',
@@ -21,7 +19,7 @@ import { finalize } from 'rxjs';
 export class AllAsnListComponent implements OnInit, OnChanges {
   @Input() allASNList!: AdvancedShipmentNotificationVM[];
   @Input() allPOList!: PurchaseOrderVM[];
-  @Input() Type!:string;
+  @Input() Type!: string;
   @Output() LoadAllASN: EventEmitter<string> = new EventEmitter<string>();
 
   isLoading = true;
@@ -33,8 +31,9 @@ export class AllAsnListComponent implements OnInit, OnChanges {
     'PODocType',
     'PODate',
     // 'Delete',
-    'View',
-    'Edit'
+    'Actions',
+    // 'View',
+    // 'Edit'
   ];
   displayedColumns: string[] = [
     'srNo',
@@ -62,17 +61,17 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   rightsForApproval = false;
   propChanges: any;
 
-  constructor(private purchaseRequistionService: PurchaseRequistionService, private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog) { }
+  constructor(private advanceShippingNotificationService: AdvanceShippingNotificationService, private toaster: ToastrService, private authService: AuthService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.currentUserRole = this.authService.roles();
     this.isSAPEnabled = this.authService.isSAPEnable();
 
-    if (this.allPOList?.length > 0 && this.Type=='PO') {
+    if (this.allPOList?.length > 0 && this.Type == 'PO') {
       this.dataSource.data = this.allPOList;
     }
-    if (this.allASNList?.length > 0 && this.Type=='ASN') {
-      this.allPOList=[];
+    if (this.allASNList?.length > 0 && this.Type == 'ASN') {
+      this.allPOList = [];
       this.dataSource.data = this.allASNList;
     }
     this.dataSource.paginator = this.paginator;
@@ -84,13 +83,13 @@ export class AllAsnListComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.propChanges = changes;
-    if (this.propChanges?.allASNList && this.Type=='ASN') {
-      this.allPOList=[];
+    if (this.propChanges?.allASNList && this.Type == 'ASN') {
+      this.allPOList = [];
       const currentValue = this.propChanges.allASNList?.currentValue;
       this.allASNList = currentValue;
       this.dataSource.data = this.allASNList;
     }
-    if (this.propChanges?.allPOList && this.Type=='PO') {
+    if (this.propChanges?.allPOList && this.Type == 'PO') {
       const currentValue = this.propChanges.allPOList?.currentValue;
       this.allPOList = currentValue;
       this.dataSource.data = this.allPOList;
@@ -123,13 +122,8 @@ export class AllAsnListComponent implements OnInit, OnChanges {
   onClickDeleteASN() {
     if (this.selectedPRId == 0 || this.selectedPRId == undefined)
       throw this.toaster.error('Something went wrong');
-    this.purchaseRequistionService
-      .deletePR(this.selectedPRId)
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
+    this.advanceShippingNotificationService.DeleteASNDetailsById(this.selectedPRId).subscribe({
+      next: (res: any) => {
         if (res[ResultEnum.IsSuccess]) {
           this.toaster.success(res[ResultEnum.Message]);
           this.LoadAllASN.emit();
@@ -139,7 +133,9 @@ export class AllAsnListComponent implements OnInit, OnChanges {
           this.toaster.error(res[ResultEnum.Message]);
 
         this.dialog.closeAll();
-      });
+      },
+      error:(e) => {this.toaster.error(e.Message);}
+    });
   }
 
 }

@@ -80,8 +80,8 @@ export interface ASNDetailsLine{
 export class AdvancedShipmentNotificationProductDet{
   SRNo?:number;
   Id?:number;
-  PoId?:number;
-  PoDetId?:number;
+  POId?:number;
+  PODetId?:number;
   ASNHeaderId?:number;
   ASNDetId?:number;
   GRId?:number;

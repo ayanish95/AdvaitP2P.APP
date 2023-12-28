@@ -142,7 +142,7 @@
             <td mat-cell *matCellDef="let element;let i = index">
               <input matInput type="number" [value]="element.DeliveryQty" name='Qty'
                      [(ngModel)]="element.DeliveryQty" [ngModelOptions]="{standalone: true}"
-                     (input)="DetLineChange($event,i)" [max]="element.TotalQty" [min]="0" />
+                     (input)="DetLineChange($event,i,element)" [max]="element.TotalQty" [min]="0" />
               <div *ngIf="element.DeliveryQty > element.TotalQty">
                 Maximum qty can be {{element.TotalQty}}.
               </div>
@@ -191,6 +191,7 @@
                              [columnCount]="displayedColumns.length"></app-no-record-found>
       </div>
       <div class="d-flex justify-content-end mt-20">
+        <button mat-button mat-raised-button class="btn-back mr-15" (click)="onClickBack()"> Back</button>
         <button [disabled]="" mat-raised-button
                 color="primary" (click)="openForAddAsn()"> Update ASN</button>
       </div>
@@ -265,9 +266,19 @@
 </ng-template>
 
 
+<ng-template #deleteItemAlert>
+  <h2 mat-dialog-title class="text-center">Delete ASN Line Item</h2>
+  <div mat-dialog-content>Are you sure want to
+    delete this item?</div>
+  <div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="warn" (click)="onClickDeleteItem()">Delete</button>
+  </div>
+</ng-template>
+
 <ng-template #deleteAlert>
-  <h2 mat-dialog-title class="text-center">Delete Purchase Requisition Line Item</h2>
-  <div mat-dialog-content>Once you delete this item it will not retrieve again, Are you sure want to
+  <h2 mat-dialog-title class="text-center">Delete ASN Line Item</h2>
+  <div mat-dialog-content> Are you sure want to
     delete this item?</div>
   <div mat-dialog-actions class="d-flex justify-content-center">
     <button mat-button mat-dialog-close>Cancel</button>

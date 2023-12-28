@@ -179,19 +179,16 @@ export class EditPurchaseOrderComponent implements OnInit {
           if (res[ResultEnum.Model]) {
             this.PODetails = res[ResultEnum.Model];
             if (this.PODetails) {
-              // if(this.PODetails?.IsApprovedByAll || this.PODetails?.IsRejected){
-              //    this.toaster.error('You can not update this PR');
-              //    this.router.navigateByUrl('/pages/purchase-order');
-              // }
               this.POHeaderForm.patchValue({
                 DocType: this.PODetails?.DocType as any,
                 PODate: this.PODetails?.PODate as any,
                 SupplierCode: this.PODetails?.Supplier?.SupplierCode + ' - ' + this.PODetails?.Supplier?.FirstName + ' ' + this.PODetails?.Supplier?.LastName as any,
                 // SupplierName: this.PODetails?.SupplierName as any,
-                PRno: this.PODetails?.PRHeaderId as any,
+                //PRno: this.PODetails?.PRHeaderId as any,
                 ContractNumber: this.PODetails?.ContractNumber as any,
                 RFQNumber: this.PODetails?.RFQHeaderId as any,
-                CompanyCode: this.PODetails?.CompanyCode as any
+                CompanyCode: this.PODetails?.CompanyCode as any,
+                PRno:this.PODetails.ERPPRNumber as any
               });
             }
             this.PODetails.POLineItems?.forEach((item, index) => {

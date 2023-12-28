@@ -333,7 +333,7 @@ export class CreateAdvancedShippingNotificationComponent {
       if (!this.selectePOId || !this.selectePOLineId)
         throw this.toaster.error('PO Id or PO Line Id not found for selected row...');
       this.batchAndSerialNoList.map(x => x.IsDeleted = false);
-      let existingData = this.batchAndSerialNoList?.filter(x => x.PoId == this.selectePOId && x.PoDetId == this.selectePOLineId);
+      let existingData = this.batchAndSerialNoList?.filter(x => x.POId == this.selectePOId && x.PODetId == this.selectePOLineId);
 
       if (existingData?.length == 0) {
         if (type != CommonEnum.None) {
@@ -351,7 +351,7 @@ export class CreateAdvancedShippingNotificationComponent {
       } else {
         if (type != CommonEnum.None) {
           existingData.forEach((element, index) => {
-            let BSData = { 'SRNo': index + 1, 'type': type, 'POId': element?.PoId, 'POLineId': element?.PoDetId, 'BatchNo': element?.BatchNo, 'SerialNo': element?.SerialNo, 'Qty': element?.Qty };
+            let BSData = { 'SRNo': index + 1, 'type': type, 'POId': element?.POId, 'POLineId': element?.PODetId, 'BatchNo': element?.BatchNo, 'SerialNo': element?.SerialNo, 'Qty': element?.Qty };
             this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(BSData));
           });
         }
@@ -430,7 +430,7 @@ export class CreateAdvancedShippingNotificationComponent {
   removeBatchNumberFormRow(i: any) {
     const remove = this.BatchAndSerialNoForm.get('items') as FormArray;
     if (remove.value) {
-      let index = this.batchAndSerialNoList.findIndex(x => x.SRNo == remove.value[i]?.SRNo && x.PoId == remove.value[i]?.PoId && x.PoDetId == remove.value[i]?.POLineId);
+      let index = this.batchAndSerialNoList.findIndex(x => x.SRNo == remove.value[i]?.SRNo && x.POId == remove.value[i]?.PoId && x.PODetId == remove.value[i]?.POLineId);
       if (index != -1) {
         this.batchAndSerialNoList[index].IsDeleted = true;
       }
@@ -458,7 +458,7 @@ export class CreateAdvancedShippingNotificationComponent {
     const batchSerialNo = this.BatchAndSerialNoForm.get('items')?.value as any;
     this.batchAndSerialNoList = this.batchAndSerialNoList.filter(x => x.IsDeleted == false);
     batchSerialNo?.forEach((data: any) => {
-      let index = this.batchAndSerialNoList.findIndex(x => x.SRNo == data?.SRNo && x.PoId == data?.PoId && x.PoDetId == data?.POLineId);
+      let index = this.batchAndSerialNoList.findIndex(x => x.SRNo == data?.SRNo && x.POId == data?.PoId && x.PODetId == data?.POLineId);
       if (index !== -1) {
         this.batchAndSerialNoList[index].BatchNo = data?.BatchNo ? data?.BatchNo : '';
         this.batchAndSerialNoList[index].Qty = data?.Qty ? data?.Qty : '';
@@ -468,8 +468,8 @@ export class CreateAdvancedShippingNotificationComponent {
         this.batchAndSerialNoList.push({
           SRNo: data?.SRNo,
           Id: 0,
-          PoId: data?.PoId,
-          PoDetId: data?.POLineId,
+          POId: data?.PoId,
+          PODetId: data?.POLineId,
           BatchNo: data?.BatchNo ? data?.BatchNo : '',
           Qty: data?.Qty ? data?.Qty : 1,
           SerialNo: data?.SerialNo ? data?.SerialNo : '',
@@ -538,7 +538,7 @@ export class CreateAdvancedShippingNotificationComponent {
     this.ASNLineItems[paramIndex].OpenGRQty = this.ASNLineItems[paramIndex].POQty - _letNumber;
     this.ASNLineItems[paramIndex].DeliveryQty = _letNumber;
     this.dataSource.data = this.ASNLineItems;
-    this.batchAndSerialNoList = this.batchAndSerialNoList?.filter(x => x.PoDetId != data?.PODetId)
+    this.batchAndSerialNoList = this.batchAndSerialNoList?.filter(x => x.PODetId != data?.PODetId)
   }
   DetLineChangeQtyWeight(paramevent: any, paramIndex: number) {
     const _letNumber = Number(paramevent.target.value);
@@ -567,7 +567,7 @@ export class CreateAdvancedShippingNotificationComponent {
     // if(this.batchAndSerialNoList?.length == 0)
     //  const lineDet: AdvancedShipmentNotificationDetVM[] = [];
     this.ASNLineItems.forEach(element => {
-      const asnLineDetails = this.batchAndSerialNoList?.filter(x => x.PoDetId == element.PODetId);
+      const asnLineDetails = this.batchAndSerialNoList?.filter(x => x.PODetId == element.PODetId);
       element.ASNProductDetails = asnLineDetails;
     });
 
