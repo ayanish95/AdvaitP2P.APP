@@ -126,8 +126,7 @@ export class CreateAdvancedShippingNotificationComponent {
     this.ASNHeaderForm.get('ASNDate')?.disable();
     this.currentUserId = this.authService.userId();
     this.apiDocType();
-    if (this.POId)
-      this.apiGetPoDetailsById(this.POId);
+
 
     this.supplierService
       .getSupplierList()
@@ -147,19 +146,20 @@ export class CreateAdvancedShippingNotificationComponent {
       });
 
     this.purchaseOrderService
-      .getAllApprovedPOHeaderListByUserId()
-      .pipe(
-        finalize(() => {
-        })
-      )
-      .subscribe(res => {
-        if (res[ResultEnum.IsSuccess]) {
-          this.approvedPolist = res[ResultEnum.Model];
-          this.filteredprno = this.poNumberControl!.valueChanges.pipe(
-            startWith(''),
-            map(value => this.filterPono(value || ''))
-          );
-        }
+      .getAllApprovedPOHeaderListByUserId().subscribe({
+        next: (res) => {
+          if (res[ResultEnum.IsSuccess]) {
+            this.approvedPolist = res[ResultEnum.Model];
+            if (this.POId)
+              this.apiGetPoDetailsById(this.POId);
+
+            this.filteredprno = this.poNumberControl!.valueChanges.pipe(
+              startWith(''),
+              map(value => this.filterPono(value || ''))
+            );
+          }
+        },
+        error: (e)=>{this.toaster.error(e.Message);}
       });
 
   }
@@ -206,8 +206,9 @@ export class CreateAdvancedShippingNotificationComponent {
           if (res[ResultEnum.Model]) {
             this.PoDetails = res[ResultEnum.Model];
             if (this.PoDetails) {
+              let POData = this.approvedPolist?.find(x=>x.ERPPONumber == this.PoDetails.ERPPONumber);
               this.ASNHeaderForm.patchValue({
-                // PoNo: this.PoDetails.ERPPONumber as any,
+                 PoNo: POData as any,
                 DocType: this.PoDetails.DocType as any,
                 ASNDate: this.formatDate(this.PoDetails.PODate) as any,
                 SupplierId: this.PoDetails.SupplierId as any,
@@ -338,7 +339,7 @@ export class CreateAdvancedShippingNotificationComponent {
       if (existingData?.length == 0) {
         if (type != CommonEnum.None) {
           if (type == CommonEnum.BatchNo) {
-            let BSData = { 'SRNo': 1, 'type': type, 'POId': this.selectePOId, 'POLineId': this.selectePOLineId, 'BatchNo': '', 'SerialNo': '', 'Qty': null};
+            let BSData = { 'SRNo': 1, 'type': type, 'POId': this.selectePOId, 'POLineId': this.selectePOLineId, 'BatchNo': '', 'SerialNo': '', 'Qty': null };
             this.batchAndSerialNoGroupForm().push(this.createFormForBatchAndSerialNo(BSData));
           }
           else {

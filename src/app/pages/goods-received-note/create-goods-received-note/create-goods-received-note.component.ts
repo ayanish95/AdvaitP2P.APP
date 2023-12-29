@@ -15,7 +15,6 @@ import { StockTypeEnum } from '@core/enums/stokc-stype-enum';
 import { GoodsReceivedNoteDetVM, GoodsReceivedNoteHeaderVM, GoodsReceivedNoteProductDet } from '@core/models/goods-received-note';
 import { SelectionModel } from '@angular/cdk/collections';
 import { CommonEnum } from '@core/enums/common-enum';
-import { ReturnGoodsReceptionNotificationService } from '@core/services/return-goods-reception-notification.service';
 import { GoodsReceptionNotificationService } from '@core/services/goods-reception-notification.service';
 @Component({
   selector: 'app-create-goods-received-note',
@@ -31,15 +30,15 @@ import { GoodsReceptionNotificationService } from '@core/services/goods-receptio
 })
 export class CreateGoodsReceivedNoteComponent implements OnInit {
   GRNHeaderForm = this.fb.group({
+    Documentdate: [{value:new Date(),disabled:true}, [Validators.required]],
     ASNNumber: ['', [Validators.required]],
-    PONumber: ['', [Validators.required]],
-    DocType: ['', [Validators.required]],
-    Documentdate: [new Date(), [Validators.required]],
-    ASNDeliveryDate: [null, [Validators.required]],
+    PONumber: [{value:'',disabled:true}, [Validators.required]],
+    DocType: [{value:'',disabled:true}, [Validators.required]],
+    ASNDeliveryDate: [{value:null,disabled:true}, [Validators.required]],
     StockType: ['', [Validators.required]],
-    Transaction: ['', [Validators.required]],
-    Supplier: [''],
-    CompanyCode: [''],
+    Transaction: [{value:'',disabled:true}, [Validators.required]],
+    Supplier: [{value:'',disabled:true}],
+    CompanyCode: [{value:'',disabled:true}],
   });
 
   GRNLineForm = this.fb.group({
@@ -67,7 +66,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
     'GRQty',
     'OpenGRQty',
     'Unit',
-    'Plant',
+    // 'Plant',
     'Location',
     'ViewPacking',
   ];
@@ -152,6 +151,8 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
 
 
   onSelectChangeASNNumber(id: any) {
+    console.log('id', id);
+
     this.GRNHeaderForm.reset();
     this.GRNHeaderForm.get('ASNNumber')?.setValue(id);
     this.GRNHeaderForm.get('Documentdate')?.setValue(new Date());
@@ -165,41 +166,44 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
             this.ASNDetails = res[ResultEnum.Model];
             if (this.ASNDetails) {
               this.GRNHeaderForm.patchValue({
-                ASNDeliveryDate: this.formatDate(this.ASNDetails?.DeliveryDate ) as any ,
+                ASNDeliveryDate: this.formatDate(this.ASNDetails?.DeliveryDate) as any,
                 DocType: this.ASNDetails?.DocType ? this.ASNDetails?.DocType : null,
                 PONumber: this.ASNDetails?.ERPPONumber ? this.ASNDetails.ERPPONumber : null,
                 CompanyCode: this.ASNDetails?.CompanyCode ? this.ASNDetails.CompanyCode : null,
-                Supplier: (this.ASNDetails?.Supplier ? this.ASNDetails.Supplier.SupplierCode : null) +' - ' + (this.ASNDetails?.Supplier?.FirstName ? (this.ASNDetails?.Supplier?.FirstName + this.ASNDetails?.Supplier?.LastName): null),
+                Supplier: (this.ASNDetails?.Supplier ? this.ASNDetails.Supplier.SupplierCode : null) + ' - ' + (this.ASNDetails?.Supplier?.FirstName ? (this.ASNDetails?.Supplier?.FirstName + this.ASNDetails?.Supplier?.LastName) : null),
                 Transaction: 'Inbound Delivery',
                 StockType: StockTypeEnum.QualityCheck
               });
               this.ASNDetails.ASNDetails?.forEach((item, index) => {
-                // this.GRNLineItems.push({
-                //   Id: 0,
-                //   ASNDetId: item ? item?.Id : 0,
-                //   // ProductCode: item ? item?.ProductCode : '',
-                //   // ProductDescription: item ? item?.ProductDescription : '',
-                //   // ProductGroup: item ? item?.ProductGroup : '',
-                //   POId: item ? item?.POId : 0,
-                //   PODetId: item?.Id ? item?.PODetId : 0,
-                //   // ProductId: item ? item?.ProductId : 0,
-                //   GRDeliveryQty: item ? item?.DeliveryQty : 0,
-                //   OpenGRQty: item ? item?.OpenGRQty : 0,
-                //   TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) + item?.OpenGRQty,
-                //   DeliveryDate: item.DeliveryDate,
-                //   // UnitName: item ? item?.UnitName : '',
-                //   // Plant: item ? item?.Plant : '',
-                //   // StorageLocation: item ? item?.StorageLocation : '',
-                //   ASNHeaderId: item ? item?.ASNHeaderId : 0,
-                //   StockType: item ? item?.StockType : '',
-                //   IsBatchNo: item ? item?.IsBatchNo : false,
-                //   IsSerialNo: item ? item?.IsSerialNo : false,
-                //   GRNProductDetails: item ? item?.ASNProductDetails : [],
-                //   IsSelected: false
-                // });
-                // item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row));
+                this.GRNLineItems.push({
+                  Id: 0,
+                  ASNDetId: item ? item?.Id : 0,
+
+                  POId: item?.POId ? item?.POId : 0,
+                  PODetId: item?.PODetId ? item?.PODetId : 0,
+                  ProductId: item ? item?.ProductId : 0,
+                  Product: item?.Product,
+                  GRDeliveryQty: item ? item?.DeliveryQty : 0,
+                  OpenGRQty: item?.PODetId ? item?.PODetId : 0,
+                  TotalQty: (item?.DeliveryQty ? item?.DeliveryQty : 0) + (item?.OpenGRQty ? item?.OpenGRQty : 0),
+                  DeliveryDate: item.DeliveryDate,
+                  UnitId:item?.UnitId,
+                  Unit:item?.Unit,
+                  // UnitName: item ? item?.UnitName : '',
+                  // Plant: item ? item?.Plant : '',
+                  StorageLocationId: item?.StorageLocationId,
+                  StorageLocation: item?.StorageLocation,
+                  ASNHeaderId: item?.ASNHeaderId ? item?.ASNHeaderId : 0,
+                  StockType: item?.StockType,
+                  IsBatchNo: item ? item?.IsBatchNo : false,
+                  IsSerialNo: item ? item?.IsSerialNo : false,
+                  GRNProductDetails: item ? item?.ASNProductDetails : [],
+                  IsSelected: false
+                });
+                if (item?.ASNProductDetails)
+                  item?.ASNProductDetails.forEach(row => this.selectionSerialAndBatchNo.select(row));
               });
-              this.GRNLineItems.filter(x => x.GRNProductDetails.filter(y => y.IsSelected = true));
+              this.GRNLineItems?.filter(x => x.GRNProductDetails?.filter(y => y.IsSelected = true));
               this.dataSource.data = this.GRNLineItems;
 
             }
@@ -312,7 +316,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
             'Qty'
           ];
         }
-        
+
         // this.packingdataSource.data.forEach(row => this.selectionSerialAndBatchNo.select(row));
       }
     }
@@ -358,7 +362,7 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
         else
           lineItem.IsSelected = false;
 
-        lineItem.GRNProductDetails.forEach(productItem => {
+        lineItem.GRNProductDetails?.forEach(productItem => {
           if (selectedLineProduct.filter(y => y.Id == productItem.Id)?.length > 0) {
             productItem.IsSelected = true;
           }
@@ -367,17 +371,18 @@ export class CreateGoodsReceivedNoteComponent implements OnInit {
           }
         });
       });
-      
+
       const GRNHeaderData = this.GRNHeaderForm.value;
+      const GRNDate = this.GRNHeaderForm.get('Documentdate')?.getRawValue();
       const GRNData: GoodsReceivedNoteHeaderVM = {
         POId: this.ASNDetails.POId,
-        ASNId: this.ASNDetails.ASNId,
+        ASNId: this.ASNDetails.Id,
         ASNNo: this.ASNDetails.ASNNo,
         ERPPONumber: this.ASNDetails.ERPPONumber ? this.ASNDetails.ERPPONumber : '',
         DocType: GRNHeaderData.DocType ? GRNHeaderData.DocType : '',
         Transaction: GRNHeaderData.Transaction ? GRNHeaderData.Transaction : '',
         StockType: GRNHeaderData.StockType ? GRNHeaderData.StockType : '',
-        GRDeliveryDate: GRNHeaderData.Documentdate ? GRNHeaderData.Documentdate : new Date(),
+        GRDeliveryDate: GRNDate ? GRNDate : new Date(),
         GRNDetails: this.GRNLineItems
       };
 

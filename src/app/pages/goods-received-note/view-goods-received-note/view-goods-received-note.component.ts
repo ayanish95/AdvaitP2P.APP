@@ -24,7 +24,7 @@ export class ViewGoodsReceivedNoteComponent {
     'ProductGroup',
     'Qty',
     'Unit',
-    'Plant',
+    // 'Plant',
     'Location',
     'View'
     // 'Close',

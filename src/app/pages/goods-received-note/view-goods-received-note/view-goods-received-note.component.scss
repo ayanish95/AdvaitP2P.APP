@@ -1,13 +1,13 @@
 
-.mb-0{
-  color: rgb(44, 33, 33);
-  margin: 5px;
-  align-content: center;
-}
-.col-md-9{
-margin: 20px;
-padding: 10px;
-}
+// .mb-0{
+//   color: rgb(44, 33, 33);
+//   margin: 5px;
+//   align-content: center;
+// }
+// .col-md-9{
+// margin: 20px;
+// padding: 10px;
+// }
 .mat-mdc-card-header {
   display: flex;
   padding: 20px;
@@ -16,4 +16,20 @@ padding: 10px;
   display: block;
   margin: 0;
   font-size: x-large;
+}
+
+.demo-full-width {
+  width: 100%;
+}
+
+.mr-10 {
+  margin-right: 10px !important;
+}
+
+.mb-0 {
+  margin-bottom: 0px !important;
+}
+
+.mt-5 {
+  margin-top: 5px !important;
 }

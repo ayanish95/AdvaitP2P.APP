@@ -20,9 +20,9 @@ export class ListGoodsReceivedNoteComponent {
     'srNo',
     'GRNo',
     'GRDeliveryDate',
-    'PRNumber',
+    'ASNNumber',
     'PRDocType',
-    'PODate',
+    'ASNDate',
     'Supplier',
     'View',
     'Delete'

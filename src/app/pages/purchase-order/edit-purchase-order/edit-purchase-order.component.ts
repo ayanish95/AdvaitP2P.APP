@@ -179,6 +179,9 @@ export class EditPurchaseOrderComponent implements OnInit {
           if (res[ResultEnum.Model]) {
             this.PODetails = res[ResultEnum.Model];
             if (this.PODetails) {
+              let PRNumber = this.PODetails?.ERPPRNumber ? this.PODetails?.ERPPRNumber.join(', ') : [] ;
+             
+           
               this.POHeaderForm.patchValue({
                 DocType: this.PODetails?.DocType as any,
                 PODate: this.PODetails?.PODate as any,
@@ -188,7 +191,7 @@ export class EditPurchaseOrderComponent implements OnInit {
                 ContractNumber: this.PODetails?.ContractNumber as any,
                 RFQNumber: this.PODetails?.RFQHeaderId as any,
                 CompanyCode: this.PODetails?.CompanyCode as any,
-                PRno:this.PODetails.ERPPRNumber as any
+                PRno: PRNumber as any
               });
             }
             this.PODetails.POLineItems?.forEach((item, index) => {

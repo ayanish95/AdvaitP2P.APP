@@ -1,22 +1,31 @@
+import { AdvancedShipmentNotificationVM } from "./advance-shipping-notification";
+import { Company } from "./company";
+import { Products } from "./products";
+import { StorageLocations } from "./storage-location";
+import { Suppliers } from "./suppliers";
+import { Units } from "./units";
+
 export interface GoodsReceivedNoteHeaderVM{
     Id?:number;
     GRNo?:string;
     ASNNo?:string;
+    ASN?:AdvancedShipmentNotificationVM;
     ASNId?:number;
     ERPPONumber?:string;
     DocType:string;
     SupplierId?:number;
     GRDeliveryDate?:Date;
     CompanyCode?:string;
-    CompanyName?:string;
-    SupplierCode?:string;
-    SupplierName?:string;
+    Company?:Company;
+    Supplier?:Suppliers;
+    // SupplierName?:string;
     SAPStatus?:boolean;
     POId?:number;
     Remark?:string;
     GRNCreatedBy?:string;
     StockType?:string;
     Transaction?:string;
+    IsGRGenerated?:boolean;
     GRNDetails:GoodsReceivedNoteDetVM[];  
   }
 
@@ -26,13 +35,18 @@ export interface GoodsReceivedNoteHeaderVM{
     ASNHeaderId: number,
     ASNDetId?: number,
     PODetId: number,
+    ProductId?:number,
+    Product?:Products,
     // ProductCode: string,
     // ProductDescription: string,
     // ProductGroup: string,
     // UnitName?:string;
-    StockType: string,
+    UnitId?:number,
+    Unit?:Units,
+    StockType?: string,
     // Plant: string,
-    // StorageLocation: string,
+    StorageLocationId?: number,
+    StorageLocation?: StorageLocations,
     TotalWeight?: number;
     QtyWeight?: number;
     TotalQty?: number;
@@ -45,7 +59,8 @@ export interface GoodsReceivedNoteHeaderVM{
     IsBatchNo?: boolean,
     IsSerialNo?: boolean,
     IsSelected?: boolean,
-    GRNProductDetails:GoodsReceivedNoteProductDet[];
+    IsGRGenerated?: boolean,
+    GRNProductDetails?:GoodsReceivedNoteProductDet[];
   }
 
   export class GoodsReceivedNoteProductDet{
