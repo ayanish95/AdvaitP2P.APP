@@ -15,6 +15,10 @@ export class GoodsReceptionNotificationService {
       CreateGRN(GRNVM: any) {
             return this.httpclient.authPost(`${Api.GoodsReceiptNotification + Method.CreateGR}`, GRNVM);
       }
+
+      UpdateGR(GRNVM: any) {
+            return this.httpclient.authPost(`${Api.GoodsReceiptNotification + Method.UpdateGR}`, GRNVM);
+      }
       GetAllGRList() {
             return this.httpclient.authGet(`${Api.GoodsReceiptNotification + Method.GetAllGRList}`);
       }

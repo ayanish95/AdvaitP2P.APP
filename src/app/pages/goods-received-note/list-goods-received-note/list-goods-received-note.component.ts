@@ -24,8 +24,9 @@ export class ListGoodsReceivedNoteComponent {
     'PRDocType',
     'ASNDate',
     'Supplier',
-    'View',
-    'Delete'
+    'Actions',
+    // 'View',
+    // 'Delete'
   ];
 
   dataSource = new MatTableDataSource<any>();

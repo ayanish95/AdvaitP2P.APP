@@ -5,13 +5,15 @@ import { ListGoodsReceivedNoteComponent } from './list-goods-received-note/list-
 import { SharedModule } from '@shared';
 import { CreateGoodsReceivedNoteComponent } from './create-goods-received-note/create-goods-received-note.component';
 import { ViewGoodsReceivedNoteComponent } from './view-goods-received-note/view-goods-received-note.component';
+import { EditGoodsReceivedNoteComponent } from './edit-goods-received-note/edit-goods-received-note.component';
 
 
 @NgModule({
   declarations: [
     ListGoodsReceivedNoteComponent,
     CreateGoodsReceivedNoteComponent,
-    ViewGoodsReceivedNoteComponent
+    ViewGoodsReceivedNoteComponent,
+    EditGoodsReceivedNoteComponent
   ],
   imports: [
     CommonModule,

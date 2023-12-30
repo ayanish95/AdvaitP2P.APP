@@ -3,7 +3,7 @@
   <mat-card-header>
     <div class="row mt-5">
       <div class="col-md-12">
-        <h2>Create Goods Received Note </h2>
+        <h2>Edit Goods Received Note </h2>
       </div>
     </div>
 
@@ -13,7 +13,7 @@
       <div class="row mt-5">
         <div class="col-sm-3">
           <label class="custom-label">
-            <h5> GR Date</h5>
+            <h5> GRN Date</h5>
           </label>
           <mat-form-field>
             <input matInput
@@ -29,12 +29,25 @@
           </mat-form-field>
         </div>
         <div class="col-sm-3">
+            <label class="custom-label">
+              <h5>GRN Number</h5>
+            </label>
+            <mat-form-field class="demo-full-width">
+              <input matInput
+                     formControlName="GRNNumber"
+                     placeholder="GRN Number" readonly>
+            </mat-form-field>
+          </div>
+        <div class="col-sm-3">
           <label class="custom-label">
             <h5> ASN Number</h5>
           </label>
           <mat-form-field class="demo-full-width">
-            <mat-select formControlName="ASNNumber" placeholder="Select ASN Number" #singleSelect
-                        (selectionChange)="onSelectChangeASNNumber($event.value)">
+            <input matInput
+            formControlName="ASNNumber"
+            placeholder="ASN Number" readonly>
+            <!-- <mat-select formControlName="ASNNumber" placeholder="Select ASN Number" #singleSelect
+                        >
               <mat-option>
                 <ngx-mat-select-search [formControl]="asnNumberControl" placeholderLabel="Search..."
                                        noEntriesFoundLabel="No Record Found..."></ngx-mat-select-search>
@@ -45,7 +58,7 @@
             </mat-select>
             <mat-error *ngIf="GRNHeaderForm.get('ASNNumber')?.hasError('required')">
               Please select ASN Number...
-            </mat-error>
+            </mat-error> -->
           </mat-form-field>
         </div>
         <div class="col-sm-3">
@@ -139,7 +152,7 @@
       <div class="mt-20">
         <h4>Product List</h4>
         <table mat-table [dataSource]="dataSource">
-          <ng-container matColumnDef="IsSelected">
+          <!-- <ng-container matColumnDef="IsSelected">
             <th mat-header-cell *matHeaderCellDef> <mat-checkbox color="primary"
                             (change)="$event ? masterToggle() : null"
                             [checked]="selection.hasValue() && isAllSelected()"
@@ -149,7 +162,7 @@
               (click)="$event.stopPropagation()"
               (change)="$event ? selection.toggle(element) : null"
               [checked]="selection.isSelected(element)"></mat-checkbox> </td>
-          </ng-container>
+          </ng-container> -->
           <ng-container matColumnDef="srNo">
             <th mat-header-cell *matHeaderCellDef># </th>
             <td mat-cell *matCellDef="let element;let i = index"> {{i+1+index}} </td>
@@ -201,7 +214,7 @@
       <div class="d-flex justify-content-end mt-20">
         <button mat-button mat-raised-button class="btn-back mr-15" (click)="onClickBack()"> Back</button>
         <button [disabled]="" mat-raised-button (click)="onClickCreatePR()"
-                color="primary"> Create GR</button>
+                color="primary"> Update GRN</button>
       </div>
     </form>
   </mat-card-content>

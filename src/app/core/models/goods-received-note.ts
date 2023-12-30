@@ -30,6 +30,7 @@ export interface GoodsReceivedNoteHeaderVM{
   }
 
   export interface GoodsReceivedNoteDetVM{
+    SRNo?: number,
     Id?: number,
     POId: number,
     ASNHeaderId: number,
