@@ -25,6 +25,7 @@ export class ViewPurchaseOrderComponent {
 
   displayedColumns: string[] = [
     'srNo',
+    'ERPPRNumber',
     'ProductCode',
     'ProductGroup',
     'Qty',

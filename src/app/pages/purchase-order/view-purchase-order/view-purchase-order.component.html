@@ -72,7 +72,11 @@
             <th mat-footer-cell *matFooterCellDef> <b *ngIf="PODetails.POLineItems.length">Total :
               </b></th>
           </ng-container>
-          <ng-container matColumnDef="ProductCode">
+          <ng-container matColumnDef="ERPPRNumber">
+            <th mat-header-cell *matHeaderCellDef> ERP PR Number</th>
+            <td mat-cell *matCellDef="let element"> {{element?.ERPPRNumber}} </td>
+          </ng-container>
+           <ng-container matColumnDef="ProductCode">
             <th mat-header-cell *matHeaderCellDef> Product Code </th>
             <td mat-cell *matCellDef="let element"> {{element?.Product?.ProductCode}} -
               {{element?.Product?.Description}}</td>
